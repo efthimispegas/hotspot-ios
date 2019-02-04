@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import PropTypes from 'prop-types';
-import Expo, { Permissions, Location } from 'expo';
+import Expo, { Permissions, Location, AR } from 'expo';
 
 import SignUpForm from './components/SignUpForm';
 import { Colors } from '../../common';
@@ -9,6 +9,7 @@ import { HomeScreen } from '../home';
 import { CreateHotspotScreen } from '../create';
 import LoadingScreen from '../loading/LoadingScreen';
 import { ScrollView } from 'react-native-gesture-handler';
+import ARScreen from '../AR/ARScreen';
 
 class SignUpScreen extends Component {
   static propTypes = {
@@ -49,8 +50,38 @@ class SignUpScreen extends Component {
     this.props.navigator.push({
       title: 'Create a Hotspot',
       component: CreateHotspotScreen,
+      rightButtonTitle: 'AR Camera',
+      onRightButtonPress: () => this._handleARCamera(),
       passProps: { position }
     });
+  };
+  _handleARCamera = () => {
+    if (!AR.isAvailable()) {
+      Alert.alert(
+        'Entering a unique experience!',
+        'In order to present to you the AR feature you need to have a version of iOS 11 or higher.',
+        [{ text: 'OK', onPress: () => this.props.navigator.pop() }],
+        { cancelable: true }
+      );
+    }
+    this._askCameraPermissionsAsync();
+  };
+
+  _askCameraPermissionsAsync = async () => {
+    const { status, permissions } = await Permissions.askAsync(
+      Permissions.CAMERA
+    );
+    if (status === 'denied') {
+      Alert.alert(
+        'Oh, bummer...',
+        "Can't do anything without permission. Allow Hotspot to use your Camera to proceed."
+      );
+    } else {
+      this.props.navigator.push({
+        title: 'AR Camera',
+        component: ARScreen
+      });
+    }
   };
 
   render() {
@@ -79,11 +110,11 @@ class SignUpScreen extends Component {
         'Looks like you have Location Services disabled. To continue you must enable it.'
       );
     } else {
-      this._askPermissionsAsync();
+      this._askLocationPermissionsAsync();
     }
   }
 
-  async _askPermissionsAsync() {
+  async _askLocationPermissionsAsync() {
     const { status, permissions } = await Permissions.askAsync(
       Permissions.LOCATION
     );
