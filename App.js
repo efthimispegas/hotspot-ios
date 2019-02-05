@@ -13,20 +13,34 @@ export default class App extends Component {
   };
 
   componentWillMount() {
-    this._loadAssetAsync();
+    // this._loadAssetsAsync();
   }
 
-  async _loadAssetAsync() {
+  async _loadAssetsAsync() {
     await Promise.all([fontAssets, ImageAssets]);
-
-    this.setState({
-      isLoadingComplete: true
-    });
   }
+
+  _handleFinishLoading = () => {
+    //set a substantial delay of 80ms because the fonts haven't finished
+    //loading before the state is set to isLoadingComplete : true
+    setTimeout(() => this.setState({ isLoadingComplete: true }), 80);
+  };
+
+  _handleLoadingError = error => {
+    // In this case, you might want to report the error to your error
+    // reporting service, for example Sentry
+    console.warn(error);
+  };
 
   render() {
     if (!this.state.isLoadingComplete) {
-      return <LoadingScreen />;
+      return (
+        <AppLoading
+          startAsync={this._loadAssetsAsync}
+          onError={this._handleLoadingError}
+          onFinish={this._handleFinishLoading}
+        />
+      );
     }
     return (
       <View style={{ flex: 1 }}>

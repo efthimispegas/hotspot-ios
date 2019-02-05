@@ -7,10 +7,10 @@ class SplashScreen extends Component {
     console.log('===============');
     console.log('[OnboardingLogo]: \n', this.props);
     console.log('===============');
-    this._checkAuth();
+    this._setDelay();
   }
 
-  _checkAuth = () => {
+  _setDelay = () => {
     setTimeout(() => {
       //not Actions.welcome();
       //use replace when you don't want the transision efect
@@ -22,7 +22,17 @@ class SplashScreen extends Component {
       <ImageBackground
         source={require('../../../assets/hotspot-splash.png')}
         style={styles.mainContainer}
-      />
+      >
+        <View style={styles.welcomeTitleContainer}>
+          <Text style={styles.welcomeTitleText}>Welcome to Hotspot .</Text>
+        </View>
+        <View style={styles.welcomeSubtitleContainer}>
+          <Text style={styles.welcomeSubtitle1Text}>
+            See where the fun is before going out.
+          </Text>
+          <Text style={styles.welcomeSubtitle2Text}>So simple.</Text>
+        </View>
+      </ImageBackground>
     );
   }
 }
@@ -38,8 +48,23 @@ const styles = StyleSheet.create({
     marginHorizontal: 20
   },
   welcomeTitleText: {
-    fontFamily: 'montserratMed',
+    fontFamily: 'montserratLight',
     fontSize: 28,
+    color: 'white',
+    alignSelf: 'center'
+  },
+  welcomeSubtitleContainer: {
+    marginTop: 60
+  },
+  welcomeSubtitle1Text: {
+    fontFamily: 'montserratLight',
+    fontSize: 14,
+    color: 'white',
+    alignSelf: 'center'
+  },
+  welcomeSubtitle2Text: {
+    fontFamily: 'montserratLightItalic',
+    fontSize: 14,
     color: 'white',
     alignSelf: 'center'
   }

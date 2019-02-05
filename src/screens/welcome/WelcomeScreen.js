@@ -5,8 +5,30 @@ import { Button, Colors } from '../../common';
 import { Actions } from 'react-native-router-flux';
 
 class WelcomeScreen extends Component {
+  state = {
+    //starting point of button's state (we don't see it)
+    opacity: new Animated.Value(0),
+    position: new Animated.Value(0)
+  };
+
+  _addOpacityAnimation = () => {
+    Animated.timing(this.state.opacity, {
+      toValue: 1,
+      duration: 2000
+    }).start();
+  };
+
+  _addTransitionAnimation = () => {
+    Animated.timing(this.state.position, {
+      toValue: 1,
+      duration: 600,
+      useNativeDriver: true
+    }).start();
+  };
+
   componentDidMount() {
-    // this._checkAuth();
+    this._addOpacityAnimation();
+    this._addTransitionAnimation();
   }
 
   _checkAuth = () => {
@@ -16,13 +38,38 @@ class WelcomeScreen extends Component {
   };
 
   render() {
+    const { opacity, position } = this.state;
+    const translateTitle = position.interpolate({
+      inputRange: [0, 1],
+      outputRange: [100, 0]
+    });
+    const translateSubtitle = position.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-45, 0]
+    });
+    const translateStreet = position.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-36, 0]
+    });
     return (
       <View style={styles.welcomeMainContainer}>
-        <Animated.View style={styles.welcomeTitleContainer}>
+        <Animated.View
+          style={[
+            styles.welcomeTitleContainer,
+            { transform: [{ translateY: translateTitle }] }
+          ]}
+        >
           <Text style={styles.welcomeTitleText}>Welcome to Hotspot .</Text>
         </Animated.View>
 
-        <Animated.View style={styles.hotspotLogoContainer}>
+        <Animated.View
+          style={{
+            opacity,
+            flex: 0.5,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
+        >
           <Image
             source={require('../../../assets/images/hotspot-logo.png')}
             style={styles.hotspotLogo}
@@ -32,22 +79,27 @@ class WelcomeScreen extends Component {
         <Animated.Image
           //----> require('../../../assets/images/welcome2.png')
           source={require('../../../assets/images/street.png')}
-          style={styles.imageContainer}
+          style={[
+            styles.imageContainer,
+            { transform: [{ translateY: translateStreet }] }
+          ]}
         />
 
         <View style={styles.welcomeBottomContainer}>
-          <Animated.View style={styles.welcomeSubtitleContainer}>
+          <Animated.View
+            style={[
+              styles.welcomeSubtitleContainer,
+              { transform: [{ translateY: translateSubtitle }] }
+            ]}
+          >
             <Text style={styles.welcomeSubtitle1Text}>
               See where the fun is before going out.
             </Text>
             <Text style={styles.welcomeSubtitle2Text}>So simple.</Text>
           </Animated.View>
 
-          <Animated.View style={styles.buttonContainer}>
-            <Button
-              name="Check it out!"
-              onPress={() => Actions.replace('onboarding')}
-            />
+          <Animated.View style={[styles.buttonContainer, { opacity }]}>
+            <Button name="Check it out!" onPress={() => Actions.login()} />
           </Animated.View>
         </View>
       </View>
@@ -68,7 +120,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20
   },
   welcomeTitleText: {
-    fontFamily: 'montserratMed',
+    fontFamily: 'montserratLight',
     fontSize: 28,
     color: 'white',
     alignSelf: 'center'
@@ -98,13 +150,13 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   welcomeSubtitle1Text: {
-    fontFamily: 'montserratMed',
+    fontFamily: 'montserratLight',
     fontSize: 14,
     color: 'white',
     alignSelf: 'center'
   },
   welcomeSubtitle2Text: {
-    fontFamily: 'montserratMedItalic',
+    fontFamily: 'montserratLightItalic',
     fontSize: 14,
     color: 'white',
     alignSelf: 'center'
