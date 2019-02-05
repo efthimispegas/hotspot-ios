@@ -20,9 +20,13 @@ import {
   HomeScreen,
   ARScreen,
   LoginScreen,
+<<<<<<< HEAD
   WelcomeScreen,
   OnboardingLogo,
   SplashScreen
+=======
+  WelcomeScreen
+>>>>>>> 90d6ee9af269ae2de405f80e02dabd73c79b06e1
 } from '../screens';
 import { DrawerContent, MenuIcon } from '../utils';
 import { Colors } from '../common';
@@ -56,6 +60,7 @@ class AppNavigator extends Component {
             <Lightbox key="lightbox">
               <Stack key="root" titleStyle={{ alignSelf: 'center' }} hideNavBar>
                 <Scene
+<<<<<<< HEAD
                   key="onboarding"
                   component={SplashScreen}
                   title="Onboarding"
@@ -66,6 +71,12 @@ class AppNavigator extends Component {
                   key="welcome"
                   component={WelcomeScreen}
                   title="Welcome"
+=======
+                  key="welcome"
+                  component={WelcomeScreen}
+                  title="Welcome"
+                  initial
+>>>>>>> 90d6ee9af269ae2de405f80e02dabd73c79b06e1
                   hideNavBar
                 />
                 <Scene hideNavBar panHandlers={null}>

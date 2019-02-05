@@ -19,6 +19,10 @@ class OnboardingLogo extends Component {
     }, 1500);
   };
 
+<<<<<<< HEAD:src/screens/welcome/OnboardingLogo.js
+=======
+class OnboardingLogo extends Component {
+>>>>>>> 90d6ee9af269ae2de405f80e02dabd73c79b06e1:src/screens/welcome/OnboardingLogo.js
   render() {
     return (
       <View style={styles.welcomeMainContainer}>
@@ -36,6 +40,12 @@ class OnboardingLogo extends Component {
             </Text>
             <Text style={styles.welcomeSubtitle2Text}>So simple.</Text>
           </View>
+<<<<<<< HEAD:src/screens/welcome/OnboardingLogo.js
+=======
+          <View style={styles.signUpButtonContainer}>
+            <Button name="Check it out!" onPress={() => console.log('Join!')} />
+          </View>
+>>>>>>> 90d6ee9af269ae2de405f80e02dabd73c79b06e1:src/screens/welcome/OnboardingLogo.js
         </View>
       </View>
     );
