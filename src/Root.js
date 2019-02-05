@@ -4,7 +4,9 @@ import {
   HomeScreen,
   CreateHotspotScreen,
   SignUpScreen,
-  ARScreen
+  ARScreen,
+  Intro,
+  WelcomeScreen
 } from './screens';
 import AppNavigator from './routes/Navigator';
 

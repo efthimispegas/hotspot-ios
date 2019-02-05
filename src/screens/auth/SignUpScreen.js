@@ -10,6 +10,7 @@ import { CreateHotspotScreen } from '../create';
 import LoadingScreen from '../loading/LoadingScreen';
 import { ScrollView } from 'react-native-gesture-handler';
 import ARScreen from '../AR/ARScreen';
+import { Actions } from 'react-native-router-flux';
 
 class SignUpScreen extends Component {
   static propTypes = {
@@ -42,10 +43,28 @@ class SignUpScreen extends Component {
   _handleChangeUsername = username => {
     this.setState({ username });
   };
-  _handleSubmit = async () => {
+
+  _handleDone = () => {
     this.setState({ isLoading: true });
     this._enableServicesAsync();
   };
+
+  _handleSubmit = () => {
+    Actions.home();
+    console.log('===============');
+    console.log('got here');
+    console.log('===============');
+    // this.props.navigation.push({
+    //   title: 'Home',
+    //   component: HomeScreen,
+    //   rightButtonTitle: '+',
+    //   onRightButtonPress: () => this._handleRightButton(coords),
+    //   passProps: {
+    //     position: coords
+    //   }
+    // });
+  };
+
   _handleRightButton = position => {
     this.props.navigator.push({
       title: 'Create a Hotspot',
@@ -91,7 +110,7 @@ class SignUpScreen extends Component {
         _handleChangeEmail={this._handleChangeEmail.bind(this)}
         _handleChangePassword={this._handleChangePassword.bind(this)}
         _handleChangeUsername={this._handleChangeUsername.bind(this)}
-        _handleSubmit={this._handleSubmit.bind(this)}
+        _handleDone={this._handleDone.bind(this)}
       />
     );
   }
@@ -125,22 +144,10 @@ class SignUpScreen extends Component {
         'Hotspot requires permission to use your current location'
       );
     } else {
-      const { coords } = await Location.getCurrentPositionAsync({
-        enableHighAccuracy: true
-      });
-      // console.log('===============');
-      // console.log('result:\n', res);
-      // console.log('===============');
       this.setState({ isLoading: false });
-      this.props.navigator.push({
-        title: 'Home',
-        component: HomeScreen,
-        rightButtonTitle: '+',
-        onRightButtonPress: () => this._handleRightButton(coords),
-        passProps: {
-          position: coords
-        }
-      });
+
+      //then submit form and store the user's current location
+      this._handleSubmit();
     }
   }
 }

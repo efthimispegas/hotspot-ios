@@ -11,10 +11,12 @@ let url;
 if (Platform.OS !== 'ios') {
   url = 'http://10.0.3.2:3000/api';
 } else {
-  url = 'http://192.168.10.7:3000/api/';
+  url = 'http://192.168.10.39:3000/api/';
 }
 
 axios.defaults.baseURL = url;
+// axios.defaults.headers.common['Authorization'] = '<AUTH_TOKEN>';
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const fakeHotspotId = '5c54b08d231ce64440d8292a';
 

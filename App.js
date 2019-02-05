@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { AppLoading } from 'expo';
-import { StyleSheet, Text, View } from 'react-native';
-import { fontAssets } from './helpers';
+import { AppLoading, Asset } from 'expo';
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
+import { fontAssets, ImageAssets } from './helpers';
 import { Provider } from 'react-redux';
 
 import Root from './src/Root';
+import { LoadingScreen, Intro } from './src/screens';
 
 export default class App extends Component {
   state = {
-    fontLoaded: false
+    isLoadingComplete: false
   };
 
   componentWillMount() {
@@ -16,16 +17,16 @@ export default class App extends Component {
   }
 
   async _loadAssetAsync() {
-    await Promise.all(fontAssets);
+    await Promise.all([fontAssets, ImageAssets]);
 
     this.setState({
-      fontLoaded: true
+      isLoadingComplete: true
     });
   }
 
   render() {
-    if (!this.state.fontLoaded) {
-      return <AppLoading />;
+    if (!this.state.isLoadingComplete) {
+      return <LoadingScreen />;
     }
     return (
       <View style={{ flex: 1 }}>

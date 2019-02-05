@@ -16,7 +16,7 @@ const SignUpForm = ({
   _handleChangeEmail,
   _handleChangeUsername,
   _handleChangePassword,
-  _handleSubmit
+  _handleDone
 }) => {
   return (
     <TouchableWithoutFeedback
@@ -55,7 +55,7 @@ const SignUpForm = ({
               <Button
                 isLoading={state.isLoading}
                 name="Done"
-                onPress={_handleSubmit}
+                onPress={_handleDone}
               />
             </View>
           </View>
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.hotspotColor,
     paddingHorizontal: 20,
-    paddingTop: 20
+    paddingTop: 70
   },
   imageContainer: {
     width: '21%',

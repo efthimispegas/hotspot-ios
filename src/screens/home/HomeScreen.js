@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { Location } from 'expo';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, Alert } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -23,6 +23,7 @@ const hotspotApi = new HotspotApi();
 class HomeScreen extends Component {
   static propTypes = {};
   state = {
+    currentPosition: undefined,
     mapRegion: undefined,
     mapRegionInput: {},
     annotations: [],
@@ -36,14 +37,18 @@ class HomeScreen extends Component {
     console.log('===============');
     console.log('[HomeScreen] props:\n', this.props);
     console.log('===============');
+    const { coords } = await Location.getCurrentPositionAsync();
+    //fetch current user's hotspots from the server
     let data = await hotspotApi.fetchHotspots(this.props.position);
     data.hotspots.forEach((hotspot, index) => {
       const views_count = Math.floor(Math.random() * 3);
       hotspot.views_count = views_count;
     });
+    //update the state
     this.setState({
       isLoading: false,
-      annotations: data
+      annotations: data,
+      currentPosition: coords
     });
   }
 
@@ -90,8 +95,8 @@ class HomeScreen extends Component {
     return (
       <MapView
         initialRegion={{
-          latitude: this.props.position.latitude,
-          longitude: this.props.position.longitude,
+          latitude: this.state.currentPosition.latitude,
+          longitude: this.state.currentPosition.longitude,
           latitudeDelta: 0.0322,
           longitudeDelta: 0.0221
         }}
