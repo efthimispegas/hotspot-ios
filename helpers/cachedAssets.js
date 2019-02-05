@@ -18,7 +18,10 @@ const cachedAssets = assets =>
 
 export const ImageAssets = cachedAssets([
   '',
-  require('../assets/images/welcome1.png'),
+  require('../assets/images/street.png'),
+  require('../assets/images/hotspot-logo.png'),
   require('../assets/images/welcome2.png'),
-  require('../assets/icons/ios.png')
+  require('../assets/icons/ios.png'),
+  require('../assets/hotspot-splash.png'),
+  require('../assets/splash.png')
 ]);

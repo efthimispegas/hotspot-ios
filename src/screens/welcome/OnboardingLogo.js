@@ -2,8 +2,23 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
 import { Button, Colors } from '../../common';
+import { Actions } from 'react-native-router-flux';
 
-class Intro extends Component {
+class OnboardingLogo extends Component {
+  componentDidMount() {
+    console.log('===============');
+    console.log('[OnboardingLogo]: \n', this.props);
+    console.log('===============');
+    this._checkAuth();
+  }
+
+  _checkAuth = () => {
+    setTimeout(() => {
+      // Actions.welcome();
+      Actions.replace('welcome');
+    }, 1500);
+  };
+
   render() {
     return (
       <View style={styles.welcomeMainContainer}>
@@ -11,7 +26,7 @@ class Intro extends Component {
           <Text style={styles.welcomeTitleText}>Welcome to Hotspot .</Text>
         </View>
         <Image
-          source={require('../../../assets/images/welcome1.png')}
+          source={require('../../../assets/images/street.png')}
           style={styles.imageContainer}
         />
         <View style={styles.welcomeBottomContainer}>
@@ -21,23 +36,12 @@ class Intro extends Component {
             </Text>
             <Text style={styles.welcomeSubtitle2Text}>So simple.</Text>
           </View>
-          <View style={styles.signUpButtonContainer}>
-            <Button name="Sign Up" onPress={() => console.log('SignUp')} />
-          </View>
-          <View style={styles.signInButtonContainer}>
-            <Button
-              name="Sign In"
-              onPress={() => {
-                console.log('SignIn');
-              }}
-            />
-          </View>
         </View>
       </View>
     );
   }
 }
-export default Intro;
+export default OnboardingLogo;
 
 const styles = StyleSheet.create({
   welcomeMainContainer: {
@@ -57,7 +61,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   imageContainer: {
-    marginTop: 100, //<---- delete
+    marginTop: 134, //<---- delete
     height: '8%', //<---- set to 28%
     width: '100%',
     resizeMode: 'stretch'
@@ -79,14 +83,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'white',
     alignSelf: 'center'
-  },
-  signUpButtonContainer: {
-    alignItems: 'stretch',
-    marginTop: 100,
-    marginBottom: 10
-  },
-  signInButtonContainer: {
-    alignItems: 'stretch',
-    marginTop: 10
   }
 });

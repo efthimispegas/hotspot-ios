@@ -1,40 +1,54 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, Animated } from 'react-native';
 
 import { Button, Colors } from '../../common';
+import { Actions } from 'react-native-router-flux';
 
 class WelcomeScreen extends Component {
+  componentDidMount() {
+    // this._checkAuth();
+  }
+
+  _checkAuth = () => {
+    setTimeout(() => {
+      Actions.login();
+    }, 1500);
+  };
+
   render() {
     return (
       <View style={styles.welcomeMainContainer}>
-        <View style={styles.welcomeTitleContainer}>
+        <Animated.View style={styles.welcomeTitleContainer}>
           <Text style={styles.welcomeTitleText}>Welcome to Hotspot .</Text>
-        </View>
-        <Image
-          source={require('../../../assets/images/welcome2.png')}
+        </Animated.View>
+
+        <Animated.View style={styles.hotspotLogoContainer}>
+          <Image
+            source={require('../../../assets/images/hotspot-logo.png')}
+            style={styles.hotspotLogo}
+          />
+        </Animated.View>
+
+        <Animated.Image
+          //----> require('../../../assets/images/welcome2.png')
+          source={require('../../../assets/images/street.png')}
           style={styles.imageContainer}
         />
+
         <View style={styles.welcomeBottomContainer}>
-          <View style={styles.welcomeSubtitleContainer}>
+          <Animated.View style={styles.welcomeSubtitleContainer}>
             <Text style={styles.welcomeSubtitle1Text}>
               See where the fun is before going out.
             </Text>
             <Text style={styles.welcomeSubtitle2Text}>So simple.</Text>
-          </View>
-          <View style={styles.signUpButtonContainer}>
+          </Animated.View>
+
+          <Animated.View style={styles.buttonContainer}>
             <Button
-              name="Sign Up"
-              onPress={() => this.props.navigation.navigate('SignUp')}
+              name="Check it out!"
+              onPress={() => Actions.replace('onboarding')}
             />
-          </View>
-          <View style={styles.signInButtonContainer}>
-            <Button
-              name="Sign In"
-              onPress={() => {
-                this.props.navigation.navigate('SignIn');
-              }}
-            />
-          </View>
+          </Animated.View>
         </View>
       </View>
     );
@@ -60,9 +74,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   imageContainer: {
-    height: '28%',
+    height: '8%', //<---- set to 28%
     width: '100%',
     resizeMode: 'stretch'
+  },
+
+  hotspotLogoContainer: {
+    flex: 0.5,
+    // backgroundColor: Colors.violetColor,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  hotspotLogo: {
+    marginTop: 10,
+    // backgroundColor: Colors.pinkColor,
+    height: 180,
+    width: 180
   },
   welcomeBottomContainer: {
     marginHorizontal: 20
@@ -82,9 +109,9 @@ const styles = StyleSheet.create({
     color: 'white',
     alignSelf: 'center'
   },
-  signUpButtonContainer: {
+  buttonContainer: {
     alignItems: 'stretch',
-    marginTop: 100,
+    marginTop: 69,
     marginBottom: 10
   },
   signInButtonContainer: {
