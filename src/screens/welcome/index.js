@@ -1,4 +1,4 @@
-import Intro from './Intro';
+import OnboardingLogo from './OnboardingLogo';
 import WelcomeScreen from './WelcomeScreen';
 
-export { Intro, WelcomeScreen };
+export { OnboardingLogo, WelcomeScreen };

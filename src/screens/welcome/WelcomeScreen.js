@@ -2,8 +2,19 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
 import { Button, Colors } from '../../common';
+import { Actions } from 'react-native-router-flux';
 
 class WelcomeScreen extends Component {
+  componentDidMount() {
+    // this._checkAuth();
+  }
+
+  checkAuth = () => {
+    setTimeout(() => {
+      this.props.navigation.navigate('auth');
+    }, 1500);
+  };
+
   render() {
     return (
       <View style={styles.welcomeMainContainer}>
@@ -11,6 +22,7 @@ class WelcomeScreen extends Component {
           <Text style={styles.welcomeTitleText}>Welcome to Hotspot .</Text>
         </View>
         <Image
+          //----> require('../../../assets/images/welcome2.png')
           source={require('../../../assets/images/welcome2.png')}
           style={styles.imageContainer}
         />
@@ -22,18 +34,7 @@ class WelcomeScreen extends Component {
             <Text style={styles.welcomeSubtitle2Text}>So simple.</Text>
           </View>
           <View style={styles.signUpButtonContainer}>
-            <Button
-              name="Sign Up"
-              onPress={() => this.props.navigation.navigate('SignUp')}
-            />
-          </View>
-          <View style={styles.signInButtonContainer}>
-            <Button
-              name="Sign In"
-              onPress={() => {
-                this.props.navigation.navigate('SignIn');
-              }}
-            />
+            <Button name="Check it out!" onPress={() => Actions.login()} />
           </View>
         </View>
       </View>
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   imageContainer: {
-    height: '28%',
+    height: '28%', //<---- set to 28%
     width: '100%',
     resizeMode: 'stretch'
   },

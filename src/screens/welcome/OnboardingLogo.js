@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 
 import { Button, Colors } from '../../common';
 
-class Intro extends Component {
+class OnboardingLogo extends Component {
   render() {
     return (
       <View style={styles.welcomeMainContainer}>
@@ -22,22 +22,14 @@ class Intro extends Component {
             <Text style={styles.welcomeSubtitle2Text}>So simple.</Text>
           </View>
           <View style={styles.signUpButtonContainer}>
-            <Button name="Sign Up" onPress={() => console.log('SignUp')} />
-          </View>
-          <View style={styles.signInButtonContainer}>
-            <Button
-              name="Sign In"
-              onPress={() => {
-                console.log('SignIn');
-              }}
-            />
+            <Button name="Check it out!" onPress={() => console.log('Join!')} />
           </View>
         </View>
       </View>
     );
   }
 }
-export default Intro;
+export default OnboardingLogo;
 
 const styles = StyleSheet.create({
   welcomeMainContainer: {

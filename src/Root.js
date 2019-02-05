@@ -5,8 +5,8 @@ import {
   CreateHotspotScreen,
   SignUpScreen,
   ARScreen,
-  Intro,
-  WelcomeScreen
+  WelcomeScreen,
+  OnboardingLogo
 } from './screens';
 import AppNavigator from './routes/Navigator';
 

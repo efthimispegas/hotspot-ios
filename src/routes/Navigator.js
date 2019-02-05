@@ -20,7 +20,8 @@ import {
   Intro,
   HomeScreen,
   ARScreen,
-  LoginScreen
+  LoginScreen,
+  WelcomeScreen
 } from '../screens';
 import { DrawerContent, MenuIcon } from '../utils';
 import { Colors } from '../common';
@@ -53,6 +54,13 @@ class AppNavigator extends Component {
           <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
             <Lightbox key="lightbox">
               <Stack key="root" titleStyle={{ alignSelf: 'center' }} hideNavBar>
+                <Scene
+                  key="welcome"
+                  component={WelcomeScreen}
+                  title="Welcome"
+                  initial
+                  hideNavBar
+                />
                 <Scene hideNavBar panHandlers={null}>
                   <Tabs
                     key="authTabBar"
@@ -87,10 +95,9 @@ class AppNavigator extends Component {
                       onBack={() => alert('Left Button pressed!')}
                     />
                   </Tabs>
-                  <Stack hideNavBar>
-                    <Scene key="home" component={HomeScreen} title="Home" />
-                    <Scene key="ar" component={ARScreen} title="AR Camera" />
-                  </Stack>
+
+                  <Scene key="home" component={HomeScreen} title="Home" />
+                  <Scene key="ar" component={ARScreen} title="AR Camera" />
                 </Scene>
               </Stack>
             </Lightbox>
