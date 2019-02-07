@@ -4,8 +4,9 @@ import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import { fontAssets, ImageAssets } from './helpers';
 import { Provider } from 'react-redux';
 
-import Root from './src/Root';
 import { LoadingScreen, Intro } from './src/screens';
+import { ReduxRouter } from './src/routes/Navigator';
+import store, { ReduxNavigator } from './src/store';
 
 export default class App extends Component {
   state = {
@@ -21,9 +22,9 @@ export default class App extends Component {
   }
 
   _handleFinishLoading = () => {
-    //set a substantial delay of 80ms because the fonts haven't finished
+    //set a substantial delay of 400ms because the fonts haven't finished
     //loading before the state is set to isLoadingComplete : true
-    setTimeout(() => this.setState({ isLoadingComplete: true }), 80);
+    setTimeout(() => this.setState({ isLoadingComplete: true }), 600);
   };
 
   _handleLoadingError = error => {
@@ -43,9 +44,11 @@ export default class App extends Component {
       );
     }
     return (
-      <View style={{ flex: 1 }}>
-        <Root />
-      </View>
+      <Provider store={store}>
+        <View style={{ flex: 1 }}>
+          <ReduxRouter navigator={ReduxNavigator} />
+        </View>
+      </Provider>
     );
   }
 }

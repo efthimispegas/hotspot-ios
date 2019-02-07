@@ -4,6 +4,8 @@ import { StyleSheet, View, Text, Image, Animated } from 'react-native';
 import { Button, Colors } from '../../common';
 import { Actions } from 'react-native-router-flux';
 
+import SearchBox from '../home/components/SearchBox';
+
 class WelcomeScreen extends Component {
   state = {
     //starting point of button's state (we don't see it)
@@ -106,6 +108,7 @@ class WelcomeScreen extends Component {
     );
   }
 }
+
 export default WelcomeScreen;
 
 const styles = StyleSheet.create({

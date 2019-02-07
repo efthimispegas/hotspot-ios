@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 class SplashScreen extends Component {
   componentDidMount() {
     console.log('===============');
-    console.log('[OnboardingLogo]: \n', this.props);
+    console.log('[SplashScreen]: \n', this.props);
     console.log('===============');
     this._setDelay();
   }
@@ -36,6 +36,7 @@ class SplashScreen extends Component {
     );
   }
 }
+
 export default SplashScreen;
 
 const styles = StyleSheet.create({

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
-import PropTypes from 'prop-types';
 import Expo, { Permissions, Location, AR } from 'expo';
 
 import SignUpForm from './components/SignUpForm';
@@ -13,15 +12,11 @@ import ARScreen from '../AR/ARScreen';
 import { Actions } from 'react-native-router-flux';
 
 class SignUpScreen extends Component {
-  static propTypes = {
-    title: PropTypes.string,
-    navigator: PropTypes.object.isRequired
-  };
-
   state = {
     username: '',
     email: '',
-    password: '',
+    password1: '',
+    password2: '',
     isLoading: false
   };
 
@@ -37,32 +32,39 @@ class SignUpScreen extends Component {
   _handleChangeEmail = email => {
     this.setState({ email });
   };
-  _handleChangePassword = password => {
-    this.setState({ password });
+  _handleChangePassword1 = password1 => {
+    this.setState({ password1 });
   };
+  _handleChangePassword2 = password2 => {
+    this.setState({ password2 });
+  };
+
   _handleChangeUsername = username => {
     this.setState({ username });
   };
 
   _handleDone = () => {
-    this.setState({ isLoading: true });
-    this._enableServicesAsync();
+    this._confirmPasswordMatch();
+  };
+
+  _confirmPasswordMatch = () => {
+    const { password1, password2 } = this.state;
+    console.log('===============');
+    console.log('password', password1);
+    console.log('conf password', password2);
+    console.log('===============');
+    if (password1 !== password2) {
+      Alert.alert('Try again', 'Please make sure your passwords match!');
+      return;
+    } else {
+      //passwords is match
+      this.setState({ isLoading: true });
+      this._enableServicesAsync();
+    }
   };
 
   _handleSubmit = () => {
-    Actions.home();
-    console.log('===============');
-    console.log('got here');
-    console.log('===============');
-    // this.props.navigation.push({
-    //   title: 'Home',
-    //   component: HomeScreen,
-    //   rightButtonTitle: '+',
-    //   onRightButtonPress: () => this._handleRightButton(coords),
-    //   passProps: {
-    //     position: coords
-    //   }
-    // });
+    Actions.main({ type: 'replace' });
   };
 
   _handleRightButton = position => {
@@ -107,8 +109,9 @@ class SignUpScreen extends Component {
     return (
       <SignUpForm
         state={this.state}
+        _handleChangePassword1={this._handleChangePassword1.bind(this)}
+        _handleChangePassword2={this._handleChangePassword2.bind(this)}
         _handleChangeEmail={this._handleChangeEmail.bind(this)}
-        _handleChangePassword={this._handleChangePassword.bind(this)}
         _handleChangeUsername={this._handleChangeUsername.bind(this)}
         _handleDone={this._handleDone.bind(this)}
       />
