@@ -15,8 +15,9 @@ const SignUpForm = ({
   state,
   _handleChangeEmail,
   _handleChangeUsername,
-  _handleChangePassword,
-  _handleSubmit
+  _handleChangePassword1,
+  _handleChangePassword2,
+  _handleDone
 }) => {
   return (
     <TouchableWithoutFeedback
@@ -46,16 +47,26 @@ const SignUpForm = ({
             <TextInput
               placeholder="Password"
               selectionColor={Colors.hotspotColor}
-              onChangeText={password => _handleChangePassword(password)}
-              value={state.password}
+              onChangeText={password1 => _handleChangePassword1(password1)}
+              value={state.password1}
               secureTextEntry={true}
               style={styles.input}
             />
+
+            <TextInput
+              placeholder="Confirm password"
+              selectionColor={Colors.hotspotColor}
+              onChangeText={password2 => _handleChangePassword2(password2)}
+              value={state.password2}
+              secureTextEntry={true}
+              style={styles.input}
+            />
+
             <View style={styles.formButton}>
               <Button
                 isLoading={state.isLoading}
                 name="Done"
-                onPress={_handleSubmit}
+                onPress={_handleDone}
               />
             </View>
           </View>
@@ -95,7 +106,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.hotspotColor,
     paddingHorizontal: 20,
-    paddingTop: 20
+    paddingTop: 70
   },
   imageContainer: {
     width: '21%',
@@ -104,7 +115,7 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   formContainer: {
-    backgroundColor: Colors.violetColor
+    // backgroundColor: Colors.violetColor
   },
   formButton: {
     marginTop: 30
@@ -122,13 +133,8 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     backgroundColor: Colors.whiteColor
   },
-  label: {
-    fontFamily: 'montserrat',
-    color: Colors.blackColor
-  },
-
   errorContainer: {
-    backgroundColor: Colors.pinkColor
+    // backgroundColor: Colors.pinkColor
   },
   errorText: {
     color: Colors.redColor,
@@ -137,9 +143,9 @@ const styles = StyleSheet.create({
     marginLeft: 20
   },
   bottomContainer: {
-    backgroundColor: Colors.violetColor,
+    // backgroundColor: Colors.violetColor,
     paddingVertical: 20,
-    marginTop: 150
+    marginTop: 120
   },
   facebookButton: {
     alignSelf: 'stretch',

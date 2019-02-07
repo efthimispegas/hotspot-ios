@@ -7,7 +7,7 @@
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icons/expo.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -15,6 +15,9 @@
     },
     "updates": {
       "fallbackToCacheTimeout": 0
+    },
+    "packagerOpts": {
+      "assetExts": ["ttf", "mp4", "otf", "xml"]
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {

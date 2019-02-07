@@ -1,23 +1,168 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, NavigatorIOS } from 'react-native';
-import { SignUpScreen } from '../screens';
+import { Text, View, Platform, StyleSheet } from 'react-native';
+import {
+  Router,
+  Scene,
+  Actions,
+  Reducer,
+  Drawer,
+  ActionConst,
+  Overlay,
+  Modal,
+  Stack,
+  Lightbox,
+  Tabs
+} from 'react-native-router-flux';
+import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import { connect } from 'react-redux';
 
-class AppNavigator extends Component {
-  render() {
-    return (
-      <NavigatorIOS
-        initialRoute={{ component: SignUpScreen, title: 'Register' }}
-        translucent={false}
-        style={styles.mainContainer}
-      />
-    );
-  }
-}
+import {
+  SignUpScreen,
+  HomeScreen,
+  ARScreen,
+  LoginScreen,
+  WelcomeScreen,
+  SplashScreen
+} from '../screens';
+import { Colors } from '../common';
+
+import MapNavBar from '../screens/home/components/MapNavBar';
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1
+  container: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  scene: {
+    backgroundColor: '#F5FCFF',
+    shadowOpacity: 2,
+    shadowRadius: 3
+  },
+  labelStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+    paddingBottom: 8,
+    fontFamily: 'montserrat',
+    // backgroundColor: Colors.violetColor,
+    fontSize: 20
+  },
+  tabBarStyle: {
+    // height: 0,
+    marginTop: 16,
+    borderTopWidth: 0,
+    borderTopColor: Colors.whiteColor,
+    borderRightColor: Colors.greyColor,
+    backgroundColor: Colors.hotspotColor
   }
 });
 
-export default AppNavigator;
+const transitionConfig = () => ({
+  screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid
+});
+
+export const AppNavigator = Actions.create(
+  <Router sceneStyle={styles.scene} hideNavBar>
+    <Overlay key="overlay">
+      <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
+        <Lightbox key="lightbox">
+          <Stack key="root" titleStyle={{ alignSelf: 'center' }} hideNavBar>
+            <Scene key="auth">
+              <Scene
+                key="splash"
+                component={SplashScreen}
+                title="Splash"
+                initial
+                hideNavBar
+              />
+              <Scene
+                key="welcome"
+                component={WelcomeScreen}
+                title="Welcome"
+                hideNavBar
+              />
+
+              <Scene hideNavBar panHandlers={null}>
+                <Tabs
+                  key="authTabBar"
+                  routeName="tabbar"
+                  legacy={true}
+                  swipeEnabled
+                  showLabel={true}
+                  labelStyle={styles.labelStyle}
+                  tabBarStyle={styles.tabBarStyle}
+                  inactiveTintColor="rgba(255, 187, 51, 0.794)"
+                  activeBackgroundColor="rgba(255, 187, 51, 0.794)"
+                  inactiveBackgroundColor={Colors.whiteColor}
+                  activeTintColor={Colors.whiteColor}
+                >
+                  <Scene
+                    hideNavBar
+                    panHandlers={null}
+                    key="register"
+                    component={SignUpScreen}
+                    title="Register"
+                    rightTitle="Login"
+                    onRight={() => alert('Right Button pressed!')}
+                  />
+                  <Scene
+                    hideNavBar
+                    panHandlers={null}
+                    key="login"
+                    component={LoginScreen}
+                    title="Login"
+                    back={true}
+                    backTitle="Register"
+                    onBack={() => alert('Left Button pressed!')}
+                  />
+                </Tabs>
+              </Scene>
+            </Scene>
+            <Stack key="main">
+              <Scene
+                key="home"
+                swipeEnabled={false}
+                hideTabBar={false}
+                hideNavBar={true}
+                headerLayoutPreset="center"
+              >
+                <Scene
+                  type={ActionConst.RESET}
+                  swipeEnabled={false}
+                  navTransparent={true}
+                  hideNavBar={true}
+                  back={false}
+                  key="map"
+                  title="" //I dont want it to show the title
+                  component={HomeScreen}
+                  navBar={MapNavBar}
+                />
+                <Scene
+                  swipeEnabled={false}
+                  hideTabBar
+                  key="ar"
+                  component={ARScreen}
+                  title="AR Camera"
+                />
+              </Scene>
+            </Stack>
+          </Stack>
+        </Lightbox>
+      </Modal>
+    </Overlay>
+  </Router>
+);
+
+const mapStateToProps = state => {
+  console.log('===============');
+  console.log('state', state);
+  console.log('===============');
+  return {
+    state: state.nav
+  };
+};
+
+export const ReduxRouter = connect(mapStateToProps)(Router);

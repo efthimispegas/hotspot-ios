@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Colors } from '../../common';
 
-const LoadingScreen = () => {
+const LoadingScreen = ({ onFinish }) => {
   return (
     <View style={styles.loading}>
       <ActivityIndicator size="large" />

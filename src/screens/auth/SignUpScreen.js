@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
-import PropTypes from 'prop-types';
-import Expo, { Permissions, Location } from 'expo';
+import Expo, { Permissions, Location, AR } from 'expo';
 
 import SignUpForm from './components/SignUpForm';
 import { Colors } from '../../common';
@@ -9,17 +8,15 @@ import { HomeScreen } from '../home';
 import { CreateHotspotScreen } from '../create';
 import LoadingScreen from '../loading/LoadingScreen';
 import { ScrollView } from 'react-native-gesture-handler';
+import ARScreen from '../AR/ARScreen';
+import { Actions } from 'react-native-router-flux';
 
 class SignUpScreen extends Component {
-  static propTypes = {
-    title: PropTypes.string,
-    navigator: PropTypes.object.isRequired
-  };
-
   state = {
     username: '',
     email: '',
-    password: '',
+    password1: '',
+    password2: '',
     isLoading: false
   };
 
@@ -35,32 +32,88 @@ class SignUpScreen extends Component {
   _handleChangeEmail = email => {
     this.setState({ email });
   };
-  _handleChangePassword = password => {
-    this.setState({ password });
+  _handleChangePassword1 = password1 => {
+    this.setState({ password1 });
   };
+  _handleChangePassword2 = password2 => {
+    this.setState({ password2 });
+  };
+
   _handleChangeUsername = username => {
     this.setState({ username });
   };
-  _handleSubmit = async () => {
-    this.setState({ isLoading: true });
-    this._enableServicesAsync();
+
+  _handleDone = () => {
+    this._confirmPasswordMatch();
   };
+
+  _confirmPasswordMatch = () => {
+    const { password1, password2 } = this.state;
+    console.log('===============');
+    console.log('password', password1);
+    console.log('conf password', password2);
+    console.log('===============');
+    if (password1 !== password2) {
+      Alert.alert('Try again', 'Please make sure your passwords match!');
+      return;
+    } else {
+      //passwords is match
+      this.setState({ isLoading: true });
+      this._enableServicesAsync();
+    }
+  };
+
+  _handleSubmit = () => {
+    Actions.main({ type: 'replace' });
+  };
+
   _handleRightButton = position => {
     this.props.navigator.push({
       title: 'Create a Hotspot',
       component: CreateHotspotScreen,
+      rightButtonTitle: 'AR Camera',
+      onRightButtonPress: () => this._handleARCamera(),
       passProps: { position }
     });
+  };
+  _handleARCamera = () => {
+    if (!AR.isAvailable()) {
+      Alert.alert(
+        'Entering a unique experience!',
+        'In order to present to you the AR feature you need to have a version of iOS 11 or higher.',
+        [{ text: 'OK', onPress: () => this.props.navigator.pop() }],
+        { cancelable: true }
+      );
+    }
+    this._askCameraPermissionsAsync();
+  };
+
+  _askCameraPermissionsAsync = async () => {
+    const { status, permissions } = await Permissions.askAsync(
+      Permissions.CAMERA
+    );
+    if (status === 'denied') {
+      Alert.alert(
+        'Oh, bummer...',
+        "Can't do anything without permission. Allow Hotspot to use your Camera to proceed."
+      );
+    } else {
+      this.props.navigator.push({
+        title: 'AR Camera',
+        component: ARScreen
+      });
+    }
   };
 
   render() {
     return (
       <SignUpForm
         state={this.state}
+        _handleChangePassword1={this._handleChangePassword1.bind(this)}
+        _handleChangePassword2={this._handleChangePassword2.bind(this)}
         _handleChangeEmail={this._handleChangeEmail.bind(this)}
-        _handleChangePassword={this._handleChangePassword.bind(this)}
         _handleChangeUsername={this._handleChangeUsername.bind(this)}
-        _handleSubmit={this._handleSubmit.bind(this)}
+        _handleDone={this._handleDone.bind(this)}
       />
     );
   }
@@ -79,11 +132,11 @@ class SignUpScreen extends Component {
         'Looks like you have Location Services disabled. To continue you must enable it.'
       );
     } else {
-      this._askPermissionsAsync();
+      this._askLocationPermissionsAsync();
     }
   }
 
-  async _askPermissionsAsync() {
+  async _askLocationPermissionsAsync() {
     const { status, permissions } = await Permissions.askAsync(
       Permissions.LOCATION
     );
@@ -94,22 +147,10 @@ class SignUpScreen extends Component {
         'Hotspot requires permission to use your current location'
       );
     } else {
-      const { coords } = await Location.getCurrentPositionAsync({
-        enableHighAccuracy: true
-      });
-      // console.log('===============');
-      // console.log('result:\n', res);
-      // console.log('===============');
       this.setState({ isLoading: false });
-      this.props.navigator.push({
-        title: 'Home',
-        component: HomeScreen,
-        rightButtonTitle: '+',
-        onRightButtonPress: () => this._handleRightButton(coords),
-        passProps: {
-          position: coords
-        }
-      });
+
+      //then submit form and store the user's current location
+      this._handleSubmit();
     }
   }
 }

@@ -9,11 +9,9 @@ import {
   Alert,
   Slider
 } from 'react-native';
+import { connect } from 'react-redux';
 
 import { Colors, Button } from '../../common';
-import HotspotApi from '../../api/hotspot.api';
-
-const hotspotApi = new HotspotApi();
 
 class CreateHotspotScreen extends Component {
   state = {
@@ -217,4 +215,15 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateHotspotScreen;
+const mapStateToProps = ({ reducer }) => ({ data } = reducer);
+
+const dispatchStateToProps = dispatch => {
+  return {
+    createHotspot: dispatch => dispatch(createHotspot())
+  };
+};
+
+export default connect(
+  null,
+  null
+)(CreateHotspotScreen);

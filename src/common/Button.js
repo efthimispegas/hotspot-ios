@@ -5,6 +5,9 @@ import { Colors } from './Colors';
 import { Spinner } from './Spinner';
 
 class Button extends Component {
+  static defaultProps = {
+    isLoading: false
+  };
   render() {
     const { button, buttonText, textContainer } = styles;
     const { onPress, name, isLoading } = this.props;

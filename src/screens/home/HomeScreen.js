@@ -1,50 +1,100 @@
 import React, { Component } from 'react';
-
-import PropTypes from 'prop-types';
-import { StyleSheet, View, Text, Alert } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Alert,
+  Keyboard,
+  Dimensions,
+  TouchableWithoutFeedback
+} from 'react-native';
+import { Colors } from '../../common';
+import { Location } from 'expo';
 import MapView, { Marker, Callout } from 'react-native-maps';
+
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-import { Colors, HeaderComponent } from '../../common';
 import LoadingScreen from '../loading/LoadingScreen';
-import HotspotApi from '../../api/hotspot.api';
-
-const x1 = require('../../../assets/flames/1.png');
-const x2 = require('../../../assets/flames/2.png');
-const x3 = require('../../../assets/flames/3.png');
-const x4 = require('../../../assets/flames/4.png');
-const flames = [x1, x2, x3, x4];
-
-const hotspotApi = new HotspotApi();
+import MapContainer from './components/MapContainer';
+import { Hotspot } from '../../api';
+import * as locationActions from '../../actions'; //we import it as * to use it later in the bindActionCreators()
 
 //we bind the functions to this component's instance because if not,
 //the variables in each function will not refer to the component but to the window
 
+//hardcode a hotspot id from my db for now
+const fakeHotspotId = '5c54b08d231ce64440d8292a';
+
 class HomeScreen extends Component {
-  static propTypes = {};
-  state = {
-    mapRegion: undefined,
-    mapRegionInput: {},
-    annotations: [],
-    markers: [],
-    isLoading: true
-  };
+  constructor(props) {
+    super(props);
+    this.watchID = null;
+    this.state = {
+      currentPosition: 'unknown',
+      lastPosition: 'unknown',
+      mapRegion: undefined,
+      mapRegionInput: {},
+      annotations: [],
+      markers: [],
+      isLoading: true,
+      dimensions: {
+        height: null,
+        width: null
+      }
+    };
+  }
   async componentDidMount() {
-    console.log('===============');
-    console.log('[HomeScreen] state:\n', this.state);
-    console.log('===============');
-    console.log('===============');
-    console.log('[HomeScreen] props:\n', this.props);
-    console.log('===============');
-    let data = await hotspotApi.fetchHotspots(this.props.position);
-    data.hotspots.forEach((hotspot, index) => {
-      const views_count = Math.floor(Math.random() * 3);
-      hotspot.views_count = views_count;
-    });
-    this.setState({
-      isLoading: false,
-      annotations: data
-    });
+    try {
+      //get the device dimensions to display the map correctly
+      const { height, width } = Dimensions.get('window');
+      //get user's current location, returns a Promise
+      const { coords } = await Location.getCurrentPositionAsync({
+        enableHighAccuracy: true,
+        timeout: 20000,
+        timeInterval: 1000
+      });
+      //if coords were returned then
+      //fetch current user's hotspots from the server
+      if (coords) {
+        let data = await Hotspot.fetchHotspots(this.props.position); //<----here we will refactor later, with loadHotspots(position, token) action
+        //for now we apply a views_count property to each hotspot to //<----and we also need to call updateLocation(coords) action here
+        //adjust the marker's size later according to the views_count
+        data.hotspots.forEach((hotspot, index) => {
+          const views_count = Math.floor(Math.random() * 3);
+          hotspot.views_count = views_count;
+        });
+        //watch last position, when the promise is resolved returns remove() function
+        //then we can clear watch by calling this.watchID.remove()
+        this.watchID = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 1000,
+            distanceInterval: 25
+          },
+          ({ coords }) => {
+            this.setState({
+              lastPosition: {
+                latitude: coords.latitude,
+                longitude: coords.longitude
+              }
+            });
+          }
+        );
+        this.setState({
+          isLoading: false,
+          annotations: data,
+          currentPosition: {
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          },
+          dimensions: { height, width }
+        });
+      }
+    } catch (e) {
+      console.log('ERROR', e);
+      throw new Error(e);
+    }
   }
 
   _onRegionChange = mapRegionInput => {
@@ -84,37 +134,24 @@ class HomeScreen extends Component {
   };
 
   render() {
+    console.log('===============');
+    console.log('[HomeScreen] state:\n', this.state);
+    console.log('===============');
+    console.log('===============');
+    console.log('[HomeScreen] props:\n', this.props);
+    console.log('===============');
     if (this.state.isLoading) {
       return <LoadingScreen />;
     }
     return (
-      <MapView
-        initialRegion={{
-          latitude: this.props.position.latitude,
-          longitude: this.props.position.longitude,
-          latitudeDelta: 0.0322,
-          longitudeDelta: 0.0221
-        }}
-        region={this.state.mapRegion}
-        onRegionChange={this._onRegionChange.bind(this)}
-        onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
-        showsUserLocation={true}
-        followsUserLocation={true}
-        style={styles.mapContainer}
-      >
-        {this.state.markers.map((marker, id) => (
-          <Marker
-            key={id}
-            coordinate={{ latitude: marker.lat, longitude: marker.lng }}
-            title={marker.title}
-            image={flames[marker.size]}
-          >
-            <Callout onPress={() => this._handleMarkerPress(marker)}>
-              <Text style={styles.text}>{marker.title}</Text>
-            </Callout>
-          </Marker>
-        ))}
-      </MapView>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <MapContainer
+          state={this.state}
+          _onRegionChange={this._onRegionChange.bind(this)}
+          _onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
+          _handleMarkerPress={this._handleMarkerPress.bind(this)}
+        />
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -124,9 +161,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: Colors.eggWhiteColor
-  },
-  mapContainer: {
-    flex: 1
   },
   top: {
     flex: 1,
@@ -151,16 +185,23 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => {
+const mapStoreToProps = store => {
   return {
-    myHotspots: state.home.myHotspots
+    hotspots: null,
+    token: null,
+    location: store.location
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchMyHotspots: () => dispatch(fetchMyHotspots())
+    loadHotspots: null,
+    openHotspot: null,
+    updateLocation: bindActionCreators(locationActions.updateLocation, dispatch) //same as writing updateLocation: dispatch => dispatch(updateLocation())
   };
 };
 
-export default HomeScreen;
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(HomeScreen);
