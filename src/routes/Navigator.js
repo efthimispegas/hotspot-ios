@@ -26,8 +26,6 @@ import {
 } from '../screens';
 import { Colors } from '../common';
 
-import MapNavBar from '../screens/home/components/MapNavBar';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -156,9 +154,6 @@ export const AppNavigator = Actions.create(
 );
 
 const mapStateToProps = state => {
-  console.log('===============');
-  console.log('state', state);
-  console.log('===============');
   return {
     state: state.nav
   };

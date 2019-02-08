@@ -35,9 +35,6 @@ class LoginScreen extends Component {
 
   _handleSubmit = () => {
     Actions.main({ type: 'replace' });
-    console.log('===============');
-    console.log('go home');
-    console.log('===============');
   };
   render() {
     return (
@@ -59,9 +56,6 @@ class LoginScreen extends Component {
         'Looks like you have Location Services disabled. To continue you must enable it.'
       );
     } else {
-      console.log('===============');
-      console.log('got here');
-      console.log('===============');
       this._askLocationPermissionsAsync();
     }
   }
@@ -70,9 +64,7 @@ class LoginScreen extends Component {
     const { status, permissions } = await Permissions.askAsync(
       Permissions.LOCATION
     );
-    console.log('===============');
-    console.log('asked permission');
-    console.log('===============');
+
     //check if permission to use location is granted
     if (status === 'denied') {
       Alert.alert(
@@ -80,13 +72,7 @@ class LoginScreen extends Component {
         'Hotspot requires permission to use your current location'
       );
     } else {
-      console.log('===============');
-      console.log('status granted');
-      console.log('===============');
       this.setState({ isLoading: false });
-      console.log('===============');
-      console.log('loading: false');
-      console.log('===============');
 
       //then submit form and store the user's current location
       this._handleSubmit();

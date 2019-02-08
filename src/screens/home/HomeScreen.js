@@ -59,8 +59,8 @@ class HomeScreen extends Component {
       //if coords were returned then
       //fetch current user's hotspots from the server
       if (coords) {
-        let data = await Hotspot.fetchHotspots(this.props.position); //<----here we will refactor later, with loadHotspots(position, token) action
         this.props.updateLocation(coords); ////<----and we also need to call updateLocation(coords) action here [X]
+        let data = await Hotspot.fetchHotspots(this.props.location); //<----here we will refactor later, with loadHotspots(position, token) action
         //for now we apply a views_count property to each hotspot to
         //adjust the marker's size later according to the views_count
         data.hotspots.forEach((hotspot, index) => {
@@ -137,12 +137,6 @@ class HomeScreen extends Component {
   };
 
   render() {
-    console.log('===============');
-    console.log('[HomeScreen] state:\n', this.state);
-    console.log('===============');
-    console.log('===============');
-    console.log('[HomeScreen] props:\n', this.props);
-    console.log('===============');
     if (this.state.isLoading) {
       return <LoadingScreen />;
     }
