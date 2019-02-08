@@ -1,44 +1,32 @@
 import { Location } from 'expo';
-import {
-  UPDATE_LOCATION,
-  UPDATE_LOCATION_SUCCESS,
-  UPDATE_LOCATION_ERROR
-} from './types';
+import { GET_SEARCH_INPUT, TOGGLE_SEARCH_LIST } from './types';
 import update from 'react-addons-update';
+import { Dimensions } from 'react-native';
+
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 //-----------------------
 //action creators
 //-----------------------
 
-export function updateLocation() {
-  return async dispatch => {
-    dispatch({ type: UPDATE_LOCATION });
-    try {
-      //get user's current location, returns a Promise
-      const { coords } = await Location.getCurrentPositionAsync({
-        enableHighAccuracy: true,
-        timeout: 20000
-      });
-      return dispatch(updateLocationSuccess(coords));
-    } catch (e) {
-      console.log(e);
-      return dispatch(updateLocationError(e));
-    }
+export function getSearchInput(payload) {
+  return {
+    type: GET_SEARCH_INPUT,
+    payload
   };
 }
 
-//-----------------------
-//action handlers
-//-----------------------
-function updateLocationError(error) {
+export function toggleSearchResultsList(payload) {
   return {
-    type: UPDATE_LOCATION_ERROR
+    type: TOGGLE_SEARCH_LIST,
+    payload
   };
 }
 
-function updateLocationSuccess(location) {
-  return {
-    type: UPDATE_LOCATION_SUCCESS,
-    location
-  };
-}
+export function getAddressPredictions() {}
+
+export function getSelectedAddress(payload) {}

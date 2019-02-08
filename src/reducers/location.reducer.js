@@ -7,7 +7,8 @@ export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case UPDATE_LOCATION:
       return {
-        location: action.payload.location
+        latitude: action.payload.latitude,
+        longitude: action.payload.longitude
       };
     default:
       return {

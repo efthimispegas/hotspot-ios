@@ -1,11 +1,11 @@
 export const Colors = {
   pinkColor: '#ee8787',
   violetColor: '#5dc4ec',
-  blackColor: '#000',
+  blackColor: '#373737',
   eggWhiteColor: '#eaebde',
   whiteColor: '#fff',
   lightGreyColor: '#4e4c4cb6',
-  darkGreyColor: '#413f3f',
+  darkGreyColor: '#7D7D7D',
   greenColor: '#5de068',
   redColor: 'red',
   orangeColor1: '#d3300777', //orange-red

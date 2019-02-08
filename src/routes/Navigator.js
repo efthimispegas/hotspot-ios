@@ -138,7 +138,6 @@ export const AppNavigator = Actions.create(
                   key="map"
                   title="" //I dont want it to show the title
                   component={HomeScreen}
-                  navBar={MapNavBar}
                 />
                 <Scene
                   swipeEnabled={false}

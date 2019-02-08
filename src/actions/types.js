@@ -22,3 +22,9 @@ export const LOGOUT_ERROR = 'LOGOUT_ERROR';
 export const UPDATE_LOCATION = 'UPDATE_LOCATION';
 export const UPDATE_LOCATION_SUCCESS = 'UPDATE_LOCATION_SUCCESS';
 export const UPDATE_LOCATION_ERROR = 'UPDATE_LOCATION_ERROR';
+
+//--------------------
+//search
+//--------------------
+export const GET_SEARCH_INPUT = 'GET_SEARCH_INPUT';
+export const TOGGLE_SEARCH_LIST = 'TOGGLE_SEARCH_LIST';

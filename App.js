@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { LoadingScreen, Intro } from './src/screens';
 import { ReduxRouter } from './src/routes/Navigator';
 import store, { ReduxNavigator } from './src/store';
+import TestScreen from './src/screens/home/TestScreen';
 
 export default class App extends Component {
   state = {
@@ -46,6 +47,7 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <View style={{ flex: 1 }}>
+          {/* <TestScreen /> */}
           <ReduxRouter navigator={ReduxNavigator} />
         </View>
       </Provider>

@@ -1,4 +1,9 @@
-import { service as axios } from '../api';
+import axios from 'axios';
+import { domainUrl } from '../config/domainUrl';
+
+axios.defaults.baseURL = domainUrl;
+// axios.defaults.headers.common['Authorization'] = '<AUTH_TOKEN>';
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 const fakeUserId = '5c54b1a4231ce64440d8292f';
 class UserApi {

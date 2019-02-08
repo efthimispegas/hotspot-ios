@@ -1,4 +1,9 @@
-import { service as axios } from '../api';
+import axios from 'axios';
+import { domainUrl } from '../config/domainUrl';
+
+axios.defaults.baseURL = domainUrl;
+// axios.defaults.headers.common['Authorization'] = '<AUTH_TOKEN>';
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 //hardcode a hotspot id from my db for now
 const fakeHotspotId = '5c54b08d231ce64440d8292a';

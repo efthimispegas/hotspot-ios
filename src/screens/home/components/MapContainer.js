@@ -1,8 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import MapView, { Marker, Callout, PROVIDER_DEFAULT } from 'react-native-maps';
+import MapView, {
+  Marker,
+  Callout,
+  PROVIDER_GOOGLE,
+  PROVIDER_DEFAULT
+} from 'react-native-maps';
 
 import { Colors } from '../../../common';
+import SearchBar from './SearchBar';
+import SearchResultsList from './SearchResultsList';
 
 const x1 = require('../../../../assets/flames/1.png');
 const x2 = require('../../../../assets/flames/2.png');
@@ -18,7 +25,11 @@ const MapContainer = ({
 }) => {
   const { dimensions, currentPosition, mapRegion, markers } = state;
   return (
-    <View style={{ width: dimensions.width, height: dimensions.height }}>
+    <View
+      style={
+        /*{ width: dimensions.width, height: dimensions.height }*/ styles.mainContainer
+      }
+    >
       <MapView
         provider={PROVIDER_DEFAULT}
         initialRegion={{
@@ -33,8 +44,8 @@ const MapContainer = ({
         showsUserLocation={true}
         followsUserLocation={true}
         style={[
-          styles.mapContainer,
-          { width: dimensions.width, height: dimensions.height }
+          styles.mapContainer
+          // { width: dimensions.width, height: dimensions.height }
         ]}
       >
         {markers.map((marker, id) => (
@@ -50,6 +61,8 @@ const MapContainer = ({
           </Marker>
         ))}
       </MapView>
+      <SearchBar />
+      <SearchResultsList />
     </View>
   );
 };
@@ -58,12 +71,10 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: Colors.eggWhiteColor
+    alignItems: 'center'
   },
-  mapContainer: {},
-  top: {
-    flex: 1,
-    backgroundColor: Colors.orangeColor1
+  mapContainer: {
+    ...StyleSheet.absoluteFillObject
   }
 });
 

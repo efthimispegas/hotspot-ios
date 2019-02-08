@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback
 } from 'react-native';
+import { Container } from 'native-base';
 import { Colors } from '../../common';
 import { Location } from 'expo';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -19,6 +20,7 @@ import LoadingScreen from '../loading/LoadingScreen';
 import MapContainer from './components/MapContainer';
 import { Hotspot } from '../../api';
 import * as locationActions from '../../actions'; //we import it as * to use it later in the bindActionCreators()
+import * as homeActions from '../../actions';
 
 //we bind the functions to this component's instance because if not,
 //the variables in each function will not refer to the component but to the window
@@ -58,7 +60,8 @@ class HomeScreen extends Component {
       //fetch current user's hotspots from the server
       if (coords) {
         let data = await Hotspot.fetchHotspots(this.props.position); //<----here we will refactor later, with loadHotspots(position, token) action
-        //for now we apply a views_count property to each hotspot to //<----and we also need to call updateLocation(coords) action here
+        this.props.updateLocation(coords); ////<----and we also need to call updateLocation(coords) action here [X]
+        //for now we apply a views_count property to each hotspot to
         //adjust the marker's size later according to the views_count
         data.hotspots.forEach((hotspot, index) => {
           const views_count = Math.floor(Math.random() * 3);
@@ -146,6 +149,7 @@ class HomeScreen extends Component {
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <MapContainer
+          getSearchInput={null}
           state={this.state}
           _onRegionChange={this._onRegionChange.bind(this)}
           _onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
@@ -197,7 +201,11 @@ const mapDispatchToProps = dispatch => {
   return {
     loadHotspots: null,
     openHotspot: null,
-    updateLocation: bindActionCreators(locationActions.updateLocation, dispatch) //same as writing updateLocation: dispatch => dispatch(updateLocation())
+    updateLocation: bindActionCreators(
+      locationActions.updateLocation,
+      dispatch
+    ), //same as writing updateLocation: dispatch => dispatch(updateLocation())
+    searchInput: bindActionCreators(homeActions, dispatch)
   };
 };
 
