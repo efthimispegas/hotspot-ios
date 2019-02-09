@@ -11,9 +11,6 @@ class FoursquareApi {
     const res = await fetch(endpoint)
       .then(fetch.throwErrors)
       .then(res => {
-        // console.log('===============');
-        // console.log('res:', JSON.stringify(res));
-        // console.log('===============');
         return res.json();
       })
       .then(data => {
@@ -37,6 +34,9 @@ class FoursquareApi {
     const res = await fetch(endpoint)
       .then(fetch.throwErrors)
       .then(res => {
+        console.log('===============');
+        console.log('type:', typeof res);
+        console.log('===============');
         return res.json();
       })
       .then(data => {

@@ -11,7 +11,6 @@ const INITIAL_STATE = {};
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case GET_SEARCH_INPUT:
-      const { key, value } = action.payload;
       return update(state, {
         input: { $set: action.payload }
       });
@@ -28,6 +27,8 @@ export default (state = INITIAL_STATE, action) => {
         selectedVenue: { $set: action.payload }
       });
     default:
-      return state;
+      return {
+        ...state
+      };
   }
 };
