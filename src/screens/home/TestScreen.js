@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import SearchBar from './components/SearchBar';
 import { Colors } from '../../common';
-import SearchResultsList from './components/SearchResultsList';
+import SearchResultsList from './components/SearchPredictionsList';
 
 class TestScreen extends Component {
   render() {

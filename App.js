@@ -1,47 +1,57 @@
 import React, { Component } from 'react';
-import { AppLoading, Asset } from 'expo';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
-import { fontAssets, ImageAssets } from './helpers';
+import { AppLoading, Asset, SplashScreen } from 'expo';
+import { StyleSheet, Text, View, Image } from 'react-native';
+import { fontAssets, imageAssets } from './helpers';
 import { Provider } from 'react-redux';
 
-import { LoadingScreen, Intro } from './src/screens';
+import { LoadingScreen } from './src/screens';
 import { ReduxRouter } from './src/routes/Navigator';
 import store, { ReduxNavigator } from './src/store';
-import TestScreen from './src/screens/home/TestScreen';
+import { Colors } from './src/common';
 
 export default class App extends Component {
   state = {
-    isLoadingComplete: false
+    isSplashReady: false,
+    isAppReady: false
   };
 
-  componentWillMount() {
-    // this._loadAssetsAsync();
-  }
-
-  async _loadAssetsAsync() {
-    await Promise.all([fontAssets, ImageAssets]);
-  }
-
-  _handleFinishLoading = () => {
-    //set a substantial delay of 400ms because the fonts haven't finished
-    //loading before the state is set to isLoadingComplete : true
-    setTimeout(() => this.setState({ isLoadingComplete: true }), 600);
+  _loadSplashResourcesAsync = async () => {
+    const gif = require('./assets/splash.png');
+    return Asset.fromModule(gif).downloadAsync();
   };
 
-  _handleLoadingError = error => {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
-    console.warn(error);
+  _cacheResourcesAsync = async () => {
+    SplashScreen.hide();
+    const result = await Promise.all([fontAssets, imageAssets]);
+    this.setState({ isAppReady: true });
   };
 
   render() {
-    if (!this.state.isLoadingComplete) {
+    if (!this.state.isSplashReady) {
       return (
         <AppLoading
-          startAsync={this._loadAssetsAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
+          startAsync={this._loadSplashResourcesAsync}
+          onFinish={() => this.setState({ isSplashReady: true })}
+          onError={console.warn}
+          autoHideSplash={false}
         />
+      );
+    }
+    if (!this.state.isAppReady) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: Colors.hotspotColor
+          }}
+        >
+          <Image
+            source={require('./assets/splash.png')}
+            onLoad={this._cacheResourcesAsync}
+          />
+        </View>
       );
     }
     return (

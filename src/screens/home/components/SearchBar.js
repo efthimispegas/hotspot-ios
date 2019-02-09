@@ -10,10 +10,52 @@ import {
 } from 'react-native';
 import { InputGroup } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
+// import GoogleAutocomplete from 'react-native-places-autocomplete';
 
 import { Colors } from '../../../common';
+import { API_KEY } from '../../../config';
+import { toggleSearchSuggestionsList } from '../../../actions';
 
-const SearchBar = ({}) => {
+const baseUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?';
+const FOURSQUARE_ENDPOINT = 'https://api.foursquare.com/v2/venues/explore';
+const API_DEBOUNCE_TIME = 2000;
+
+const SearchBar = props => {
+  const {
+    region,
+    getSearchInput,
+    getSearchSuggestions,
+    selectedVenue,
+    input
+  } = props;
+  const { latitude, longitude } = region;
+
+  const _handleChangeText = input => {
+    getSearchInput(input);
+    getSearchSuggestions(input, 'Athens', region);
+  };
+
+  const _handleClearSearch = () => {
+    getSearchInput('');
+    toggleSearchSuggestionsList();
+  };
+
+  const _renderButton = text => {
+    if (text.length !== 0) {
+      return (
+        <TouchableOpacity onPress={_handleClearSearch}>
+          <Ionicons
+            name="ios-close-circle"
+            size={20}
+            color={Colors.lightGreyColor}
+          />
+        </TouchableOpacity>
+      );
+    } else {
+      return;
+    }
+  };
+
   return (
     <View style={styles.searchBar}>
       <TouchableOpacity onPress={() => Keyboard.dismiss()}>
@@ -29,16 +71,11 @@ const SearchBar = ({}) => {
           placeholderTextColor={Colors.darkGreyColor}
           selectionColor={Colors.hotspotColor}
           style={styles.inputSearch}
+          onChangeText={input => _handleChangeText(input)}
+          onFocus={() => toggleSearchSuggestionsList()}
+          value={input}
         />
-        <View style={styles.buttonWrapper}>
-          <TouchableOpacity onPress={() => Keyboard.dismiss()}>
-            <Ionicons
-              name="ios-close-circle"
-              size={20}
-              color={Colors.lightGreyColor}
-            />
-          </TouchableOpacity>
-        </View>
+        <View style={styles.buttonWrapper}>{_renderButton(input)}</View>
       </InputGroup>
     </View>
   );
@@ -50,7 +87,7 @@ const styles = StyleSheet.create({
     top: 20,
     position: 'absolute',
     width: Dimensions.get('window').width, //get screens full width
-    height: 40,
+    height: 45,
     paddingHorizontal: 10,
     // backgroundColor: Colors.pinkColor,
     alignItems: 'center',
@@ -74,14 +111,15 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.greenColor
   },
   inputSearch: {
-    flex: 0.8,
+    flex: 1,
+    alignSelf: 'baseline',
     fontFamily: 'montserratLight',
     fontSize: 20,
     paddingRight: 5,
-    paddingLeft: 0,
-    lineHeight: 20,
-    color: Colors.hotspotColor
-    // backgroundColor: Colors.whiteColor
+    paddingLeft: 5,
+    lineHeight: 25,
+    color: Colors.hotspotColor,
+    backgroundColor: Colors.whiteColor
   },
   buttonWrapper: {
     flex: 0.1,

@@ -4,9 +4,6 @@ import { Actions } from 'react-native-router-flux';
 
 class SplashScreen extends Component {
   componentDidMount() {
-    console.log('===============');
-    console.log('[SplashScreen]: \n', this.props);
-    console.log('===============');
     this._setDelay();
   }
 
@@ -15,12 +12,12 @@ class SplashScreen extends Component {
       //not Actions.welcome();
       //use replace when you don't want the transision efect
       Actions.replace('welcome');
-    }, 1500);
+    }, 3000);
   };
   render() {
     return (
       <ImageBackground
-        source={require('../../../assets/hotspot-splash.png')}
+        source={require('../../../assets/splash.png')}
         style={styles.mainContainer}
       >
         <View style={styles.welcomeTitleContainer}>

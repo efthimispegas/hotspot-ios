@@ -14,3 +14,8 @@ if (Platform.OS !== 'ios') {
 }
 
 export const domainUrl = url;
+
+export const suggest4sq =
+  'https://api.foursquare.com/v2/venues/suggestcompletion';
+
+export const venue4sq = 'https://api.foursquare.com/v2/venues/';

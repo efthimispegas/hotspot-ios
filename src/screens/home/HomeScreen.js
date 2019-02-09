@@ -48,19 +48,19 @@ class HomeScreen extends Component {
   }
   async componentDidMount() {
     try {
-      //get the device dimensions to display the map correctly
-      const { height, width } = Dimensions.get('window');
       //get user's current location, returns a Promise
       const { coords } = await Location.getCurrentPositionAsync({
         enableHighAccuracy: true,
         timeout: 20000,
         timeInterval: 1000
       });
+
       //if coords were returned then
       //fetch current user's hotspots from the server
       if (coords) {
-        let data = await Hotspot.fetchHotspots(this.props.position); //<----here we will refactor later, with loadHotspots(position, token) action
-        this.props.updateLocation(coords); ////<----and we also need to call updateLocation(coords) action here [X]
+        this.props.updateLocation(coords);
+
+        let data = await Hotspot.fetchHotspots(coords); //<----here we will refactor later, with loadHotspots(region, token) action
         //for now we apply a views_count property to each hotspot to
         //adjust the marker's size later according to the views_count
         data.hotspots.forEach((hotspot, index) => {
@@ -90,8 +90,7 @@ class HomeScreen extends Component {
           currentPosition: {
             latitude: coords.latitude,
             longitude: coords.longitude
-          },
-          dimensions: { height, width }
+          }
         });
       }
     } catch (e) {
@@ -137,75 +136,63 @@ class HomeScreen extends Component {
   };
 
   render() {
-    console.log('===============');
-    console.log('[HomeScreen] state:\n', this.state);
-    console.log('===============');
-    console.log('===============');
-    console.log('[HomeScreen] props:\n', this.props);
-    console.log('===============');
     if (this.state.isLoading) {
       return <LoadingScreen />;
     }
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <MapContainer
-          getSearchInput={null}
+          input={this.props.input}
+          suggestions={this.props.suggestions}
+          getSearchInput={this.props.getSearchInput} //<-----------|
+          getSearchSuggestions={this.props.getSearchSuggestions} //<-------fill those with the right actions
+          getSelectedVenue={this.props.getSelectedVenue}
+          toggleSearchSuggestionsList={this.props.toggleSearchSuggestionsList} //<-------|
+          region={this.props.region}
+          selectedVenue={this.props.selectedVenue}
           state={this.state}
-          _onRegionChange={this._onRegionChange.bind(this)}
-          _onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
-          _handleMarkerPress={this._handleMarkerPress.bind(this)}
+          _onRegionChange={this._onRegionChange}
+          _onRegionChangeComplete={this._onRegionChangeComplete}
+          _handleMarkerPress={this._handleMarkerPress}
         />
       </TouchableWithoutFeedback>
     );
   }
-}
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: Colors.eggWhiteColor
-  },
-  top: {
-    flex: 1,
-    backgroundColor: Colors.orangeColor1
-  },
-  screenTitle: {
-    fontFamily: 'montserrat',
-    fontSize: 20,
-    fontWeight: '600',
-    color: 'white'
-  },
-  bottom: {
-    flex: 0.4
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center'
-  },
-  text: {
-    fontFamily: 'montserrat',
-    fontSize: 14
+  componentWillUnmount() {
+    this.watchID.remove();
   }
-});
+}
 
 const mapStoreToProps = store => {
   return {
-    hotspots: null,
-    token: null,
-    location: store.location
+    hotspots: null, //<---------------------------
+    token: null, //<-------------------------
+    region: store.location.region,
+    input: store.home.input,
+    suggestions: store.home.suggestions, //<--------------fill those
+    selectedVenue: store.home.selectedVenue //<----------|
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadHotspots: null,
-    openHotspot: null,
+    loadHotspots: null, //<---------------------
+    openHotspot: null, //<----------------------fill them
     updateLocation: bindActionCreators(
       locationActions.updateLocation,
       dispatch
     ), //same as writing updateLocation: dispatch => dispatch(updateLocation())
-    searchInput: bindActionCreators(homeActions, dispatch)
+    getSearchInput: bindActionCreators(homeActions.getSearchInput, dispatch),
+    getSearchSuggestions: bindActionCreators(
+      homeActions.getSearchSuggestions,
+      dispatch
+    ),
+    toggleSearchSuggestionsList: bindActionCreators(
+      homeActions.toggleSearchSuggestionsList,
+      dispatch
+    ),
+    getSelectedVenue: bindActionCreators(homeActions.getSelectedVenue, dispatch)
   };
 };
 

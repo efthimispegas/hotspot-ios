@@ -14,6 +14,7 @@ import { Colors, ButtonWithIcon, Button } from '../../../common';
 const SignUpForm = ({
   state,
   _handleChangeEmail,
+  _handleChangeCity,
   _handleChangeUsername,
   _handleChangePassword1,
   _handleChangePassword2,
@@ -41,6 +42,15 @@ const SignUpForm = ({
               selectionColor={Colors.hotspotColor}
               onChangeText={email => _handleChangeEmail(email)}
               value={state.email}
+              style={styles.input}
+              keyboardType="email-address"
+            />
+
+            <TextInput
+              placeholder="City"
+              selectionColor={Colors.hotspotColor}
+              onChangeText={city => _handleChangeCity(city)}
+              value={state.city}
               style={styles.input}
             />
 

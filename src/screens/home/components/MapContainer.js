@@ -9,7 +9,7 @@ import MapView, {
 
 import { Colors } from '../../../common';
 import SearchBar from './SearchBar';
-import SearchResultsList from './SearchResultsList';
+import SearchSuggestionsList from './SearchSuggestionsList';
 
 const x1 = require('../../../../assets/flames/1.png');
 const x2 = require('../../../../assets/flames/2.png');
@@ -18,35 +18,41 @@ const x4 = require('../../../../assets/flames/4.png');
 const flames = [x1, x2, x3, x4];
 
 const MapContainer = ({
+  input,
+  suggestions,
+  getSearchInput,
+  getSearchSuggestions,
+  getSelectedVenue,
+  toggleSearchSuggestionsList,
+  region,
+  selectedVenue,
   state,
   _onRegionChange,
   _onRegionChangeComplete,
   _handleMarkerPress
 }) => {
-  const { dimensions, currentPosition, mapRegion, markers } = state;
+  const { currentPosition, mapRegion, markers } = state;
+  //check whether there's a selected address if not assign empty obj
+  console.log('===============');
+  console.log('suggestions:', suggestions);
+  console.log('===============');
+
   return (
-    <View
-      style={
-        /*{ width: dimensions.width, height: dimensions.height }*/ styles.mainContainer
-      }
-    >
+    <View style={styles.mainContainer}>
       <MapView
-        provider={PROVIDER_DEFAULT}
+        provider={PROVIDER_GOOGLE}
         initialRegion={{
           latitude: currentPosition.latitude,
+          latitudeDelta: 0,
           longitude: currentPosition.longitude,
-          latitudeDelta: 0.0322,
-          longitudeDelta: 0.0221
+          longitudeDelta: 0.018
         }}
         region={mapRegion}
         onRegionChange={_onRegionChange}
         onRegionChangeComplete={_onRegionChangeComplete}
         showsUserLocation={true}
         followsUserLocation={true}
-        style={[
-          styles.mapContainer
-          // { width: dimensions.width, height: dimensions.height }
-        ]}
+        style={styles.mapContainer}
       >
         {markers.map((marker, id) => (
           <Marker
@@ -60,9 +66,28 @@ const MapContainer = ({
             </Callout>
           </Marker>
         ))}
+        {/* here I will add the selected address marker as follows:
+          {selectedAddress &&
+            ...
+          }
+        */}
       </MapView>
-      <SearchBar />
-      <SearchResultsList />
+      <SearchBar
+        input={input || ''}
+        region={region}
+        getSearchInput={getSearchInput}
+        getSearchSuggestions={getSearchSuggestions}
+        getSelectedVenue={getSelectedVenue}
+        selectedVenue={selectedVenue || {}}
+        toggleSearchSuggestionsList={toggleSearchSuggestionsList}
+      />
+      {suggestions && (
+        <SearchSuggestionsList
+          suggestions={suggestions}
+          getSelectedVenue={getSelectedVenue}
+          toggleSearchSuggestionsList={toggleSearchSuggestionsList}
+        />
+      )}
     </View>
   );
 };

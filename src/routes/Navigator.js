@@ -26,8 +26,6 @@ import {
 } from '../screens';
 import { Colors } from '../common';
 
-import MapNavBar from '../screens/home/components/MapNavBar';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -72,17 +70,11 @@ export const AppNavigator = Actions.create(
           <Stack key="root" titleStyle={{ alignSelf: 'center' }} hideNavBar>
             <Scene key="auth">
               <Scene
-                key="splash"
-                component={SplashScreen}
-                title="Splash"
-                initial
-                hideNavBar
-              />
-              <Scene
                 key="welcome"
                 component={WelcomeScreen}
                 title="Welcome"
                 hideNavBar
+                initial
               />
 
               <Scene hideNavBar panHandlers={null}>
@@ -156,9 +148,6 @@ export const AppNavigator = Actions.create(
 );
 
 const mapStateToProps = state => {
-  console.log('===============');
-  console.log('state', state);
-  console.log('===============');
   return {
     state: state.nav
   };

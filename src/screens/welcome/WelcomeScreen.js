@@ -4,8 +4,6 @@ import { StyleSheet, View, Text, Image, Animated } from 'react-native';
 import { Button, Colors } from '../../common';
 import { Actions } from 'react-native-router-flux';
 
-import SearchBox from '../home/components/SearchBox';
-
 class WelcomeScreen extends Component {
   state = {
     //starting point of button's state (we don't see it)
@@ -79,7 +77,6 @@ class WelcomeScreen extends Component {
         </Animated.View>
 
         <Animated.Image
-          //----> require('../../../assets/images/welcome2.png')
           source={require('../../../assets/images/street.png')}
           style={[
             styles.imageContainer,
@@ -101,7 +98,7 @@ class WelcomeScreen extends Component {
           </Animated.View>
 
           <Animated.View style={[styles.buttonContainer, { opacity }]}>
-            <Button name="Check it out!" onPress={() => Actions.login()} />
+            <Button name="Get started!" onPress={() => Actions.login()} />
           </Animated.View>
         </View>
       </View>
@@ -129,20 +126,18 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   imageContainer: {
-    height: '8%', //<---- set to 28%
+    height: '8%',
     width: '100%',
     resizeMode: 'stretch'
   },
 
   hotspotLogoContainer: {
     flex: 0.5,
-    // backgroundColor: Colors.violetColor,
     justifyContent: 'center',
     alignItems: 'center'
   },
   hotspotLogo: {
     marginTop: 10,
-    // backgroundColor: Colors.pinkColor,
     height: 180,
     width: 180
   },

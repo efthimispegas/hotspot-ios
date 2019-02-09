@@ -10,7 +10,7 @@ import {
 import rootReducer from '../reducers';
 import { AppNavigator } from '../routes/Navigator';
 
-const loggerMiddleware = createLogger();
+const loggerMiddleware = createLogger({ diff: true, collapsed: true });
 const navMiddleware = createReactNavigationReduxMiddleware(
   'root',
   state => state.nav

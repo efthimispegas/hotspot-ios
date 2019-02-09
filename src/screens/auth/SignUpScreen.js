@@ -1,33 +1,21 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import Expo, { Permissions, Location, AR } from 'expo';
+import { Actions } from 'react-native-router-flux';
 
 import SignUpForm from './components/SignUpForm';
-import { Colors } from '../../common';
-import { HomeScreen } from '../home';
-import { CreateHotspotScreen } from '../create';
-import LoadingScreen from '../loading/LoadingScreen';
-import { ScrollView } from 'react-native-gesture-handler';
-import ARScreen from '../AR/ARScreen';
-import { Actions } from 'react-native-router-flux';
 
 class SignUpScreen extends Component {
   state = {
     username: '',
     email: '',
+    city: '',
     password1: '',
     password2: '',
     isLoading: false
   };
 
-  componentDidMount() {
-    console.log('===============');
-    console.log('[SignUpScreen] state:\n', this.state);
-    console.log('===============');
-    console.log('===============');
-    console.log('[SignUpScreen] props:\n', this.props);
-    console.log('===============');
-  }
+  componentDidMount() {}
 
   _handleChangeEmail = email => {
     this.setState({ email });
@@ -43,16 +31,17 @@ class SignUpScreen extends Component {
     this.setState({ username });
   };
 
+  _handleChangeCity = city => {
+    this.setState({ city });
+  };
+
   _handleDone = () => {
     this._confirmPasswordMatch();
   };
 
   _confirmPasswordMatch = () => {
     const { password1, password2 } = this.state;
-    console.log('===============');
-    console.log('password', password1);
-    console.log('conf password', password2);
-    console.log('===============');
+
     if (password1 !== password2) {
       Alert.alert('Try again', 'Please make sure your passwords match!');
       return;
@@ -67,15 +56,6 @@ class SignUpScreen extends Component {
     Actions.main({ type: 'replace' });
   };
 
-  _handleRightButton = position => {
-    this.props.navigator.push({
-      title: 'Create a Hotspot',
-      component: CreateHotspotScreen,
-      rightButtonTitle: 'AR Camera',
-      onRightButtonPress: () => this._handleARCamera(),
-      passProps: { position }
-    });
-  };
   _handleARCamera = () => {
     if (!AR.isAvailable()) {
       Alert.alert(
@@ -112,6 +92,7 @@ class SignUpScreen extends Component {
         _handleChangePassword1={this._handleChangePassword1.bind(this)}
         _handleChangePassword2={this._handleChangePassword2.bind(this)}
         _handleChangeEmail={this._handleChangeEmail.bind(this)}
+        _handleChangeCity={this._handleChangeCity.bind(this)}
         _handleChangeUsername={this._handleChangeUsername.bind(this)}
         _handleDone={this._handleDone.bind(this)}
       />
@@ -154,7 +135,5 @@ class SignUpScreen extends Component {
     }
   }
 }
-
-const styles = StyleSheet.create({});
 
 export default SignUpScreen;

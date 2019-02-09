@@ -1,7 +1,18 @@
 import { Location } from 'expo';
-import { GET_SEARCH_INPUT, TOGGLE_SEARCH_LIST } from './types';
 import update from 'react-addons-update';
 import { Dimensions } from 'react-native';
+// import GooglePlaces from 'react-native-google-places';
+
+import { venueQuery, venuesQuery } from '../../helpers';
+
+import {
+  GET_SEARCH_INPUT,
+  TOGGLE_SEARCH_LIST,
+  GET_SEARCH_SUGGESTIONS,
+  GET_SELECTED_VENUE
+} from './types';
+import { Foursquare } from '../api/foursquare.api';
+import { suggest4sq, venue4sq } from '../config';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -20,13 +31,29 @@ export function getSearchInput(payload) {
   };
 }
 
-export function toggleSearchResultsList(payload) {
+export function getSearchSuggestions(input, nearby, region) {
+  //nearby will be user's city
+  return async dispatch => {
+    const query = venuesQuery(region, nearby, input);
+    const suggestions = await Foursquare.fetchVenuesSuggestions(
+      `${suggest4sq}?${query}`
+    );
+
+    dispatch({ type: GET_SEARCH_SUGGESTIONS, payload: suggestions });
+  };
+}
+
+export function getSelectedVenue(id) {
+  return async dispatch => {
+    const query = venueQuery();
+    const venue = await Foursquare.lookUpPlaceByID(`${venue4sq}${id}?${query}`);
+    dispatch({ type: GET_SELECTED_VENUE, payload: venue });
+  };
+}
+
+export function toggleSearchSuggestionsList(payload) {
   return {
     type: TOGGLE_SEARCH_LIST,
     payload
   };
 }
-
-export function getAddressPredictions() {}
-
-export function getSelectedAddress(payload) {}
