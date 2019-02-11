@@ -1,17 +1,37 @@
 import React from 'react';
-import { AR, Asset } from 'expo';
+import { Alert } from 'react-native';
+import { AR, Asset, Permissions } from 'expo';
 // Let's alias ExpoTHREE.AR as ThreeAR so it doesn't collide with Expo.AR.
 import ExpoTHREE, { AR as ThreeAR, THREE } from 'expo-three';
 // Let's also import `expo-graphics`
 // expo-graphics manages the setup/teardown of the gl context/ar session, creates a frame-loop, and observes size/orientation changes.
 // it also provides debug information with `isArCameraStateEnabled`
 import { View as GraphicsView } from 'expo-graphics';
+import { Actions } from 'react-native-router-flux';
 
 export default class App extends React.Component {
-  componentDidMount() {
+  async componentDidMount() {
     // Turn off extra warnings
     THREE.suppressExpoWarnings(true);
     ThreeAR.suppressWarnings();
+    //ask for camera permissions before rendering
+    const { status, permissions } = await Permissions.askAsync(
+      Permissions.CAMERA
+    );
+    if (status === 'denied') {
+      Alert.alert(
+        'Oh, bummer...',
+        "Can't do anything without permission. Allow Hotspot to use your Camera to proceed.",
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => Actions.pop({ type: 'replace' })
+          }
+        ],
+        { cancelable: true }
+      );
+    }
   }
 
   render() {

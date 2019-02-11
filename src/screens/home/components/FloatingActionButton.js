@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
-import { BlurView } from 'expo';
+import { BlurView, AR } from 'expo';
 import ActionButton from 'react-native-action-button';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -40,7 +40,9 @@ class FloatingActionButton extends Component {
             onPress={() => Actions.profile()}
             size={58}
           >
-            <MaterialIcons name="account-circle" size={32} color="white" />
+            <Image
+              source={require('../../../../assets/icons/user-no-outline.png')}
+            />
           </ActionButton.Item>
 
           <ActionButton.Item
@@ -61,7 +63,7 @@ class FloatingActionButton extends Component {
 
           <ActionButton.Item
             buttonColor={Colors.hotspotColor}
-            onPress={() => Actions.pm()}
+            onPress={() => this._handleARCamera()}
             size={58}
           >
             <AntDesign name="message1" size={32} color="white" />
@@ -70,6 +72,18 @@ class FloatingActionButton extends Component {
       </View>
     );
   }
+
+  _handleARCamera = () => {
+    if (!AR.isAvailable()) {
+      Alert.alert(
+        'Entering a unique experience!',
+        'In order to present to you the AR feature you need to have a version of iOS 11 or higher.',
+        [{ text: 'OK', onPress: () => this.props.nav.pop() }],
+        { cancelable: true }
+      );
+    }
+    Actions.ar();
+  };
 }
 
 const styles = StyleSheet.create({

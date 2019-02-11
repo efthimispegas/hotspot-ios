@@ -56,35 +56,6 @@ class SignUpScreen extends Component {
     Actions.main({ type: 'replace' });
   };
 
-  _handleARCamera = () => {
-    if (!AR.isAvailable()) {
-      Alert.alert(
-        'Entering a unique experience!',
-        'In order to present to you the AR feature you need to have a version of iOS 11 or higher.',
-        [{ text: 'OK', onPress: () => this.props.navigator.pop() }],
-        { cancelable: true }
-      );
-    }
-    this._askCameraPermissionsAsync();
-  };
-
-  _askCameraPermissionsAsync = async () => {
-    const { status, permissions } = await Permissions.askAsync(
-      Permissions.CAMERA
-    );
-    if (status === 'denied') {
-      Alert.alert(
-        'Oh, bummer...',
-        "Can't do anything without permission. Allow Hotspot to use your Camera to proceed."
-      );
-    } else {
-      this.props.navigator.push({
-        title: 'AR Camera',
-        component: ARScreen
-      });
-    }
-  };
-
   render() {
     return (
       <SignUpForm
