@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
 import MapView, {
   Marker,
   Callout,
@@ -13,6 +19,7 @@ import SearchBar from './SearchBar';
 import SearchSuggestionsList from './SearchSuggestionsList';
 import { getVenueCategory, getMarkerImage } from '../../../../helpers';
 import CustomMarker from './CustomMarker';
+import FloatingActionButton from './FloatingActionButton';
 
 const MapContainer = ({
   input,
@@ -35,68 +42,69 @@ const MapContainer = ({
   }
 
   return (
-    <View style={styles.mainContainer}>
-      <MapView
-        provider={PROVIDER_DEFAULT}
-        initialRegion={{
-          latitude: currentPosition.latitude,
-          latitudeDelta: 0.223,
-          longitude: currentPosition.longitude,
-          longitudeDelta: 0.04
-        }}
-        region={mapRegion}
-        onRegionChange={_onRegionChange}
-        onRegionChangeComplete={_onRegionChangeComplete}
-        showsUserLocation={true}
-        // followsUserLocation={true}
-        style={styles.mapContainer}
-      >
-        {markers.map((marker, id) => {
-          return (
-            <Marker
-              key={id}
-              coordinate={{ latitude: marker.lat, longitude: marker.lng }}
-              title={marker.title}
-              image={getMarkerImage('flame', marker.size)}
-            >
-              <Callout onPress={_handleMarkerPress}>
-                <Text style={styles.text}>{marker.title}</Text>
-              </Callout>
-            </Marker>
-          );
-        })}
-        {selectedVenue !== null && !_.isArrayLikeObject(selectedVenue) && (
-          <CustomMarker
-            selectedVenue={selectedVenue}
-            _handleVenuePress={_handleVenuePress}
-            isGeneral={false}
-            img={null}
-          />
-        )}
-
-        {_.isArrayLikeObject(selectedVenue) &&
-          selectedVenue.map(venue => {
-            const categoryId = getVenueCategory(venue);
-            const img = getMarkerImage('category', categoryId);
-            <CustomMarker
-              selectedVenue={venue}
-              _handleVenuePress={_handleVenuePress}
-              isGeneral={true}
-              img={img}
-            />;
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.mainContainer}>
+        <MapView
+          provider={PROVIDER_DEFAULT}
+          initialRegion={{
+            latitude: currentPosition.latitude,
+            latitudeDelta: 0.223,
+            longitude: currentPosition.longitude,
+            longitudeDelta: 0.04
+          }}
+          region={mapRegion}
+          onRegionChange={_onRegionChange}
+          onRegionChangeComplete={_onRegionChangeComplete}
+          showsUserLocation={true}
+          // followsUserLocation={true}
+          style={styles.mapContainer}
+        >
+          {markers.map((marker, id) => {
+            return (
+              <Marker
+                key={id}
+                coordinate={{ latitude: marker.lat, longitude: marker.lng }}
+                title={marker.title}
+                image={getMarkerImage('flame', marker.size)}
+              >
+                <Callout onPress={_handleMarkerPress}>
+                  <Text style={styles.text}>{marker.title}</Text>
+                </Callout>
+              </Marker>
+            );
           })}
-      </MapView>
-      <SearchBar
-        input={input}
-        region={region}
-        getSearchInput={getSearchInput}
-        clearSearchInput={clearSearchInput}
-        getSearchSuggestions={getSearchSuggestions}
-        toggleSearchSuggestionsList={toggleSearchSuggestionsList}
-      />
-      {suggestions !== undefined &&
-        suggestions.length > 1 &&
-        suggestions !== {} && (
+          {selectedVenue !== null && !_.isArrayLikeObject(selectedVenue) && (
+            <CustomMarker
+              selectedVenue={selectedVenue}
+              _handleVenuePress={_handleVenuePress}
+              isGeneral={false}
+              img={null}
+            />
+          )}
+
+          {_.isArrayLikeObject(selectedVenue) &&
+            selectedVenue.map(venue => {
+              const categoryId = getVenueCategory(venue);
+              const img = getMarkerImage('category', categoryId);
+              return (
+                <CustomMarker
+                  selectedVenue={venue}
+                  _handleVenuePress={_handleVenuePress}
+                  isGeneral={true}
+                  img={img}
+                />
+              );
+            })}
+        </MapView>
+        <SearchBar
+          input={input}
+          region={region}
+          getSearchInput={getSearchInput}
+          clearSearchInput={clearSearchInput}
+          getSearchSuggestions={getSearchSuggestions}
+          toggleSearchSuggestionsList={toggleSearchSuggestionsList}
+        />
+        {input !== undefined && input !== '' && (
           <SearchSuggestionsList
             input={input}
             suggestions={suggestions}
@@ -105,7 +113,9 @@ const MapContainer = ({
             clearSearchInput={clearSearchInput}
           />
         )}
-    </View>
+        <FloatingActionButton />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

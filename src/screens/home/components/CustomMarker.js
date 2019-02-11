@@ -26,6 +26,7 @@ const CustomMarker = ({ isGeneral, selectedVenue, _handleVenuePress, img }) => {
       </Marker>
     );
   }
+
   return (
     <Marker
       key={selectedVenue.id}
@@ -36,7 +37,7 @@ const CustomMarker = ({ isGeneral, selectedVenue, _handleVenuePress, img }) => {
       title={selectedVenue.name}
       image={img}
     >
-      <Callout onPress={_handleselectedVenuePress}>
+      <Callout onPress={_handleVenuePress}>
         <Title>{selectedVenue.name}</Title>
         <Text>
           {selectedVenue.location.address}, {selectedVenue.location.city}

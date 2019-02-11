@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import SearchBar from './components/SearchBar';
 import { Colors } from '../../common';
-import SearchResultsList from './components/SearchPredictionsList';
+import FloatingActionButton from './components/FloatingActionButton';
 
 class TestScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <SearchBar />
-        <SearchResultsList />
+        <FloatingActionButton />
       </View>
     );
   }

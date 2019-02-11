@@ -8,6 +8,7 @@ import { LoadingScreen } from './src/screens';
 import { ReduxRouter } from './src/routes/Navigator';
 import store, { ReduxNavigator } from './src/store';
 import { Colors } from './src/common';
+import TestScreen from './src/screens/home/TestScreen';
 
 export default class App extends Component {
   state = {

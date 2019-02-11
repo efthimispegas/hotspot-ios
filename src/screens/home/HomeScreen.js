@@ -85,7 +85,9 @@ class HomeScreen extends Component {
       else venues = nextProps.selectedVenue;
       this.setState({ selectedVenue: venues });
     }
-
+    console.log('===============');
+    console.log('venues to be rendered in next re-render:', venues);
+    console.log('===============');
     let hotspots = [];
     //here we will check if the hotspots change, to re-render
   }
@@ -230,12 +232,12 @@ class HomeScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
-    hotspots: null, //<---------------------------
-    token: null, //<-------------------------
+    hotspots: null, //<--------------------|
+    token: null, //<-------------------------fill them
     region: store.location.region,
     input: store.home.input,
-    suggestions: store.home.suggestions, //<--------------fill those
-    selectedVenue: store.home.selectedVenue, //<----------|
+    suggestions: store.home.suggestions,
+    selectedVenue: store.home.selectedVenue,
     isVenueSelected: store.home.isVenueSelected
   };
 };

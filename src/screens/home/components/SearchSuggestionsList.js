@@ -2,6 +2,8 @@ import React from 'react';
 import { Text, StyleSheet, Dimensions, Keyboard } from 'react-native';
 import { List, ListItem, View, Left, Body } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
+import _ from 'lodash';
+
 import { Colors } from '../../../common';
 
 const SearchSuggestionsList = ({
@@ -16,7 +18,10 @@ const SearchSuggestionsList = ({
     toggleSearchSuggestionsList();
     clearSearchInput();
   }
-  if (input) {
+  if (input.length > 3 && _.isArrayLikeObject(suggestions)) {
+    console.log('===============');
+    console.log('got in the first if bc is array');
+    console.log('===============');
     return (
       <View style={styles.searchResultsWrapper}>
         <List
@@ -54,6 +59,7 @@ const SearchSuggestionsList = ({
       </View>
     );
   } else {
+    console.log('toggled searchlist');
     return null;
   }
 };
@@ -87,6 +93,12 @@ const styles = StyleSheet.create({
   },
   distance: {
     fontSize: 12
+  },
+  noResults: {
+    alignSelf: 'center',
+    fontFamily: 'montserratItalic',
+    fontSize: 22,
+    color: Colors.blackColor
   }
 });
 
