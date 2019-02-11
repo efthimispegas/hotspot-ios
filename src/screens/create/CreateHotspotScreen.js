@@ -123,9 +123,9 @@ class CreateHotspotScreen extends Component {
           <View style={styles.titleBox}>
             <Text style={styles.message}>Validity of your message</Text>
             <Slider
-              value={15}
+              value={30}
               minimumValue={1}
-              maximumValue={30}
+              maximumValue={60}
               step={1}
               thumbTintColor={Colors.greyColor}
               minimumTrackTintColor={Colors.hotspotColor}
@@ -133,7 +133,7 @@ class CreateHotspotScreen extends Component {
               onSlidingComplete={value =>
                 Alert.alert(
                   'Validity of your message:',
-                  `${value} day${value > 1 ? 's' : ''}`
+                  `${value} minute${value > 1 ? 's' : ''}`
                 )
               }
             />

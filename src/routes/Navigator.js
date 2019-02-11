@@ -23,7 +23,10 @@ import {
   LoginScreen,
   WelcomeScreen,
   SplashScreen,
-  CreateHotspotScreen
+  CreateHotspotScreen,
+  MessageScreen,
+  SettingsScreen,
+  ProfileScreen
 } from '../screens';
 import { Colors } from '../common';
 
@@ -145,6 +148,27 @@ export const AppNavigator = Actions.create(
                   key="add"
                   component={CreateHotspotScreen}
                   title="Add new hotspot"
+                />
+                <Scene
+                  swipeEnabled={false}
+                  hideTabBar
+                  key="pm"
+                  component={MessageScreen}
+                  title="Messages"
+                />
+                <Scene
+                  swipeEnabled={false}
+                  hideTabBar
+                  key="profile"
+                  component={ProfileScreen}
+                  title="Profile"
+                />
+                <Scene
+                  swipeEnabled={false}
+                  hideTabBar
+                  key="settings"
+                  component={SettingsScreen}
+                  title="Settings"
                 />
               </Scene>
             </Stack>

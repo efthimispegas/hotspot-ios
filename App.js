@@ -9,6 +9,7 @@ import { ReduxRouter } from './src/routes/Navigator';
 import store, { ReduxNavigator } from './src/store';
 import { Colors } from './src/common';
 import TestScreen from './src/screens/home/TestScreen';
+import MessageScreen from './src/screens/message/MessageScreen';
 
 export default class App extends Component {
   state = {
@@ -59,6 +60,7 @@ export default class App extends Component {
       <Provider store={store}>
         <View style={{ flex: 1 }}>
           {/* <TestScreen /> */}
+          {/* <MessageScreen /> */}
           <ReduxRouter navigator={ReduxNavigator} />
         </View>
       </Provider>
