@@ -1,4 +1,5 @@
 import { stringify as queryString } from 'query-string';
+import { Image } from 'react-native';
 import { CLIENT_ID, CLIENT_SECRET } from '../src/config';
 
 export const venuesQuery = ({ latitude, longitude }, nearby, query) => {

@@ -6,88 +6,105 @@ import MapView, {
   PROVIDER_GOOGLE,
   PROVIDER_DEFAULT
 } from 'react-native-maps';
+import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 
-import { Colors } from '../../../common';
 import SearchBar from './SearchBar';
 import SearchSuggestionsList from './SearchSuggestionsList';
-
-const x1 = require('../../../../assets/flames/1.png');
-const x2 = require('../../../../assets/flames/2.png');
-const x3 = require('../../../../assets/flames/3.png');
-const x4 = require('../../../../assets/flames/4.png');
-const flames = [x1, x2, x3, x4];
+import { getVenueCategory, getMarkerImage } from '../../../../helpers';
+import CustomMarker from './CustomMarker';
 
 const MapContainer = ({
   input,
   suggestions,
   getSearchInput,
+  clearSearchInput,
   getSearchSuggestions,
   getSelectedVenue,
   toggleSearchSuggestionsList,
   region,
-  selectedVenue,
   state,
   _onRegionChange,
   _onRegionChangeComplete,
-  _handleMarkerPress
+  _handleMarkerPress,
+  _handleVenuePress
 }) => {
-  const { currentPosition, mapRegion, markers } = state;
-  //check whether there's a selected address if not assign empty obj
-  console.log('===============');
-  console.log('suggestions:', suggestions);
-  console.log('===============');
+  const { currentPosition, mapRegion, markers, selectedVenue } = state;
+
+  if (!_.isArrayLikeObject(selectedVenue)) {
+  }
 
   return (
     <View style={styles.mainContainer}>
       <MapView
-        provider={PROVIDER_GOOGLE}
+        provider={PROVIDER_DEFAULT}
         initialRegion={{
           latitude: currentPosition.latitude,
-          latitudeDelta: 0,
+          latitudeDelta: 0.223,
           longitude: currentPosition.longitude,
-          longitudeDelta: 0.018
+          longitudeDelta: 0.04
         }}
         region={mapRegion}
         onRegionChange={_onRegionChange}
         onRegionChangeComplete={_onRegionChangeComplete}
         showsUserLocation={true}
-        followsUserLocation={true}
+        // followsUserLocation={true}
         style={styles.mapContainer}
       >
-        {markers.map((marker, id) => (
-          <Marker
-            key={id}
-            coordinate={{ latitude: marker.lat, longitude: marker.lng }}
-            title={marker.title}
-            image={flames[marker.size]}
-          >
-            <Callout onPress={() => _handleMarkerPress(marker)}>
-              <Text style={styles.text}>{marker.title}</Text>
-            </Callout>
-          </Marker>
-        ))}
-        {/* here I will add the selected address marker as follows:
-          {selectedAddress &&
-            ...
-          }
-        */}
+        {markers.map((marker, id) => {
+          return (
+            <Marker
+              key={id}
+              coordinate={{ latitude: marker.lat, longitude: marker.lng }}
+              title={marker.title}
+              image={getMarkerImage('flame', marker.size)}
+            >
+              <Callout onPress={_handleMarkerPress}>
+                <Text style={styles.text}>{marker.title}</Text>
+              </Callout>
+            </Marker>
+          );
+        })}
+        {selectedVenue !== null && !_.isArrayLikeObject(selectedVenue) && (
+          <CustomMarker
+            selectedVenue={selectedVenue}
+            _handleVenuePress={_handleVenuePress}
+            isGeneral={false}
+            img={null}
+          />
+        )}
+
+        {_.isArrayLikeObject(selectedVenue) &&
+          selectedVenue.map(venue => {
+            const categoryId = getVenueCategory(venue);
+            const img = getMarkerImage('category', categoryId);
+            <CustomMarker
+              selectedVenue={venue}
+              _handleVenuePress={_handleVenuePress}
+              isGeneral={true}
+              img={img}
+            />;
+          })}
       </MapView>
       <SearchBar
-        input={input || ''}
+        input={input}
         region={region}
         getSearchInput={getSearchInput}
+        clearSearchInput={clearSearchInput}
         getSearchSuggestions={getSearchSuggestions}
-        getSelectedVenue={getSelectedVenue}
-        selectedVenue={selectedVenue || {}}
         toggleSearchSuggestionsList={toggleSearchSuggestionsList}
       />
-      {suggestions && (
-        <SearchSuggestionsList
-          suggestions={suggestions}
-          getSelectedVenue={getSelectedVenue}
-          toggleSearchSuggestionsList={toggleSearchSuggestionsList}
-        />
-      )}
+      {suggestions !== undefined &&
+        suggestions.length > 1 &&
+        suggestions !== {} && (
+          <SearchSuggestionsList
+            input={input}
+            suggestions={suggestions}
+            getSelectedVenue={getSelectedVenue}
+            toggleSearchSuggestionsList={toggleSearchSuggestionsList}
+            clearSearchInput={clearSearchInput}
+          />
+        )}
     </View>
   );
 };

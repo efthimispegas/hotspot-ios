@@ -2899,6 +2899,11 @@ gauge@~2.7.3:
     strip-ansi "^3.0.1"
     wide-align "^1.1.0"
 
+geolib@^2.0.24:
+  version "2.0.24"
+  resolved "https://registry.yarnpkg.com/geolib/-/geolib-2.0.24.tgz#eb3d7fbc65f5ea3354a5af6054563ebe9f33e5f4"
+  integrity sha512-NR0AyYyEnGrFS9JvSFmmotQDxVCORJgDHdvBwSatxl5aHarOLMh3KuGI83bCvCfObjfoEiDe8Ung8GGLGAtthw==
+
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"
@@ -4933,6 +4938,11 @@ react-native-gesture-handler@~1.0.14:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
+
+react-native-google-places@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/react-native-google-places/-/react-native-google-places-2.5.2.tgz#62658034519ab0876ffebfdd1fb2f8503847c1cc"
+  integrity sha512-utJrVcZCi7LDaBrd1r6axQAfcR9pRE1NPjUr/gO95iPHT+9ktJGPDcoRuJi7HgMlTZ4eOJaFRx0PB1xFE7WF0Q==
 
 react-native-iphone-x-helper@^1.0.3:
   version "1.2.0"

@@ -14,6 +14,9 @@ class FoursquareApi {
         return res.json();
       })
       .then(data => {
+        console.log('===============');
+        console.log('data retured by foursquare:', data);
+        console.log('===============');
         if (data.response.minivenues) {
           return {
             suggestions: data.response.minivenues

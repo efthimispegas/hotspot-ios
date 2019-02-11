@@ -22,7 +22,8 @@ import {
   ARScreen,
   LoginScreen,
   WelcomeScreen,
-  SplashScreen
+  SplashScreen,
+  CreateHotspotScreen
 } from '../screens';
 import { Colors } from '../common';
 
@@ -94,21 +95,21 @@ export const AppNavigator = Actions.create(
                   <Scene
                     hideNavBar
                     panHandlers={null}
-                    key="register"
-                    component={SignUpScreen}
-                    title="Register"
-                    rightTitle="Login"
-                    onRight={() => alert('Right Button pressed!')}
-                  />
-                  <Scene
-                    hideNavBar
-                    panHandlers={null}
                     key="login"
                     component={LoginScreen}
                     title="Login"
                     back={true}
                     backTitle="Register"
                     onBack={() => alert('Left Button pressed!')}
+                  />
+                  <Scene
+                    hideNavBar
+                    panHandlers={null}
+                    key="register"
+                    component={SignUpScreen}
+                    title="Register"
+                    rightTitle="Login"
+                    onRight={() => alert('Right Button pressed!')}
                   />
                 </Tabs>
               </Scene>
@@ -137,6 +138,13 @@ export const AppNavigator = Actions.create(
                   key="ar"
                   component={ARScreen}
                   title="AR Camera"
+                />
+                <Scene
+                  swipeEnabled={false}
+                  hideTabBar
+                  key="add"
+                  component={CreateHotspotScreen}
+                  title="Add new hotspot"
                 />
               </Scene>
             </Stack>

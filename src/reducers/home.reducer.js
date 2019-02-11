@@ -2,7 +2,9 @@ import {
   GET_SEARCH_INPUT,
   GET_SEARCH_SUGGESTIONS,
   TOGGLE_SEARCH_LIST,
-  GET_SELECTED_VENUE
+  GET_SELECTED_VENUE,
+  GET_GENERAL_VENUES,
+  CLEAR_SEARCH_INPUT
 } from '../actions/types';
 import update from 'react-addons-update';
 
@@ -14,6 +16,10 @@ export default (state = INITIAL_STATE, action) => {
       return update(state, {
         input: { $set: action.payload }
       });
+    case CLEAR_SEARCH_INPUT:
+      return update(state, {
+        input: { $set: undefined }
+      });
     case GET_SEARCH_SUGGESTIONS:
       return update(state, {
         suggestions: { $set: action.payload }
@@ -24,6 +30,12 @@ export default (state = INITIAL_STATE, action) => {
       });
     case GET_SELECTED_VENUE:
       return update(state, {
+        isVenueSelected: { $set: true },
+        selectedVenue: { $set: action.payload }
+      });
+    case GET_GENERAL_VENUES:
+      return update(state, {
+        isVenueSelected: { $set: true },
         selectedVenue: { $set: action.payload }
       });
     default:

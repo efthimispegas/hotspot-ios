@@ -5,47 +5,57 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '../../../common';
 
 const SearchSuggestionsList = ({
+  input,
   suggestions,
   getSelectedVenue,
-  toggleSearchSuggestionsList
+  toggleSearchSuggestionsList,
+  clearSearchInput
 }) => {
   function handleSelectedVenue(placeId) {
     getSelectedVenue(placeId);
     toggleSearchSuggestionsList();
+    clearSearchInput();
   }
-
-  return (
-    <View style={styles.searchResultsWrapper}>
-      <List
-        onScroll={() => Keyboard.dismiss()}
-        dataArray={suggestions}
-        renderRow={suggestion => (
-          <View key={suggestion.id}>
-            <ListItem
-              activeOpacity={0.9}
-              onPress={() => handleSelectedVenue(suggestion.id)}
-              button
-              avatar
-            >
-              <Left style={styles.leftContainer}>
-                <MaterialIcons style={styles.leftIcon} name="location-on" />
-              </Left>
-              <Body>
-                <Text style={styles.primaryText}>{suggestion.name}</Text>
-                <Text style={styles.secondaryText}>
-                  {suggestion.location.address}
-                  {suggestion.location.crossStreet ? ',' : ''}
-                  {suggestion.location.crossStreet}
-                  {suggestion.location.postalCode ? ',' : ''}
-                  {suggestion.location.postalCode}
-                </Text>
-              </Body>
-            </ListItem>
-          </View>
-        )}
-      />
-    </View>
-  );
+  if (input) {
+    return (
+      <View style={styles.searchResultsWrapper}>
+        <List
+          onScroll={() => Keyboard.dismiss()}
+          dataArray={suggestions}
+          renderRow={suggestion => (
+            <View key={suggestion.id}>
+              <ListItem
+                activeOpacity={0.9}
+                onPress={() => handleSelectedVenue(suggestion.id)}
+                button
+                avatar
+              >
+                <Left style={styles.leftContainer}>
+                  <MaterialIcons style={styles.leftIcon} name="location-on" />
+                </Left>
+                <Body>
+                  <Text style={styles.primaryText}>{suggestion.name}</Text>
+                  <Text style={styles.secondaryText}>
+                    {suggestion.location.address
+                      ? suggestion.location.address
+                      : null}
+                    {suggestion.location.city
+                      ? `, ${suggestion.location.city}`
+                      : null}
+                    {suggestion.location.postalCode
+                      ? `, ${suggestion.location.postalCode}`
+                      : null}
+                  </Text>
+                </Body>
+              </ListItem>
+            </View>
+          )}
+        />
+      </View>
+    );
+  } else {
+    return null;
+  }
 };
 
 const styles = StyleSheet.create({

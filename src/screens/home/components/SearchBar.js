@@ -8,40 +8,37 @@ import {
   Image,
   Keyboard
 } from 'react-native';
-import { InputGroup } from 'native-base';
+import { InputGroup, Input } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 // import GoogleAutocomplete from 'react-native-places-autocomplete';
 
 import { Colors } from '../../../common';
-import { API_KEY } from '../../../config';
-import { toggleSearchSuggestionsList } from '../../../actions';
 
-const baseUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?';
-const FOURSQUARE_ENDPOINT = 'https://api.foursquare.com/v2/venues/explore';
-const API_DEBOUNCE_TIME = 2000;
+const DEBOUNCE_TIME = 1000;
 
 const SearchBar = props => {
   const {
     region,
     getSearchInput,
+    clearSearchInput,
     getSearchSuggestions,
-    selectedVenue,
+    toggleSearchSuggestionsList,
     input
   } = props;
   const { latitude, longitude } = region;
 
-  const _handleChangeText = input => {
+  function _handleChangeText(input) {
     getSearchInput(input);
-    getSearchSuggestions(input, 'Athens', region);
-  };
 
-  const _handleClearSearch = () => {
-    getSearchInput('');
-    toggleSearchSuggestionsList();
-  };
+    if (input.length >= 4) {
+      setTimeout(() => {
+        getSearchSuggestions('Athens', region, false);
+      }, DEBOUNCE_TIME);
+    }
+  }
 
-  const _renderButton = text => {
-    if (text.length !== 0) {
+  const _renderCloseButton = () => {
+    if (input) {
       return (
         <TouchableOpacity onPress={_handleClearSearch}>
           <Ionicons
@@ -56,26 +53,49 @@ const SearchBar = props => {
     }
   };
 
+  const _handleClearSearch = () => {
+    clearSearchInput();
+    toggleSearchSuggestionsList();
+  };
+
+  //if search button is pressed we show the all the suggestions
+  const _renderSearchButton = () => {
+    if (input) {
+      return (
+        <TouchableOpacity onPress={() => _handleSearchAll()}>
+          <Image
+            style={styles.searchIcon}
+            resizeMode="contain"
+            source={require('../../../../assets/icons/search.png')}
+          />
+        </TouchableOpacity>
+      );
+    } else {
+      return;
+    }
+  };
+
+  const _handleSearchAll = () => {
+    Keyboard.dismiss();
+    getSearchSuggestions('Athens', region, true);
+    clearSearchInput();
+    toggleSearchSuggestionsList();
+  };
+
   return (
     <View style={styles.searchBar}>
-      <TouchableOpacity onPress={() => Keyboard.dismiss()}>
-        <Image
-          style={styles.searchIcon}
-          resizeMode="contain"
-          source={require('../../../../assets/icons/search.png')}
-        />
-      </TouchableOpacity>
+      {_renderSearchButton()}
       <InputGroup style={styles.inputGroup}>
         <TextInput
           placeholder="Search a hotspot..."
           placeholderTextColor={Colors.darkGreyColor}
           selectionColor={Colors.hotspotColor}
           style={styles.inputSearch}
-          onChangeText={input => _handleChangeText(input)}
+          onChangeText={_handleChangeText}
           onFocus={() => toggleSearchSuggestionsList()}
           value={input}
         />
-        <View style={styles.buttonWrapper}>{_renderButton(input)}</View>
+        <View style={styles.buttonWrapper}>{_renderCloseButton()}</View>
       </InputGroup>
     </View>
   );
@@ -118,8 +138,8 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingLeft: 5,
     lineHeight: 25,
-    color: Colors.hotspotColor,
-    backgroundColor: Colors.whiteColor
+    color: Colors.hotspotColor
+    // backgroundColor: Colors.whiteColor
   },
   buttonWrapper: {
     flex: 0.1,
