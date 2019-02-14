@@ -5,19 +5,18 @@ axios.defaults.baseURL = domainUrl;
 // axios.defaults.headers.common['Authorization'] = '<AUTH_TOKEN>';
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
-const fakeUserId = '5c54b1a4231ce64440d8292f';
+// const fakeUserId = '5c54b1a4231ce64440d8292f';
 class UserApi {
   constructor() {
-    this.userId = fakeUserId;
-    this.path = `/users/${this.userId}`;
+    this.path = `/users`;
   }
 
-  async fetchUsers() {
+  async fetchUser(userId) {
     try {
       //make an axios call to somewhere
-      const res = await axios.get('somewhere');
+      const { data } = await axios.get(`${this.path}/${userId}`);
       console.log('===============');
-      console.log('data returned by axios:\n', res);
+      console.log('data returned by axios:\n', data);
       console.log('===============');
       return data;
     } catch (e) {
@@ -38,12 +37,17 @@ class UserApi {
     }
   }
 
-  async createHotspotComment(args) {
+  async updateUser(nextUser) {
     try {
-      const response = await axios.post(`${this.path}/new`, args);
-      return response;
+      const { data } = await axios.post(
+        `${this.path}/${nextUser._id}/update`,
+        nextUser
+      );
+      console.log('===============');
+      console.log('data returned by axios:', data);
+      console.log('===============');
     } catch (e) {
-      throw e;
+      throw new Error(e);
     }
   }
 }

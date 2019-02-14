@@ -13,11 +13,9 @@ const fakeHotspotId = '5c54b08d231ce64440d8292a';
 class HotspotApi {
   constructor() {
     this.hotspotId = fakeHotspotId;
-    this.path = `/hotspots/`;
+    this.path = `/hotspots`;
   }
 
-  //I need to create a new method - fetchUserHotspots() if the user wants to see only his hotspots on the map
-  //idea: similar to fetchHotspots() but filtered with the user's id
   async fetchHotspots(position) {
     try {
       console.log('===============');
@@ -26,6 +24,22 @@ class HotspotApi {
       //now we just return all the hotspots
       //next steps: use the users position to limit the returned hotspots
       const { data } = await axios.get(this.path);
+      console.log('===============');
+      console.log('data returned by axios:\n', data);
+      console.log('===============');
+      return data;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
+  async fetchHotspotsWithinRadius(region) {
+    const query = `lat=${region.latitude}&lng=${region.longitude}`;
+
+    try {
+      //now we just return all the hotspots
+      //next steps: use the users position to limit the returned hotspots
+      const { data } = await axios.get(`${this.path}/radius?${query}`);
       console.log('===============');
       console.log('data returned by axios:\n', data);
       console.log('===============');

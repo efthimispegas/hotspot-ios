@@ -1,4 +1,4 @@
-import { UPDATE_LOCATION } from './types';
+import { UPDATE_LOCATION, SHOW_MY_LOCATION } from './types';
 
 //---------------------
 // Action Creators
@@ -6,6 +6,13 @@ import { UPDATE_LOCATION } from './types';
 export function updateLocation(payload) {
   return {
     type: UPDATE_LOCATION,
+    payload
+  };
+}
+
+export function getMyLocation(payload) {
+  return {
+    type: SHOW_MY_LOCATION,
     payload
   };
 }

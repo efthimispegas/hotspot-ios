@@ -2,13 +2,10 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { BlurView, AR } from 'expo';
 import ActionButton from 'react-native-action-button';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Entypo from '@expo/vector-icons/Entypo';
+import { Ionicons, AntDesign, Entypo } from '@expo/vector-icons';
 import { Actions } from 'react-native-router-flux';
 
 import { Colors } from '../../../common';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 class FloatingActionButton extends Component {
   _renderFabIcon(active) {
@@ -37,7 +34,7 @@ class FloatingActionButton extends Component {
         >
           <ActionButton.Item
             buttonColor={Colors.hotspotColor}
-            onPress={() => Actions.profile()}
+            onPress={() => Actions.profile({ type: 'replace' })}
             size={58}
           >
             <Image
@@ -47,7 +44,7 @@ class FloatingActionButton extends Component {
 
           <ActionButton.Item
             buttonColor={Colors.hotspotColor}
-            onPress={() => Actions.ar()}
+            onPress={() => this._handleARCamera()}
             size={58}
           >
             <Entypo name="camera" size={32} color="white" />
@@ -63,7 +60,7 @@ class FloatingActionButton extends Component {
 
           <ActionButton.Item
             buttonColor={Colors.hotspotColor}
-            onPress={() => this._handleARCamera()}
+            onPress={() => Actions.pm()}
             size={58}
           >
             <AntDesign name="message1" size={32} color="white" />

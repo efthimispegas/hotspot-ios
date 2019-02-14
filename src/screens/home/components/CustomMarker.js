@@ -19,14 +19,17 @@ const CustomMarker = ({ isGeneral, selectedVenue, _handleVenuePress, img }) => {
         <Callout onPress={_handleVenuePress}>
           <Title>{selectedVenue.name}</Title>
           <Text>
-            {selectedVenue.location.formattedAddress[0]},{' '}
-            {selectedVenue.location.formattedAddress[1]}
+            {selectedVenue.location.formattedAddress[0]
+              ? `${selectedVenue.location.formattedAddress[0]}`
+              : null}
+            {selectedVenue.location.formattedAddress[1]
+              ? `, ${selectedVenue.location.formattedAddress[1]}`
+              : null}
           </Text>
         </Callout>
       </Marker>
     );
   }
-
   return (
     <Marker
       key={selectedVenue.id}
@@ -40,7 +43,12 @@ const CustomMarker = ({ isGeneral, selectedVenue, _handleVenuePress, img }) => {
       <Callout onPress={_handleVenuePress}>
         <Title>{selectedVenue.name}</Title>
         <Text>
-          {selectedVenue.location.address}, {selectedVenue.location.city}
+          {selectedVenue.location.address
+            ? `${selectedVenue.location.address}`
+            : null}
+          {selectedVenue.location.city
+            ? `, ${selectedVenue.location.city}`
+            : null}
         </Text>
       </Callout>
     </Marker>

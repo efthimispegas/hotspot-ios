@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { fontAssets, imageAssets } from './helpers';
 import { Provider } from 'react-redux';
 
-import { LoadingScreen } from './src/screens';
+import { LoadingScreen, ProfileScreen } from './src/screens';
 import { ReduxRouter } from './src/routes/Navigator';
 import store, { ReduxNavigator } from './src/store';
 import { Colors } from './src/common';
@@ -59,8 +59,7 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <View style={{ flex: 1 }}>
-          {/* <TestScreen /> */}
-          {/* <MessageScreen /> */}
+          {/* <ProfileScreen /> */}
           <ReduxRouter navigator={ReduxNavigator} />
         </View>
       </Provider>

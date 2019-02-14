@@ -20,25 +20,52 @@ import SearchSuggestionsList from './SearchSuggestionsList';
 import { getVenueCategory, getMarkerImage } from '../../../../helpers';
 import CustomMarker from './CustomMarker';
 import FloatingActionButton from './FloatingActionButton';
+import ShowMyLocation from './ShowMyLocation';
 
 const MapContainer = ({
   input,
   suggestions,
+  recommendations,
   getSearchInput,
   clearSearchInput,
   getSearchSuggestions,
   getSelectedVenue,
   toggleSearchSuggestionsList,
   region,
+  getMyLocation,
+  showMyLocation,
   state,
   _onRegionChange,
   _onRegionChangeComplete,
   _handleMarkerPress,
   _handleVenuePress
 }) => {
-  const { currentPosition, mapRegion, markers, selectedVenue } = state;
+  const { currentPosition, markers, selectedVenue } = state;
 
-  if (!_.isArrayLikeObject(selectedVenue)) {
+  //if the user selected a venue, then we change the mapview
+  //region to the venue's location ;)
+  let mapRegion = state.mapRegion;
+  if (
+    !_.isArrayLikeObject(selectedVenue) &&
+    (selectedVenue != undefined || selectedVenue != null)
+  ) {
+    mapRegion = {
+      latitude: selectedVenue.location.lat,
+      latitudeDelta: 0.00922 * 0.8,
+      longitude: selectedVenue.location.lng,
+      longitudeDelta: 0.00421
+    };
+  }
+
+  //if the "show my location" button is pressed
+  //we reset the mapview to show the user's location
+  if (showMyLocation) {
+    mapRegion = {
+      latitude: currentPosition.latitude,
+      latitudeDelta: 0.00922 * 0.8,
+      longitude: currentPosition.longitude,
+      longitudeDelta: 0.00421
+    };
   }
 
   return (
@@ -48,17 +75,19 @@ const MapContainer = ({
           provider={PROVIDER_DEFAULT}
           initialRegion={{
             latitude: currentPosition.latitude,
-            latitudeDelta: 0.223,
+            latitudeDelta: 0.00922 * 0.8,
             longitude: currentPosition.longitude,
-            longitudeDelta: 0.04
+            longitudeDelta: 0.00421
           }}
           region={mapRegion}
           onRegionChange={_onRegionChange}
           onRegionChangeComplete={_onRegionChangeComplete}
           showsUserLocation={true}
-          // followsUserLocation={true}
+          showsCompass={false}
+          followsUserLocation={false}
           style={styles.mapContainer}
         >
+          {/* Here we map the hotspots */}
           {markers.map((marker, id) => {
             return (
               <Marker
@@ -73,6 +102,7 @@ const MapContainer = ({
               </Marker>
             );
           })}
+          {/* Here we show the single selected venue */}
           {selectedVenue !== null && !_.isArrayLikeObject(selectedVenue) && (
             <CustomMarker
               selectedVenue={selectedVenue}
@@ -81,13 +111,30 @@ const MapContainer = ({
               img={null}
             />
           )}
-
+          {/* Here we map the general selected venues */}
           {_.isArrayLikeObject(selectedVenue) &&
             selectedVenue.map(venue => {
               const categoryId = getVenueCategory(venue);
               const img = getMarkerImage('category', categoryId);
               return (
                 <CustomMarker
+                  key={venue.id}
+                  selectedVenue={venue}
+                  _handleVenuePress={_handleVenuePress}
+                  isGeneral={true}
+                  img={img}
+                />
+              );
+            })}
+          {/* Here we map the menu recommendations */}
+          {recommendations &&
+            _.isArrayLikeObject(recommendations) &&
+            recommendations.map(({ venue }) => {
+              const categoryId = getVenueCategory(venue);
+              const img = getMarkerImage('category', categoryId);
+              return (
+                <CustomMarker
+                  key={venue.id}
                   selectedVenue={venue}
                   _handleVenuePress={_handleVenuePress}
                   isGeneral={true}
@@ -114,6 +161,7 @@ const MapContainer = ({
           />
         )}
         <FloatingActionButton />
+        <ShowMyLocation getMyLocation={getMyLocation} region={region} />
       </View>
     </TouchableWithoutFeedback>
   );

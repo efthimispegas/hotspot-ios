@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, Platform, StyleSheet } from 'react-native';
+import { Text, View, Platform, StyleSheet, Image } from 'react-native';
 import {
   Router,
   Scene,
@@ -22,13 +22,15 @@ import {
   ARScreen,
   LoginScreen,
   WelcomeScreen,
-  SplashScreen,
   CreateHotspotScreen,
   MessageScreen,
   SettingsScreen,
-  ProfileScreen
+  ProfileScreen,
+  EditProfileScreen
 } from '../screens';
 import { Colors } from '../common';
+import DrawerContent from './components/DrawerContent';
+import CustomNavBar from '../screens/profile/components/CustomNavBar';
 
 const styles = StyleSheet.create({
   container: {
@@ -59,6 +61,9 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.whiteColor,
     borderRightColor: Colors.greyColor,
     backgroundColor: Colors.hotspotColor
+  },
+  profileTitle: {
+    color: Colors.whiteColor
   }
 });
 
@@ -96,9 +101,9 @@ export const AppNavigator = Actions.create(
                   activeTintColor={Colors.whiteColor}
                 >
                   <Scene
+                    key="login"
                     hideNavBar
                     panHandlers={null}
-                    key="login"
                     component={LoginScreen}
                     title="Login"
                     back={true}
@@ -106,9 +111,9 @@ export const AppNavigator = Actions.create(
                     onBack={() => alert('Left Button pressed!')}
                   />
                   <Scene
+                    key="register"
                     hideNavBar
                     panHandlers={null}
-                    key="register"
                     component={SignUpScreen}
                     title="Register"
                     rightTitle="Login"
@@ -125,48 +130,79 @@ export const AppNavigator = Actions.create(
                 hideNavBar={true}
                 headerLayoutPreset="center"
               >
+                <Drawer
+                  key="drawer"
+                  hideNavBar
+                  contentComponent={DrawerContent}
+                  drawerIcon={
+                    <Image
+                      source={require('../../assets/icons/location.png')}
+                    />
+                  }
+                  drawerPosition="left"
+                  drawerWidth={260}
+                  onExit={() => {}}
+                  onEnter={() => {}}
+                >
+                  <Scene
+                    key="map"
+                    type={ActionConst.RESET}
+                    swipeEnabled={false}
+                    navTransparent={true}
+                    hideNavBar={true}
+                    back={false}
+                    title="" //I dont want it to show the title
+                    component={HomeScreen}
+                  />
+                </Drawer>
                 <Scene
-                  type={ActionConst.RESET}
-                  swipeEnabled={false}
-                  navTransparent={true}
-                  hideNavBar={true}
-                  back={false}
-                  key="map"
-                  title="" //I dont want it to show the title
-                  component={HomeScreen}
-                />
-                <Scene
+                  key="ar"
                   swipeEnabled={false}
                   hideTabBar
-                  key="ar"
                   component={ARScreen}
                   title="AR Camera"
                 />
                 <Scene
+                  key="add"
                   swipeEnabled={false}
                   hideTabBar
-                  key="add"
+                  hideNavBar={false}
                   component={CreateHotspotScreen}
                   title="Add new hotspot"
                 />
                 <Scene
+                  key="pm"
                   swipeEnabled={false}
                   hideTabBar
-                  key="pm"
+                  hideNavBar={false}
                   component={MessageScreen}
                   title="Messages"
                 />
+
                 <Scene
-                  swipeEnabled={false}
-                  hideTabBar
                   key="profile"
-                  component={ProfileScreen}
                   title="Profile"
+                  hideTabBar
+                  hideNavBar
+                  // navBar={CustomNavBar}
+                  component={ProfileScreen}
                 />
+
                 <Scene
+                  key="edit"
+                  title="Edit your Profile"
+                  hideTabBar
+                  hideNavBar
+                  swipeEnabled={false}
+                  // navBar={CustomNavBar}
+                  component={EditProfileScreen}
+                  type={ActionConst.RESET}
+                />
+
+                <Scene
+                  key="settings"
                   swipeEnabled={false}
                   hideTabBar
-                  key="settings"
                   component={SettingsScreen}
                   title="Settings"
                 />

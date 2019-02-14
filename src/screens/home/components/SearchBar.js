@@ -6,13 +6,15 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
-  Keyboard
+  Keyboard,
+  Animated
 } from 'react-native';
 import { InputGroup, Input } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 // import GoogleAutocomplete from 'react-native-places-autocomplete';
 
 import { Colors } from '../../../common';
+import { Actions } from 'react-native-router-flux';
 
 const DEBOUNCE_TIME = 1000;
 
@@ -25,7 +27,6 @@ const SearchBar = props => {
     toggleSearchSuggestionsList,
     input
   } = props;
-  const { latitude, longitude } = region;
 
   function _handleChangeText(input) {
     getSearchInput(input);
@@ -49,7 +50,7 @@ const SearchBar = props => {
         </TouchableOpacity>
       );
     } else {
-      return;
+      return null;
     }
   };
 
@@ -58,33 +59,27 @@ const SearchBar = props => {
     toggleSearchSuggestionsList();
   };
 
-  //if search button is pressed we show the all the suggestions
-  const _renderSearchButton = () => {
-    if (input) {
+  const _renderMenuButton = () => {
+    if (!input) {
       return (
-        <TouchableOpacity onPress={() => _handleSearchAll()}>
+        <TouchableOpacity
+          onPress={Actions.drawerOpen}
+          style={styles.iconContainer}
+        >
           <Image
             style={styles.searchIcon}
             resizeMode="contain"
-            source={require('../../../../assets/icons/search.png')}
+            source={require('../../../../assets/icons/location.png')}
           />
         </TouchableOpacity>
       );
     } else {
-      return;
+      return null;
     }
   };
 
-  const _handleSearchAll = () => {
-    Keyboard.dismiss();
-    getSearchSuggestions('Athens', region, true);
-    clearSearchInput();
-    toggleSearchSuggestionsList();
-  };
-
-  return (
-    <View style={styles.searchBar}>
-      {_renderSearchButton()}
+  _renderSearchBar = () => {
+    return (
       <InputGroup style={styles.inputGroup}>
         <TextInput
           placeholder="Search a hotspot..."
@@ -97,6 +92,40 @@ const SearchBar = props => {
         />
         <View style={styles.buttonWrapper}>{_renderCloseButton()}</View>
       </InputGroup>
+    );
+  };
+  //if search button is pressed we show the all the suggestions
+  const _renderSearchButton = () => {
+    if (input) {
+      return (
+        <TouchableOpacity
+          onPress={() => _handleSearchAll()}
+          style={styles.iconContainer}
+        >
+          <Image
+            style={styles.searchIcon}
+            resizeMode="contain"
+            source={require('../../../../assets/icons/search.png')}
+          />
+        </TouchableOpacity>
+      );
+    } else {
+      return null;
+    }
+  };
+
+  const _handleSearchAll = () => {
+    Keyboard.dismiss();
+    getSearchSuggestions('Athens', region, true);
+    clearSearchInput();
+    toggleSearchSuggestionsList();
+  };
+
+  return (
+    <View style={styles.searchBar}>
+      {_renderMenuButton()}
+      {_renderSearchBar()}
+      {_renderSearchButton()}
     </View>
   );
 };
@@ -124,6 +153,9 @@ const styles = StyleSheet.create({
     borderColor: Colors.hotspotColor,
     borderRadius: 30,
     justifyContent: 'space-between'
+  },
+  iconContainer: {
+    paddingHorizontal: 10
   },
   searchIcon: {
     width: 30,

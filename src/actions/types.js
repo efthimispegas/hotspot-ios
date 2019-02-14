@@ -20,8 +20,7 @@ export const LOGOUT_ERROR = 'LOGOUT_ERROR';
 //location
 //--------------------
 export const UPDATE_LOCATION = 'UPDATE_LOCATION';
-export const UPDATE_LOCATION_SUCCESS = 'UPDATE_LOCATION_SUCCESS';
-export const UPDATE_LOCATION_ERROR = 'UPDATE_LOCATION_ERROR';
+export const SHOW_MY_LOCATION = 'SHOW_MY_LOCATION';
 
 //--------------------
 //search
@@ -32,3 +31,9 @@ export const GET_SEARCH_SUGGESTIONS = 'GET_SEARCH_SUGGESTIONS';
 export const GET_SELECTED_VENUE = 'GET_SELECTED_VENUE';
 export const GET_GENERAL_VENUES = 'GET_GENERAL_VENUES';
 export const TOGGLE_SEARCH_LIST = 'TOGGLE_SEARCH_LIST';
+
+//--------------------
+//menu
+//--------------------
+export const GET_RECOMMENDATIONS = 'GET_RECOMMENDATIONS';
+export const CLEAR_RECOMMENDATIONS = 'CLEAR_RECOMMENDATIONS';

@@ -21,3 +21,16 @@ export const venueQuery = () => {
     v: 20190120
   });
 };
+
+export const recommendationQuery = ({ latitude, longitude }, lookingFor) => {
+  return queryString({
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    v: 20180323,
+    ll: `${latitude},${longitude}`,
+    section: lookingFor,
+    limit: 10,
+    openNow: 1,
+    venuePhotos: 1
+  });
+};

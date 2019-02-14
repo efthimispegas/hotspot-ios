@@ -37,12 +37,12 @@ class FoursquareApi {
     const res = await fetch(endpoint)
       .then(fetch.throwErrors)
       .then(res => {
-        console.log('===============');
-        console.log('type:', typeof res);
-        console.log('===============');
         return res.json();
       })
       .then(data => {
+        console.log('===============');
+        console.log('[Foursquare]:', data);
+        console.log('===============');
         if (data.response.venue) {
           return {
             venue: data.response.venue
@@ -53,6 +53,37 @@ class FoursquareApi {
         throw new Error(error);
       });
     return res.venue;
+  }
+
+  async fetchRecommendations(endpoint) {
+    const result = await fetch(endpoint)
+      .then(fetch.throwErrors)
+      .then(res => {
+        return res.json();
+      })
+      .then(data => {
+        console.log('===============');
+        console.log('[Foursquare]:', data);
+        console.log('===============');
+        if (data.response.groups) {
+          return {
+            recommendations: data.response.groups.reduce(
+              (all, group) => all.concat(group ? group.items : []),
+              []
+            ),
+            headerLocation: data.response.headerLocation,
+            last4sqCall: new Date()
+          };
+        }
+      })
+      .catch(err => {
+        Alert.alert(
+          'Error!',
+          'We could not connect to the network. Please, try again. If you think this is not a network problem contact us.'
+        );
+        throw new Error(err);
+      });
+    return result;
   }
 }
 
