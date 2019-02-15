@@ -20,7 +20,7 @@ export default class CustomNavBar extends React.Component {
     if (Actions.currentScene === 'add') {
       return (
         <TouchableOpacity
-          onPress={Actions.pop}
+          onPress={this.handleCancel}
           style={[styles.navBarItem, { paddingLeft: 15 }]}
         >
           <Text style={styles.buttontext}>Cancel</Text>
@@ -54,6 +54,11 @@ export default class CustomNavBar extends React.Component {
       </View>
     );
   }
+
+  handleCancel = () => {
+    //do some canceling and then
+    Actions.pop();
+  };
 
   render() {
     return (

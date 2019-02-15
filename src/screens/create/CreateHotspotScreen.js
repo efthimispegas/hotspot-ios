@@ -13,6 +13,7 @@ import {
 import { Permissions, ImagePicker, Camera } from 'expo';
 
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import { Colors, Button, Spinner } from '../../common';
 import CreateHotspotForm from './components/CreateHotspotForm';
@@ -195,11 +196,16 @@ class CreateHotspotScreen extends Component {
   }
 }
 
-const mapStateToProps = ({ reducer }) => ({ data } = reducer);
+const mapStateToProps = store => {
+  return {
+    region: store.location.region,
+    hotspots: null //<------------------- fill them
+  };
+};
 
 const dispatchStateToProps = dispatch => {
   return {
-    createHotspot: dispatch => dispatch(createHotspot())
+    // createHotspot: bindActionCreators() <-------------
   };
 };
 

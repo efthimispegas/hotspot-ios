@@ -37,3 +37,10 @@ export const TOGGLE_SEARCH_LIST = 'TOGGLE_SEARCH_LIST';
 //--------------------
 export const GET_RECOMMENDATIONS = 'GET_RECOMMENDATIONS';
 export const CLEAR_RECOMMENDATIONS = 'CLEAR_RECOMMENDATIONS';
+
+//--------------------
+//hotspots
+//--------------------
+export const LOAD_HOTSPOTS = 'LOAD_HOTSPOTS';
+export const CREATE_HOTSPOT = 'CREATE_HOTSPOT';
+export const CANCEL_HOTSPOT = 'CANCEL_HOTSPOT';

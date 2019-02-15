@@ -24,6 +24,7 @@ import ShowMyLocation from './ShowMyLocation';
 
 const MapContainer = ({
   input,
+  hotspots,
   suggestions,
   recommendations,
   getSearchInput,
@@ -88,7 +89,7 @@ const MapContainer = ({
           style={styles.mapContainer}
         >
           {/* Here we map the hotspots */}
-          {markers.map((marker, id) => {
+          {hotspots.map((marker, id) => {
             return (
               <Marker
                 key={id}
