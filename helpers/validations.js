@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const validateInput = (input, requiredLength) => {
   let error = '';
 
@@ -55,4 +57,21 @@ const isButtonDisabled = state => {
   return disabled;
 };
 
-export { validateInput, validateEmail, validateFullName, isButtonDisabled };
+const validateCreationForm = fields => {
+  const { message } = fields;
+  if (!message || message.length < 1) {
+    return "Message field can't be empty 🤨";
+  }
+  if (message.length < 10) {
+    return 'Message needs to be at least 10 characters long 😁';
+  }
+  return false;
+};
+
+export {
+  validateInput,
+  validateEmail,
+  validateFullName,
+  isButtonDisabled,
+  validateCreationForm
+};

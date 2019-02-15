@@ -99,7 +99,7 @@ export const AppNavigator = Actions.create(
                   activeBackgroundColor="rgba(255, 187, 51, 0.794)"
                   inactiveBackgroundColor={Colors.whiteColor}
                   activeTintColor={Colors.whiteColor}
-                  tabStyle={{ shadowOpacity: 2, shadowRadius: 1 }}
+                  tabStyle={{ shadowOpacity: 1, shadowRadius: 1 }}
                 >
                   <Scene
                     key="login"
@@ -156,8 +156,10 @@ export const AppNavigator = Actions.create(
               <Scene
                 key="add"
                 swipeEnabled={false}
+                gesturesEnabled={false}
+                back
                 hideTabBar
-                hideNavBar={false}
+                hideNavBar
                 component={CreateHotspotScreen}
                 title="Add new hotspot"
               />

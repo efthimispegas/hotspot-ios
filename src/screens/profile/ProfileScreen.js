@@ -44,7 +44,7 @@ class ProfileScreen extends Component {
             <View style={styles.picture}>
               <Image
                 source={require('../../../assets/icons/user.png')}
-                style={{ width: 100, height: 100 }}
+                style={{ width: 60, height: 60 }}
               />
             </View>
             <View style={styles.settings}>

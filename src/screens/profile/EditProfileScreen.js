@@ -11,7 +11,7 @@ import {
   Alert
 } from 'react-native';
 import { List, ListItem, Left, Button, Body, Right, Picker } from 'native-base';
-import { Permissions, ImagePicker, Camera, Location } from 'expo';
+import { Permissions, ImagePicker, Camera } from 'expo';
 import { FontAwesome, Ionicons, Foundation } from '@expo/vector-icons';
 import DatePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
