@@ -1,63 +1,63 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, CameraRoll } from 'react-native';
-import { ImagePicker, Permissions, Icon } from 'expo';
-
-import { Colors, Button } from '../../common';
+import React from 'react';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
+import { Permissions } from 'expo-permissions';
+import { Camera } from 'expo-camera';
+import { Icon } from 'expo';
+import {
+  launchCameraAsync,
+  launchImageLibraryAsync
+} from 'expo/build/ImagePicker/ImagePicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Button } from '../../common';
 
-class TestScreen extends Component {
+class CameraExample extends React.Component {
   state = {
-    picture: null
+    hasCameraPermission: null,
+    type: Camera.Constants.Type.back,
+    hasCameraRollPermission: null,
+    uri: null
   };
 
-  _selectPicture = async () => {
-    await Permissions.getAsync(Permissions.CAMERA, Permissions.CAMERA_ROLL);
-    const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
+  async componentWillMount() {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+  }
+  takePicture = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    const { cancelled, uri } = await launchCameraAsync({
+      allowsEditing: false
+    });
+    this.setState({ uri });
+  };
+
+  openGallery = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    console.log(status);
+    const { cancelled, uri } = await launchImageLibraryAsync({
       aspect: 1,
       allowsEditing: true
     });
-    this.setState({ picture: uri });
-  };
-
-  _takePicure = async () => {
-    await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    const { cancelled, uri } = await ImagePicker.launchCameraAsync({
-      allowsEditing: false
-    });
+    console.log(uri);
     this.setState({
-      picture: uri
+      uri
     });
-  };
-
-  renderImage = () => {
-    if (this.state.picture) {
-      return <Image source={{ uri: this.state.picture }} />;
-    }
-    return <Ionicons name="ios-person" size={32} />;
   };
 
   render() {
     return (
-      <View style={styles.container}>
-        {this.renderImage()}
-        <View style={styles.row}>
-          <Button onPress={this._selectPicture} name="Gallery" />
-          <Button onPress={this._takePicure} name="Camera" />
-        </View>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        {this.state.uri === null ? (
+          <Ionicons name="ios-person" size={40} />
+        ) : (
+          <Image
+            source={{ uri: this.state.uri }}
+            style={{ width: 60, height: 60, borderRadius: 30 }}
+          />
+        )}
+        <Button name="Gallery" onPress={this.openGallery} />
+        <Button name="Camera" onPress={this.takePicture} />
       </View>
     );
   }
 }
-export default TestScreen;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.faintHotspotColor
-  },
-  row: {
-    margin: 20
-  }
-});
+export default CameraExample;

@@ -45,13 +45,10 @@ class EditProfileScreen extends Component {
     this._getUser();
   }
 
-  _selectPicture = async () => {
+  openCameraRoll = async () => {
     const { status, permissions } = await Permissions.askAsync(
       Permissions.CAMERA_ROLL
     );
-    console.log('===============');
-    console.log('status:', status);
-    console.log('===============');
     if (status === 'denied') {
       alert('Hotspot needs permissions to access Camera Roll');
       return;
@@ -63,7 +60,7 @@ class EditProfileScreen extends Component {
     this.setState({ picture: uri });
   };
 
-  _takePicure = async () => {
+  openCamera = async () => {
     const { status, permissions } = await Permissions.askAsync(
       Permissions.CAMERA_ROLL,
       Permissions.CAMERA
@@ -85,14 +82,14 @@ class EditProfileScreen extends Component {
       return (
         <Image
           source={{ uri: this.state.picture }}
-          style={{ width: 100, height: 100, BorderRadius: 50 }}
+          style={{ width: 60, height: 60, borderRadius: 30 }}
         />
       );
     }
     return (
       <Image
         source={require('../../../assets/icons/user.png')}
-        style={{ width: 100, height: 100 }}
+        style={{ width: 60, height: 60 }}
       />
     );
   };
@@ -179,8 +176,8 @@ class EditProfileScreen extends Component {
                     'Set a Profile picture',
                     'Choose a photo from Camera Roll, or take a new one.',
                     [
-                      { text: 'Camera Roll', onPress: this._selectPicture },
-                      { text: 'Take picture', onPress: this._takePicure }
+                      { text: 'Camera Roll', onPress: this.openCameraRoll },
+                      { text: 'Take picture', onPress: this.openCamera }
                     ]
                   )
                 }
