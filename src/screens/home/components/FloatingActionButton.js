@@ -34,7 +34,7 @@ class FloatingActionButton extends Component {
         >
           <ActionButton.Item
             buttonColor={Colors.hotspotColor}
-            onPress={() => Actions.profile({ type: 'replace' })}
+            onPress={() => Actions.profile()}
             size={58}
           >
             <Image

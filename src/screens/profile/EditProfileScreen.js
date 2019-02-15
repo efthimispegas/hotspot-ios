@@ -11,6 +11,7 @@ import {
   Alert
 } from 'react-native';
 import { List, ListItem, Left, Button, Body, Right, Picker } from 'native-base';
+import { Permissions, ImagePicker, Camera, Location } from 'expo';
 import { FontAwesome, Ionicons, Foundation } from '@expo/vector-icons';
 import DatePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
@@ -36,12 +37,65 @@ class EditProfileScreen extends Component {
       birthday: null
     },
     picker: 'key0',
-    isDatePickerVisible: false
+    isDatePickerVisible: false,
+    picture: null
   };
 
   componentDidMount() {
     this._getUser();
   }
+
+  _selectPicture = async () => {
+    const { status, permissions } = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL
+    );
+    console.log('===============');
+    console.log('status:', status);
+    console.log('===============');
+    if (status === 'denied') {
+      alert('Hotspot needs permissions to access Camera Roll');
+      return;
+    }
+    const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
+      aspect: 1,
+      allowsEditing: true
+    });
+    this.setState({ picture: uri });
+  };
+
+  _takePicure = async () => {
+    const { status, permissions } = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL,
+      Permissions.CAMERA
+    );
+    if (status === 'denied') {
+      alert('Hotspot needs permissions to access your Camera');
+      return;
+    }
+    const { cancelled, uri } = await ImagePicker.launchCameraAsync({
+      allowsEditing: false
+    });
+    this.setState({
+      picture: uri
+    });
+  };
+
+  renderImage = () => {
+    if (this.state.picture) {
+      return (
+        <Image
+          source={{ uri: this.state.picture }}
+          style={{ width: 100, height: 100, BorderRadius: 50 }}
+        />
+      );
+    }
+    return (
+      <Image
+        source={require('../../../assets/icons/user.png')}
+        style={{ width: 100, height: 100 }}
+      />
+    );
+  };
 
   _getUser = async () => {
     //hardcode id for now
@@ -119,11 +173,19 @@ class EditProfileScreen extends Component {
         <KeyboardAwareScrollView>
           <View style={styles.container}>
             <View style={styles.picture}>
-              <TouchableOpacity onPress={() => console.log('imagepicker')}>
-                <Image
-                  source={require('../../../assets/icons/user.png')}
-                  style={{ width: 100, height: 100 }}
-                />
+              <TouchableOpacity
+                onPress={() =>
+                  Alert.alert(
+                    'Set a Profile picture',
+                    'Choose a photo from Camera Roll, or take a new one.',
+                    [
+                      { text: 'Camera Roll', onPress: this._selectPicture },
+                      { text: 'Take picture', onPress: this._takePicure }
+                    ]
+                  )
+                }
+              >
+                {this.renderImage()}
               </TouchableOpacity>
             </View>
             <View style={styles.settings}>

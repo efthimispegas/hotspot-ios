@@ -91,7 +91,7 @@ const SignUpForm = ({
                 editable={false}
                 placeholder={_checkBirthday()}
                 style={styles.input}
-                value={_checkBirthday}
+                value={() => _checkBirthday()}
               />
             </NativeButton>
             <TouchableOpacity style={[styles.input, { paddingVertical: 0 }]}>

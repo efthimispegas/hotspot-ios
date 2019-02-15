@@ -34,6 +34,7 @@ class LoginScreen extends Component {
   };
 
   _handleSubmit = () => {
+    this.setState({ isLoading: false });
     Actions.main({ type: 'replace' });
   };
   render() {
@@ -71,9 +72,8 @@ class LoginScreen extends Component {
         'Access Denied!',
         'Hotspot requires permission to use your current location'
       );
-    } else {
       this.setState({ isLoading: false });
-
+    } else {
       //then submit form and store the user's current location
       this._handleSubmit();
     }

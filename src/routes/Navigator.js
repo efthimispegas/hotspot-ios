@@ -124,89 +124,82 @@ export const AppNavigator = Actions.create(
               </Scene>
             </Scene>
             <Stack key="main">
-              <Scene
-                key="home"
-                swipeEnabled={false}
-                hideTabBar={false}
-                hideNavBar={true}
-                headerLayoutPreset="center"
+              <Drawer
+                key="drawer"
+                hideNavBar
+                contentComponent={DrawerContent}
+                drawerIcon={
+                  <Image source={require('../../assets/icons/location.png')} />
+                }
+                drawerPosition="left"
+                drawerWidth={260}
+                onExit={() => {}}
+                onEnter={() => {}}
               >
-                <Drawer
-                  key="drawer"
-                  hideNavBar
-                  contentComponent={DrawerContent}
-                  drawerIcon={
-                    <Image
-                      source={require('../../assets/icons/location.png')}
-                    />
-                  }
-                  drawerPosition="left"
-                  drawerWidth={260}
-                  onExit={() => {}}
-                  onEnter={() => {}}
-                >
-                  <Scene
-                    key="map"
-                    type={ActionConst.RESET}
-                    swipeEnabled={false}
-                    navTransparent={true}
-                    hideNavBar={true}
-                    back={false}
-                    title="" //I dont want it to show the title
-                    component={HomeScreen}
-                  />
-                </Drawer>
                 <Scene
-                  key="ar"
-                  swipeEnabled={false}
-                  hideTabBar
-                  component={ARScreen}
-                  title="AR Camera"
-                />
-                <Scene
-                  key="add"
-                  swipeEnabled={false}
-                  hideTabBar
-                  hideNavBar={false}
-                  component={CreateHotspotScreen}
-                  title="Add new hotspot"
-                />
-                <Scene
-                  key="pm"
-                  swipeEnabled={false}
-                  hideTabBar
-                  hideNavBar={false}
-                  component={MessageScreen}
-                  title="Messages"
-                />
-
-                <Scene
-                  key="profile"
-                  title="Profile"
-                  hideTabBar
-                  hideNavBar
-                  component={ProfileScreen}
-                />
-
-                <Scene
-                  key="edit"
+                  key="map"
                   gesturesEnabled={false}
-                  drawerLockMode="locked-closed"
-                  title="Edit your Profile"
-                  hideTabBar
-                  hideNavBar
                   swipeEnabled={false}
-                  component={EditProfileScreen}
+                  navTransparent={true}
+                  hideNavBar={true}
+                  back={false}
+                  component={HomeScreen}
                 />
+              </Drawer>
+              <Scene
+                key="ar"
+                swipeEnabled={false}
+                hideTabBar
+                component={ARScreen}
+                title="AR Camera"
+              />
+              <Scene
+                key="add"
+                swipeEnabled={false}
+                hideTabBar
+                hideNavBar={false}
+                component={CreateHotspotScreen}
+                title="Add new hotspot"
+              />
+              <Scene
+                key="pm"
+                swipeEnabled={false}
+                hideTabBar
+                hideNavBar={false}
+                component={MessageScreen}
+                title="Messages"
+              />
 
-                <Scene
-                  key="settings"
-                  swipeEnabled={false}
-                  hideTabBar
-                  component={SettingsScreen}
-                  title="Settings"
-                />
-              </Scene>
+              <Scene
+                key="profile"
+                title="Profile"
+                hideTabBar
+                hideNavBar
+                back={true}
+                swipeEnabled={true}
+                gesturesEnabled={true}
+                component={ProfileScreen}
+                type={ActionConst.PUSH}
+              />
+
+              <Scene
+                key="edit"
+                gesturesEnabled={false}
+                title="Edit your Profile"
+                hideTabBar
+                hideNavBar
+                swipeEnabled={false}
+                component={EditProfileScreen}
+                type={ActionConst.PUSH}
+              />
+
+              <Scene
+                key="settings"
+                swipeEnabled={false}
+                hideTabBar
+                component={SettingsScreen}
+                title="Settings"
+              />
             </Stack>
           </Stack>
         </Lightbox>

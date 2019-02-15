@@ -91,6 +91,7 @@ class SignUpScreen extends Component {
   };
 
   _handleSubmit = () => {
+    this.setState({ isLoading: false });
     console.log('===============');
     console.log('[SignUpScreen] new user:', this.state);
     console.log('===============');
@@ -129,6 +130,7 @@ class SignUpScreen extends Component {
         'Hmm, houston we have a problem!',
         'Looks like you have Location Services disabled. To continue you must enable it.'
       );
+      this.setState({ isLoading: false });
     } else {
       this._askLocationPermissionsAsync();
     }
@@ -144,9 +146,8 @@ class SignUpScreen extends Component {
         'Access Denied!',
         'Hotspot requires permission to use your current location'
       );
-    } else {
       this.setState({ isLoading: false });
-
+    } else {
       //then submit form and store the user's current location
       this._handleSubmit();
     }

@@ -59,7 +59,7 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <View style={{ flex: 1 }}>
-          {/* <ProfileScreen /> */}
+          {/* <TestScreen /> */}
           <ReduxRouter navigator={ReduxNavigator} />
         </View>
       </Provider>
