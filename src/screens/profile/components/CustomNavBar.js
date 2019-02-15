@@ -57,7 +57,7 @@ export default class CustomNavBar extends React.Component {
   }
 
   _renderRight() {
-    if (Actions.currentScene === 'profile2') {
+    if (Actions.currentScene === 'profile') {
       return (
         <TouchableOpacity
           onPress={() => Actions.edit()}

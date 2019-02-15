@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   scene: {
-    backgroundColor: '#F5FCFF',
+    backgroundColor: Colors.hotspotColor,
     shadowOpacity: 2,
     shadowRadius: 3
   },
@@ -99,6 +99,7 @@ export const AppNavigator = Actions.create(
                   activeBackgroundColor="rgba(255, 187, 51, 0.794)"
                   inactiveBackgroundColor={Colors.whiteColor}
                   activeTintColor={Colors.whiteColor}
+                  tabStyle={{ shadowOpacity: 2, shadowRadius: 1 }}
                 >
                   <Scene
                     key="login"
@@ -184,19 +185,18 @@ export const AppNavigator = Actions.create(
                   title="Profile"
                   hideTabBar
                   hideNavBar
-                  // navBar={CustomNavBar}
                   component={ProfileScreen}
                 />
 
                 <Scene
                   key="edit"
+                  gesturesEnabled={false}
+                  drawerLockMode="locked-closed"
                   title="Edit your Profile"
                   hideTabBar
                   hideNavBar
                   swipeEnabled={false}
-                  // navBar={CustomNavBar}
                   component={EditProfileScreen}
-                  type={ActionConst.RESET}
                 />
 
                 <Scene

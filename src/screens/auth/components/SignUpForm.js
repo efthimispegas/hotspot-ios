@@ -6,8 +6,14 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
-  Image
+  Image,
+  TouchableOpacity,
+  Dimensions
 } from 'react-native';
+import { Button as NativeButton, Picker } from 'native-base';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import moment from 'moment';
+import DatePicker from 'react-native-modal-datetime-picker';
 
 import { Colors, ButtonWithIcon, Button } from '../../../common';
 
@@ -18,14 +24,15 @@ const SignUpForm = ({
   _handleChangeUsername,
   _handleChangePassword1,
   _handleChangePassword2,
+  _handleDatePicked,
+  _showDatePicker,
+  _hideDatePicker,
+  _checkBirthday,
+  _checkGender,
   _handleDone
 }) => {
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
+    <KeyboardAwareScrollView>
       <View style={styles.mainContainer}>
         <View style={styles.formContainer}>
           <View>
@@ -47,14 +54,6 @@ const SignUpForm = ({
             />
 
             <TextInput
-              placeholder="City"
-              selectionColor={Colors.hotspotColor}
-              onChangeText={city => _handleChangeCity(city)}
-              value={state.city}
-              style={styles.input}
-            />
-
-            <TextInput
               placeholder="Password"
               selectionColor={Colors.hotspotColor}
               onChangeText={password1 => _handleChangePassword1(password1)}
@@ -71,6 +70,61 @@ const SignUpForm = ({
               secureTextEntry={true}
               style={styles.input}
             />
+
+            <TextInput
+              placeholder="City"
+              selectionColor={Colors.hotspotColor}
+              onChangeText={city => _handleChangeCity(city)}
+              value={state.city}
+              style={styles.input}
+            />
+
+            <NativeButton
+              transparent
+              onPress={_showDatePicker}
+              style={[
+                styles.input,
+                { width: Dimensions.get('window').width - 40 }
+              ]}
+            >
+              <TextInput
+                editable={false}
+                placeholder={_checkBirthday()}
+                style={styles.input}
+                value={_checkBirthday}
+              />
+            </NativeButton>
+            <TouchableOpacity style={[styles.input, { paddingVertical: 0 }]}>
+              <Picker
+                mode="dropdown"
+                placeholder="Select you gender"
+                textStyle={{
+                  flex: 1,
+                  color: Colors.hotspotColor,
+                  fontFamily: 'montserrat'
+                }}
+                itemTextStyle={{
+                  color: Colors.hotspotColor,
+                  fontFamily: 'montserrat'
+                }}
+                headerStyle={{
+                  backgroundColor: Colors.hotspotColor,
+                  fontFamily: 'montserrat'
+                }}
+                headerBackButtonText="Cancel"
+                headerBackButtonTextStyle={{ color: Colors.whiteColor }}
+                headerTitleStyle={{
+                  color: Colors.whiteColor,
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }}
+                selectedValue={state.picker}
+                onValueChange={_checkGender}
+              >
+                <Picker.Item label="male" value="key0" />
+                <Picker.Item label="female" value="key1" />
+              </Picker>
+            </TouchableOpacity>
 
             <View style={styles.formButton}>
               <Button
@@ -106,8 +160,26 @@ const SignUpForm = ({
             />
           </View>
         </View>
+        <DatePicker
+          mode="date"
+          isVisible={state.isDatePickerVisible}
+          onCancel={_hideDatePicker}
+          cancelTextStyle={{ color: Colors.redColor, fontWeight: '400' }}
+          onConfirm={_handleDatePicked}
+          titleIOS="Choose your birthday"
+          titleStyle={{ color: Colors.hotspotColor, fontSize: 16 }}
+          confirmTextIOS="Set Birthday"
+          confirmTextStyle={{
+            flex: 1,
+            justifyContent: 'center',
+            paddingTop: 15,
+            backgroundColor: Colors.hotspotColor,
+            color: Colors.whiteColor,
+            fontWeight: '500'
+          }}
+        />
       </View>
-    </TouchableWithoutFeedback>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -116,7 +188,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.hotspotColor,
     paddingHorizontal: 20,
-    paddingTop: 70
+    paddingTop: 50
   },
   imageContainer: {
     width: '21%',

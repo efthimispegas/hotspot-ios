@@ -8,13 +8,13 @@ import {
   TouchableOpacity,
   TextInput,
   Keyboard,
-  Alert,
-  KeyboardAvoidingView
+  Alert
 } from 'react-native';
 import { List, ListItem, Left, Button, Body, Right, Picker } from 'native-base';
 import { FontAwesome, Ionicons, Foundation } from '@expo/vector-icons';
 import DatePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { User } from '../../api';
 import { Colors, Spinner } from '../../common';
@@ -116,286 +116,291 @@ class EditProfileScreen extends Component {
     return (
       <View>
         <CustomNavBar title="Edit your profile" />
-        <KeyboardAvoidingView style={styles.container} behavior="padding">
-          {/* <ScrollView onScroll={() => Keyboard.dismiss()}> */}
-          <View style={styles.picture}>
-            <TouchableOpacity onPress={() => console.log('imagepicker')}>
-              <Image
-                source={require('../../../assets/icons/user.png')}
-                style={{ width: 100, height: 100 }}
-              />
-            </TouchableOpacity>
+        <KeyboardAwareScrollView>
+          <View style={styles.container}>
+            <View style={styles.picture}>
+              <TouchableOpacity onPress={() => console.log('imagepicker')}>
+                <Image
+                  source={require('../../../assets/icons/user.png')}
+                  style={{ width: 100, height: 100 }}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.settings}>
+              <List>
+                <ListItem itemDivider>
+                  <Text style={styles.separator}>ACCOUNT INFO</Text>
+                </ListItem>
+                <ListItem icon>
+                  <Left>
+                    <Button
+                      active={false}
+                      style={{ backgroundColor: Colors.hotspotColor }}
+                    >
+                      <FontAwesome
+                        name="transgender"
+                        size={24}
+                        color={Colors.whiteColor}
+                      />
+                    </Button>
+                  </Left>
+                  <Body>
+                    <Text style={styles.listItem}>Gender</Text>
+                  </Body>
+                  <Right>
+                    <Picker
+                      mode="dropdown"
+                      placeholder="Select you gender"
+                      textStyle={{ color: Colors.lightGreyColor }}
+                      itemTextStyle={{ color: Colors.hotspotColor }}
+                      headerStyle={{ backgroundColor: Colors.hotspotColor }}
+                      headerBackButtonText="Cancel"
+                      headerBackButtonTextStyle={{ color: Colors.whiteColor }}
+                      headerTitleStyle={{
+                        color: Colors.whiteColor,
+                        fontSize: 20,
+                        fontWeight: 'bold'
+                      }}
+                      selectedValue={this.state.picker}
+                      onValueChange={value =>
+                        this.setState({
+                          ...this.state,
+                          nextUser: {
+                            ...this.state.nextUser,
+                            gender: value === 'key0' ? 'male' : 'female'
+                          },
+                          picker: value
+                        })
+                      }
+                    >
+                      <Picker.Item label="male" value="key0" />
+                      <Picker.Item label="female" value="key1" />
+                    </Picker>
+                  </Right>
+                </ListItem>
+                <ListItem icon>
+                  <Left>
+                    <Button
+                      active={false}
+                      style={{ backgroundColor: Colors.hotspotColor }}
+                    >
+                      <Ionicons
+                        name="ios-person"
+                        size={24}
+                        color={Colors.whiteColor}
+                      />
+                    </Button>
+                  </Left>
+                  <Body>
+                    <Text style={styles.listItem}>Username</Text>
+                  </Body>
+                  <Right>
+                    <TextInput
+                      textContentType="username"
+                      placeholder={prevvUser.username}
+                      selectionColor={Colors.hotspotColor}
+                      value={this.state.nextUser.username}
+                      onChangeText={username =>
+                        this.setState({
+                          ...this.state,
+                          nextUser: { ...this.state.nextUser, username }
+                        })
+                      }
+                      style={styles.input}
+                    />
+                  </Right>
+                </ListItem>
+                <ListItem icon>
+                  <Left>
+                    <Button
+                      active={false}
+                      style={{ backgroundColor: Colors.hotspotColor }}
+                    >
+                      <Foundation
+                        name="at-sign"
+                        size={24}
+                        color={Colors.whiteColor}
+                      />
+                    </Button>
+                  </Left>
+                  <Body>
+                    <Text style={styles.listItem}>New email</Text>
+                  </Body>
+                  <Right>
+                    <TextInput
+                      keyboardType="email-address"
+                      placeholder="Your new email"
+                      selectionColor={Colors.hotspotColor}
+                      value={this.state.nextUser.email}
+                      style={styles.input}
+                      onChangeText={email =>
+                        this.setState({
+                          ...this.state,
+                          nextUser: { ...this.state.nextUser, email }
+                        })
+                      }
+                    />
+                  </Right>
+                </ListItem>
+                <ListItem icon>
+                  <Left>
+                    <Button
+                      active={false}
+                      style={{ backgroundColor: Colors.hotspotColor }}
+                    >
+                      <Ionicons
+                        name="ios-lock"
+                        size={24}
+                        color={Colors.whiteColor}
+                      />
+                    </Button>
+                  </Left>
+                  <Body>
+                    <Text style={styles.listItem}>New password</Text>
+                  </Body>
+                  <Right>
+                    <TextInput
+                      secureTextEntry={true}
+                      placeholder="supersecretpassword"
+                      selectionColor={Colors.hotspotColor}
+                      value={this.state.nextUser.password}
+                      style={styles.input}
+                      onChangeText={password =>
+                        this.setState({
+                          ...this.state,
+                          nextUser: { ...this.state.nextUser, password }
+                        })
+                      }
+                    />
+                  </Right>
+                </ListItem>
+                <ListItem icon>
+                  <Left />
+                  <Body>
+                    <Text style={styles.listItem} />
+                  </Body>
+                  <Right>
+                    <TextInput
+                      secureTextEntry={true}
+                      placeholder="Confirm password"
+                      selectionColor={Colors.hotspotColor}
+                      value={this.state.nextUser.confirmPassword}
+                      style={styles.input}
+                      onChangeText={confirmPassword =>
+                        this.setState({
+                          ...this.state,
+                          nextUser: { ...this.state.nextUser, confirmPassword }
+                        })
+                      }
+                      onBlur={this._checkPasswordMatch}
+                    />
+                  </Right>
+                </ListItem>
+                <ListItem icon>
+                  <Left>
+                    <Button
+                      active={false}
+                      style={{ backgroundColor: Colors.hotspotColor }}
+                    >
+                      <Ionicons
+                        name="ios-information-circle-outline"
+                        size={24}
+                        color={Colors.whiteColor}
+                      />
+                    </Button>
+                  </Left>
+                  <Body>
+                    <Text style={styles.listItem}>Full name</Text>
+                  </Body>
+                  <Right>
+                    <TextInput
+                      textContentType="familyName"
+                      placeholder={
+                        prevvUser.fullname
+                          ? prevvUser.fullname
+                          : 'Enter your full name'
+                      }
+                      selectionColor={Colors.hotspotColor}
+                      value={this.state.nextUser.fullname}
+                      style={styles.input}
+                      onChangeText={fullname =>
+                        this.setState({
+                          ...this.state,
+                          nextUser: { ...this.state.nextUser, fullname }
+                        })
+                      }
+                    />
+                  </Right>
+                </ListItem>
+                <ListItem icon>
+                  <Left />
+                  <Body>
+                    <Text style={styles.listItem}>Birthday</Text>
+                  </Body>
+                  <Right>
+                    <Button transparent onPress={this._showDatePicker}>
+                      <Text style={styles.input}>
+                        {this._checkBirthday(prevvUser)}
+                      </Text>
+                    </Button>
+                  </Right>
+                </ListItem>
+                <ListItem icon>
+                  <Left>
+                    <Button
+                      active={false}
+                      style={{ backgroundColor: Colors.hotspotColor }}
+                    >
+                      <Ionicons
+                        name="md-home"
+                        size={24}
+                        color={Colors.whiteColor}
+                      />
+                    </Button>
+                  </Left>
+                  <Body>
+                    <Text style={styles.listItem}>City</Text>
+                  </Body>
+                  <Right>
+                    <TextInput
+                      textContentType="location"
+                      placeholder={prevvUser.city}
+                      selectionColor={Colors.hotspotColor}
+                      value={this.state.nextUser.city}
+                      onChangeText={city =>
+                        this.setState({
+                          ...this.state,
+                          nextUser: { ...this.state.nextUser, city }
+                        })
+                      }
+                      style={styles.input}
+                    />
+                  </Right>
+                </ListItem>
+              </List>
+            </View>
+            <DatePicker
+              mode="date"
+              isVisible={this.state.isDatePickerVisible}
+              onCancel={this._hideDatePicker}
+              cancelTextStyle={{ color: Colors.redColor, fontWeight: '400' }}
+              onConfirm={this._handleDatePicked}
+              titleIOS="Choose your birthday"
+              titleStyle={{ color: Colors.hotspotColor, fontSize: 16 }}
+              confirmTextIOS="Set Birthday"
+              confirmTextStyle={{
+                flex: 1,
+                justifyContent: 'center',
+                paddingTop: 15,
+                backgroundColor: Colors.hotspotColor,
+                color: Colors.whiteColor,
+                fontWeight: '500'
+              }}
+              date={new Date(prevvUser.birthday)}
+            />
+            <View style={{ height: 100 }} />
           </View>
-          <View style={styles.settings}>
-            <List>
-              <ListItem itemDivider>
-                <Text style={styles.separator}>ACCOUNT INFO</Text>
-              </ListItem>
-              <ListItem icon>
-                <Left>
-                  <Button
-                    active={false}
-                    style={{ backgroundColor: Colors.hotspotColor }}
-                  >
-                    <FontAwesome
-                      name="transgender"
-                      size={24}
-                      color={Colors.whiteColor}
-                    />
-                  </Button>
-                </Left>
-                <Body>
-                  <Text style={styles.listItem}>Gender</Text>
-                </Body>
-                <Right>
-                  <Picker
-                    mode="dropdown"
-                    placeholder="Select you gender"
-                    textStyle={{ color: Colors.lightGreyColor }}
-                    itemTextStyle={{ color: Colors.hotspotColor }}
-                    headerStyle={{ backgroundColor: Colors.hotspotColor }}
-                    headerBackButtonText="Cancel"
-                    headerBackButtonTextStyle={{ color: Colors.whiteColor }}
-                    headerTitleStyle={{
-                      color: Colors.whiteColor,
-                      fontSize: 20,
-                      fontWeight: 'bold'
-                    }}
-                    selectedValue={this.state.picker}
-                    onValueChange={value =>
-                      this.setState({
-                        ...this.state,
-                        nextUser: { ...this.state.nextUser, gender: value },
-                        picker: value
-                      })
-                    }
-                  >
-                    <Picker.Item label="male" value="key0" />
-                    <Picker.Item label="female" value="key1" />
-                  </Picker>
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left>
-                  <Button
-                    active={false}
-                    style={{ backgroundColor: Colors.hotspotColor }}
-                  >
-                    <Ionicons
-                      name="ios-person"
-                      size={24}
-                      color={Colors.whiteColor}
-                    />
-                  </Button>
-                </Left>
-                <Body>
-                  <Text style={styles.listItem}>Username</Text>
-                </Body>
-                <Right>
-                  <TextInput
-                    textContentType="username"
-                    placeholder={prevvUser.username}
-                    selectionColor={Colors.hotspotColor}
-                    value={this.state.nextUser.username}
-                    onChangeText={username =>
-                      this.setState({
-                        ...this.state,
-                        nextUser: { ...this.state.nextUser, username }
-                      })
-                    }
-                    style={styles.input}
-                  />
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left>
-                  <Button
-                    active={false}
-                    style={{ backgroundColor: Colors.hotspotColor }}
-                  >
-                    <Foundation
-                      name="at-sign"
-                      size={24}
-                      color={Colors.whiteColor}
-                    />
-                  </Button>
-                </Left>
-                <Body>
-                  <Text style={styles.listItem}>New email</Text>
-                </Body>
-                <Right>
-                  <TextInput
-                    keyboardType="email-address"
-                    placeholder="Your new email"
-                    selectionColor={Colors.hotspotColor}
-                    value={this.state.nextUser.email}
-                    style={styles.input}
-                    onChangeText={email =>
-                      this.setState({
-                        ...this.state,
-                        nextUser: { ...this.state.nextUser, email }
-                      })
-                    }
-                  />
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left>
-                  <Button
-                    active={false}
-                    style={{ backgroundColor: Colors.hotspotColor }}
-                  >
-                    <Ionicons
-                      name="ios-lock"
-                      size={24}
-                      color={Colors.whiteColor}
-                    />
-                  </Button>
-                </Left>
-                <Body>
-                  <Text style={styles.listItem}>New password</Text>
-                </Body>
-                <Right>
-                  <TextInput
-                    secureTextEntry={true}
-                    placeholder="supersecretpassword"
-                    selectionColor={Colors.hotspotColor}
-                    value={this.state.nextUser.password}
-                    style={styles.input}
-                    onChangeText={password =>
-                      this.setState({
-                        ...this.state,
-                        nextUser: { ...this.state.nextUser, password }
-                      })
-                    }
-                  />
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left />
-                <Body>
-                  <Text style={styles.listItem} />
-                </Body>
-                <Right>
-                  <TextInput
-                    secureTextEntry={true}
-                    placeholder="Confirm password"
-                    selectionColor={Colors.hotspotColor}
-                    value={this.state.nextUser.confirmPassword}
-                    style={styles.input}
-                    onChangeText={confirmPassword =>
-                      this.setState({
-                        ...this.state,
-                        nextUser: { ...this.state.nextUser, confirmPassword }
-                      })
-                    }
-                    onBlur={this._checkPasswordMatch}
-                  />
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left>
-                  <Button
-                    active={false}
-                    style={{ backgroundColor: Colors.hotspotColor }}
-                  >
-                    <Ionicons
-                      name="ios-information-circle-outline"
-                      size={24}
-                      color={Colors.whiteColor}
-                    />
-                  </Button>
-                </Left>
-                <Body>
-                  <Text style={styles.listItem}>Full name</Text>
-                </Body>
-                <Right>
-                  <TextInput
-                    textContentType="familyName"
-                    placeholder={
-                      prevvUser.fullname
-                        ? prevvUser.fullname
-                        : 'Enter your full name'
-                    }
-                    selectionColor={Colors.hotspotColor}
-                    value={this.state.nextUser.fullname}
-                    style={styles.input}
-                    onChangeText={fullname =>
-                      this.setState({
-                        ...this.state,
-                        nextUser: { ...this.state.nextUser, fullname }
-                      })
-                    }
-                  />
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left />
-                <Body>
-                  <Text style={styles.listItem}>Birthday</Text>
-                </Body>
-                <Right>
-                  <Button transparent onPress={this._showDatePicker}>
-                    <Text style={styles.input}>
-                      {this._checkBirthday(prevvUser)}
-                    </Text>
-                  </Button>
-                </Right>
-              </ListItem>
-              <ListItem icon>
-                <Left>
-                  <Button
-                    active={false}
-                    style={{ backgroundColor: Colors.hotspotColor }}
-                  >
-                    <Ionicons
-                      name="md-home"
-                      size={24}
-                      color={Colors.whiteColor}
-                    />
-                  </Button>
-                </Left>
-                <Body>
-                  <Text style={styles.listItem}>City</Text>
-                </Body>
-                <Right>
-                  <TextInput
-                    textContentType="location"
-                    placeholder={prevvUser.city}
-                    selectionColor={Colors.hotspotColor}
-                    value={this.state.nextUser.city}
-                    onChangeText={city =>
-                      this.setState({
-                        ...this.state,
-                        nextUser: { ...this.state.nextUser, city }
-                      })
-                    }
-                    style={styles.input}
-                  />
-                </Right>
-              </ListItem>
-            </List>
-          </View>
-          <DatePicker
-            mode="date"
-            isVisible={this.state.isDatePickerVisible}
-            onCancel={this._hideDatePicker}
-            cancelTextStyle={{ color: Colors.redColor, fontWeight: '400' }}
-            onConfirm={this._handleDatePicked}
-            confirmTextIOS="Set Birthday"
-            confirmTextStyle={{
-              flex: 1,
-              justifyContent: 'center',
-              paddingTop: 15,
-              backgroundColor: Colors.hotspotColor,
-              color: Colors.whiteColor,
-              fontWeight: '500'
-            }}
-            date={new Date(prevvUser.birthday)}
-          />
-          <View style={{ height: 100 }} />
-          {/* </ScrollView> */}
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
       </View>
     );
   }

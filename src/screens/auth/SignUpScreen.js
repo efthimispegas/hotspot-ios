@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import Expo, { Permissions, Location, AR } from 'expo';
 import { Actions } from 'react-native-router-flux';
+import moment from 'moment';
 
 import SignUpForm from './components/SignUpForm';
 
@@ -10,9 +11,13 @@ class SignUpScreen extends Component {
     username: '',
     email: '',
     city: '',
+    gender: 'male',
+    picker: 'key0',
+    birthday: null,
     password1: '',
     password2: '',
-    isLoading: false
+    isLoading: false,
+    isDatePickerVisible: false
   };
 
   componentDidMount() {}
@@ -52,7 +57,43 @@ class SignUpScreen extends Component {
     }
   };
 
+  _showDatePicker = () => {
+    this.setState({ isDatePickerVisible: true });
+  };
+
+  _hideDatePicker = () => {
+    this.setState({ isDatePickerVisible: false });
+  };
+
+  _handleDatePicked = birthday => {
+    console.log('===============');
+    console.log('date:', birthday);
+    console.log('===============');
+    this.setState({ birthday });
+    this._hideDatePicker();
+  };
+
+  _checkBirthday(value) {
+    const { birthday } = this.state;
+    if (birthday) {
+      return moment(birthday)
+        .format('DD[-]MM[-]YYYY')
+        .toString();
+    }
+    return 'Choose your birthday';
+  }
+  _checkGender = value => {
+    if (value === 'key0') {
+      this.setState({ picker: value, gender: 'male' });
+      return;
+    }
+    this.setState({ picker: value, gender: 'female' });
+  };
+
   _handleSubmit = () => {
+    console.log('===============');
+    console.log('[SignUpScreen] new user:', this.state);
+    console.log('===============');
     Actions.main({ type: 'replace' });
   };
 
@@ -65,6 +106,11 @@ class SignUpScreen extends Component {
         _handleChangeEmail={this._handleChangeEmail.bind(this)}
         _handleChangeCity={this._handleChangeCity.bind(this)}
         _handleChangeUsername={this._handleChangeUsername.bind(this)}
+        _checkBirthday={this._checkBirthday.bind(this)}
+        _checkGender={this._checkGender.bind(this)}
+        _handleDatePicked={this._handleDatePicked.bind(this)}
+        _showDatePicker={this._showDatePicker.bind(this)}
+        _hideDatePicker={this._hideDatePicker.bind(this)}
         _handleDone={this._handleDone.bind(this)}
       />
     );
