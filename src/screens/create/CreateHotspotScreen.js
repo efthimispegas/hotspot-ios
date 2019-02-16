@@ -17,10 +17,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
-import { Colors, Button, Spinner } from '../../common';
+import { Colors, CustomNavBar } from '../../common';
 import CreateHotspotForm from './components/CreateHotspotForm';
 import { validateCreationForm } from '../../../helpers';
-import CustomNavBar from './components/CustomNavBar';
 
 class CreateHotspotScreen extends Component {
   state = {
@@ -181,14 +180,27 @@ class CreateHotspotScreen extends Component {
     );
   };
 
+  _onCancel = () => {
+    //do some canceling
+    this.props.cancelCreation();
+  };
+
   render() {
     return (
       <View style={{ flex: 1, backgroundColor: Colors.hotspotColor }}>
-        <CustomNavBar title="Add a hotspot" />
+        <CustomNavBar
+          title="Add a hotspot"
+          leftTitle="Cancel"
+          rightTitle="Save"
+          onLeft={this._onCancel}
+          onRight={this._onSave}
+          margins={{ marginLeft: 50, marginRight: 68 }}
+          textColor={{ color: Colors.hotspotColor }}
+          backgroundColor={{ backgroundColor: Colors.whiteColor }}
+        />
         <CreateHotspotForm
           _handleChangeSlider={this._handleChangeSlider.bind(this)}
           _handleChangeMessage={this._handleChangeMessage.bind(this)}
-          _onSave={this._onSave.bind(this)}
           _openCamera={this._openCamera.bind(this)}
           _openCameraRoll={this._openCameraRoll.bind(this)}
           _renderImage={this._renderImage.bind(this)}

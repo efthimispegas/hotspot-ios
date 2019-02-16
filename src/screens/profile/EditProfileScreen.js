@@ -18,8 +18,7 @@ import moment from 'moment';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { User } from '../../api';
-import { Colors, Spinner } from '../../common';
-import CustomNavBar from './components/CustomNavBar';
+import { Colors, Spinner, CustomNavBar } from '../../common';
 
 class EditProfileScreen extends Component {
   //implemet the a-reducer logic -> when i navigate from profile to edit
@@ -166,7 +165,16 @@ class EditProfileScreen extends Component {
     console.log('===============');
     return (
       <View>
-        <CustomNavBar title="Edit your profile" />
+        <CustomNavBar
+          title="Edit your profile"
+          leftTitle="Cancel"
+          rightTitle="Done"
+          onLeft={Actions.pop}
+          onRight={this._handleDone}
+          margins={{ marginLeft: 30, marginRight: 30 }}
+          textColor={{ color: Colors.whiteColor }}
+          backgroundColor={{ backgroundColor: Colors.hotspotColor }}
+        />
         <KeyboardAwareScrollView>
           <View style={styles.container}>
             <View style={styles.picture}>

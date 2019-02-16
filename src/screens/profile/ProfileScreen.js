@@ -4,8 +4,7 @@ import { List, ListItem, Left, Button, Body, Right, Switch } from 'native-base';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 import { User } from '../../api';
-import { Colors, Spinner } from '../../common';
-import CustomNavBar from './components/CustomNavBar';
+import { Colors, Spinner, CustomNavBar } from '../../common';
 
 class ProfileScreen extends Component {
   state = {
@@ -37,8 +36,17 @@ class ProfileScreen extends Component {
     console.log('===============');
     return (
       <View>
-        <CustomNavBar title="Profile" />
-
+        <CustomNavBar />
+        <CustomNavBar
+          title="Profile"
+          leftTitle="Back"
+          rightTitle="Edit"
+          onLeft={Actions.pop}
+          onRight={() => Actions.edit()}
+          margins={{ marginLeft: 50, marginRight: 50 }}
+          textColor={{ color: Colors.whiteColor }}
+          backgroundColor={{ backgroundColor: Colors.hotspotColor }}
+        />
         <ScrollView>
           <View style={styles.container}>
             <View style={styles.picture}>

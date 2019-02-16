@@ -19,12 +19,12 @@ import {
   Button,
   Text
 } from 'native-base';
+import { Actions } from 'react-native-router-flux';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 
 import { data } from './dummy';
-import { Colors } from '../../common';
+import { Colors, CustomNavBar } from '../../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import CustomNavBar from './components/CustomNavBar';
 
 class DetailsScreen extends React.Component {
   state = {
@@ -71,7 +71,16 @@ class DetailsScreen extends React.Component {
 
     return (
       <View style={{ backgroundColor: 'white' }}>
-        <CustomNavBar title="Comments" />
+        <CustomNavBar
+          title="Comments"
+          leftTitle="Back"
+          rightTitle={null}
+          onLeft={Actions.pop}
+          onRight={null}
+          margins={{ marginLeft: 84 }}
+          textColor={{ color: Colors.whiteColor }}
+          backgroundColor={{ backgroundColor: Colors.hotspotColor }}
+        />
         <KeyboardAwareScrollView>
           <List
             rightOpenValue={-75}

@@ -168,7 +168,7 @@ export const AppNavigator = Actions.create(
                 key="pm"
                 gesturesEnabled={false}
                 hideTabBar
-                hideNavBar={false}
+                hideNavBar
                 component={MessageScreen}
                 title="Messages"
               />

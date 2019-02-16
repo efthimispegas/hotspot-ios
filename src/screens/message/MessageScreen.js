@@ -5,7 +5,7 @@ import {
   Image,
   ScrollView,
   ListView,
-  FlatList
+  TouchableOpacity
 } from 'react-native';
 import {
   View,
@@ -18,10 +18,12 @@ import {
   Button,
   Text
 } from 'native-base';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Actions } from 'react-native-router-flux';
 
 import { messages as dummyData } from './dummy';
-import { Colors } from '../../common';
+import { Colors, CustomNavBar } from '../../common';
 
 class MessageScreen extends React.Component {
   state = {
@@ -68,50 +70,73 @@ class MessageScreen extends React.Component {
 
   // }
 
+  //if no messages then need to display "no mesages"
   render() {
     console.log('state', this.state.messageData);
 
     return (
-      // <ScrollView style={styles.container}>
-      <List
-        leftOpenValue={75}
-        rightOpenValue={-75}
-        dataSource={this.ds.cloneWithRows(this.state.messageData)}
-        renderRow={value => (
-          <ListItem avatar>
-            <Left style={styles.avatarContainer}>
-              <Thumbnail source={{ uri: value.avatar }} style={styles.image} />
-            </Left>
-            <Body>
-              <View style={styles.topContainer}>
-                <Text style={styles.name}>{value.name}</Text>
-                <Text note style={styles.time}>
-                  3 mins ago
-                </Text>
+      <View style={{ backgroundColor: Colors.whiteColor }}>
+        <CustomNavBar
+          title="Messages"
+          leftTitle="Back"
+          rightTitle={null}
+          onLeft={Actions.pop}
+          onRight={null}
+          margins={{ marginLeft: 84 }}
+          textColor={{ color: Colors.whiteColor }}
+          backgroundColor={{ backgroundColor: Colors.hotspotColor }}
+        />
+        <KeyboardAwareScrollView>
+          <List
+            leftOpenValue={75}
+            rightOpenValue={-75}
+            dataSource={this.ds.cloneWithRows(this.state.messageData)}
+            renderRow={value => (
+              <ListItem avatar>
+                <Left style={styles.avatarContainer}>
+                  <Thumbnail
+                    source={{ uri: value.avatar }}
+                    style={styles.image}
+                  />
+                </Left>
+                <Body>
+                  <View style={styles.topContainer}>
+                    <Text style={styles.name}>{value.name}</Text>
+                    <Text note style={styles.time}>
+                      3 mins ago
+                    </Text>
+                  </View>
+                  <View style={styles.bottomContainer}>
+                    <Text style={styles.message}>
+                      {value.content.substr(0, 30).concat('...')}
+                    </Text>
+                  </View>
+                </Body>
+              </ListItem>
+            )}
+            renderLeftHiddenRow={data => (
+              <View style={styles.button}>
+                <TouchableOpacity onPress={() => alert(data)}>
+                  <Entypo name="reply" size={32} color={Colors.blackColor} />
+                </TouchableOpacity>
               </View>
-              <View style={styles.bottomContainer}>
-                <Text style={styles.message}>
-                  {value.content.substr(0, 30).concat('...')}
-                </Text>
-              </View>
-            </Body>
-          </ListItem>
-        )}
-        renderLeftHiddenRow={data => (
-          <Button full onPress={() => alert(data)}>
-            <Entypo name="reply" size={32} />
-          </Button>
-        )}
-        renderRightHiddenRow={(data, secId, rowId, rowMap) => (
-          <Button
-            full
-            danger
-            onPress={() => this.deleteRow(secId, rowId, rowMap)}
-          >
-            <Ionicons name="ios-trash" size={32} />
-          </Button>
-        )}
-      />
+            )}
+            renderRightHiddenRow={(data, secId, rowId, rowMap) => (
+              <Button
+                full
+                danger
+                onPress={() => this.deleteRow(secId, rowId, rowMap)}
+              >
+                <Ionicons
+                  name="ios-trash"
+                  size={32}
+                  color={Colors.whiteColor}
+                />
+              </Button>
+            )}
+          />
+        </KeyboardAwareScrollView>
+      </View>
     );
   }
 }
@@ -147,6 +172,12 @@ const styles = StyleSheet.create({
   time: {
     fontSize: 12,
     paddingRight: 10
+  },
+  button: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.hotspotColor
   }
 });
 

@@ -19,7 +19,6 @@ const CreateHotspotForm = ({
   state,
   _handleChangeMessage,
   _handleChangeSlider,
-  _onSave,
   _openCamera,
   _openCameraRoll,
   _renderImage
@@ -90,10 +89,6 @@ const CreateHotspotForm = ({
             </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.buttonContainer}>
-          <Button name="Create" onPress={_onSave} isLoading={state.isLoading} />
-        </View>
       </View>
     </KeyboardAwareScrollView>
   );
@@ -152,13 +147,6 @@ const styles = StyleSheet.create({
     // backgroundColor: Colors.pinkColor,
     paddingHorizontal: 10,
     paddingVertical: 10,
-    justifyContent: 'center'
-  },
-  buttonContainer: {
-    flex: 0.2,
-    // backgroundColor: Colors.greyColor,
-    paddingHorizontal: 10,
-    paddingVertical: 2,
     justifyContent: 'center'
   }
 });
