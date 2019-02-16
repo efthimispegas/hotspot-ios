@@ -1,7 +1,13 @@
-import { LOAD_HOTSPOTS, CREATE_HOTSPOT } from '../actions/types';
+import {
+  LOAD_HOTSPOTS,
+  CREATE_HOTSPOT,
+  CANCEL_HOTSPOT
+} from '../actions/types';
 
 const INITIAL_STATE = {
-  markers: null
+  markers: null,
+  creation: false,
+  cancelled: false
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -12,11 +18,21 @@ export default (state = INITIAL_STATE, action) => {
         markers: action.payload
       };
     case CREATE_HOTSPOT:
+      //handle the creation in HomeScreen
       return {
         ...state,
-        creation: action.paylaod
+        creation: action.payload
+      };
+    case CANCEL_HOTSPOT:
+      //handle the creation in HomeScreen
+      return {
+        ...state,
+        creation: false,
+        cancelled: true
       };
     default:
-      return state;
+      return {
+        ...state
+      };
   }
 };

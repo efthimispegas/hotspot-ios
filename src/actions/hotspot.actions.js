@@ -1,4 +1,4 @@
-import { LOAD_HOTSPOTS, CREATE_HOTSPOT } from './types';
+import { LOAD_HOTSPOTS, CREATE_HOTSPOT, CANCEL_HOTSPOT } from './types';
 import { Hotspot } from '../api';
 
 export function loadHotspots(coords) {
@@ -43,4 +43,8 @@ export function create3DHotspot(hotspot) {
     const response = await Hotspot.createHotspot(hotspot);
     dispatch({ type: CREATE_HOTSPOT, payload: response });
   };
+}
+
+export function cancelCreation() {
+  return { type: CANCEL_HOTSPOT };
 }

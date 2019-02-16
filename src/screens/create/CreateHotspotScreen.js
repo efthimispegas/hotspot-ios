@@ -10,7 +10,8 @@ import {
   Slider,
   Image
 } from 'react-native';
-import { Permissions, ImagePicker, Camera } from 'expo';
+import { Permissions, ImagePicker } from 'expo';
+import { Actions } from 'react-native-router-flux';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -25,7 +26,7 @@ class CreateHotspotScreen extends Component {
   state = {
     message: '',
     value: 15,
-    picture: null,
+    image: null,
     isLoading: false
   };
 
@@ -36,6 +37,24 @@ class CreateHotspotScreen extends Component {
     console.log('===============');
     console.log('[CreateHotspotScreen] props:\n', this.props);
     console.log('===============');
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.creation) {
+      if (nextProps.cancelled) {
+        console.log('===============');
+        console.log('cancelled:', nextProps);
+        console.log('===============');
+        this.setState({
+          message: '',
+          value: 15,
+          image: null,
+          isLoading: false
+        });
+        nextProps.flushImage();
+        Actions.pop();
+      }
+    }
   }
 
   _handleChangeMessage = message => {
@@ -65,7 +84,7 @@ class CreateHotspotScreen extends Component {
     console.log('===============');
     if (!cancelled) {
       this.setState({
-        picture: uri
+        image: uri
       });
       this.props.saveImage(meta);
     }
@@ -86,7 +105,7 @@ class CreateHotspotScreen extends Component {
     console.log('===============');
     if (!cancelled) {
       this.setState({
-        picture: uri
+        image: uri
       });
       this.props.saveImage(meta);
     }
@@ -121,31 +140,18 @@ class CreateHotspotScreen extends Component {
       user: { id: '5c539c398b7c1126bcfd984d', username: 'mikediamond' },
       validity: value
     });
-    // const res = hotspotApi.createHotspot({
-    //   validity: value,
-    //   text: message,
-    //   loc: {
-    //     lat: position.latitude,
-    //     lng: position.longitude
-    //   },
-    //   city,
-    //   country: country ? country : 'Greece',
-    //   user: {
-    //     id: '5c54b1a4231ce64440d8292f',
-    //     username: 'Pot',
-    //     file: ''
-    //   }
-    // });
-    //refresh screen
-    // this.setState({
-    //   lat: '',
-    //   lng: '',
-    //   message: '',
-    //   value: 15
-    // });
-    //redirect after successfull post
-    //this.setState({ isLoading: false })
-    // this.props.navigator.pop();
+    //refresh screen and redirect after successful post
+    this.setState({
+      lat: '',
+      lng: '',
+      message: '',
+      image: null,
+      value: 15,
+      isLoading: false
+    });
+    //flush the data, since they've been sent to the db
+    this.props.flushImage();
+    Actions.pop();
   };
 
   _onSave = () => {
@@ -178,7 +184,7 @@ class CreateHotspotScreen extends Component {
         { text: 'OK', onPress: () => this._postMessage() },
         {
           text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
+          onPress: () => this.props.cancelCreation(),
           style: 'cancel'
         }
       ],
@@ -190,11 +196,7 @@ class CreateHotspotScreen extends Component {
     console.log('===============');
     console.log('[CreateHotspotScreen]:\n', this.props);
     console.log('===============');
-    // if (this.state.isLoading) {
-    //   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    //     <Spinner size="large" />
-    //   </View>;
-    // }
+
     return (
       <View style={{ flex: 1, backgroundColor: Colors.hotspotColor }}>
         <CustomNavBar title="Add a hotspot" />
@@ -215,15 +217,19 @@ class CreateHotspotScreen extends Component {
 const mapStateToProps = store => {
   return {
     region: store.location.region,
-    hotspots: store.hotspots.markers, //<------------------- fill them
-    image: store.gallery.image
+    hotspots: store.hotspots.markers,
+    image: store.gallery.image,
+    creation: store.hotspots.creation,
+    cancelled: store.hotspots.cancelled
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     createHotspot: bindActionCreators(actions.createHotspot, dispatch),
-    saveImage: bindActionCreators(actions.saveImage, dispatch)
+    saveImage: bindActionCreators(actions.saveImage, dispatch),
+    flushImage: bindActionCreators(actions.flushImage, dispatch),
+    cancelCreation: bindActionCreators(actions.cancelCreation, dispatch)
   };
 };
 

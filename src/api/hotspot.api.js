@@ -67,7 +67,7 @@ class HotspotApi {
       const response = await axios.post(`${this.path}/new`, args);
       return response;
     } catch (e) {
-      throw e;
+      throw new Error(e);
     }
   }
 
@@ -77,7 +77,7 @@ class HotspotApi {
       const response = await axios.post(`${this.path}/new`, args);
       return response;
     } catch (e) {
-      throw e;
+      throw new Error(e);
     }
   }
 }

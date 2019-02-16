@@ -82,7 +82,7 @@ class HomeScreen extends Component {
     // console.log('venues to be rendered in next re-render:', venues);
     // console.log('===============');
     let hotspots = [];
-    //here we will check if the hotspots change, to re-render
+    //here we will check if the hotspots change, to re-render -> handle the creation
   }
 
   async _getMarkers() {

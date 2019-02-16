@@ -8,14 +8,15 @@ import {
 } from 'react-native';
 import React from 'react';
 import { Actions } from 'react-native-router-flux';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../../actions';
+
 import { Colors } from '../../../common';
 import { User } from '../../../api';
 
-export default class CustomNavBar extends React.Component {
-  // constructor(props) {
-  //   super(props)
-  // }
-
+class CustomNavBar extends React.Component {
   _renderLeft() {
     if (Actions.currentScene === 'add') {
       return (
@@ -56,8 +57,8 @@ export default class CustomNavBar extends React.Component {
   }
 
   handleCancel = () => {
-    //do some canceling and then
-    Actions.pop();
+    //do some canceling
+    this.props.cancelCreation();
   };
 
   render() {
@@ -95,3 +96,22 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
+
+const mapStoreToProps = store => {
+  return {
+    creation: store.hotspots.creation,
+    cancelled: store.hotspots.cancelled
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    cancelCreation: bindActionCreators(actions.cancelCreation, dispatch),
+    flushImage: bindActionCreators(actions.flushImage, dispatch)
+  };
+};
+
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(CustomNavBar);

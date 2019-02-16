@@ -46,6 +46,7 @@ export const CREATE_HOTSPOT = 'CREATE_HOTSPOT';
 export const CANCEL_HOTSPOT = 'CANCEL_HOTSPOT';
 
 //--------------------
-//hotspots
+//gallery
 //--------------------
 export const SAVE_IMAGE = 'SAVE_IMAGE';
+export const FLUSH_IMAGE = 'FLUSH_IMAGE';

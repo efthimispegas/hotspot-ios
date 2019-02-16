@@ -12,8 +12,22 @@ import { Colors } from '../../../common';
 import { User } from '../../../api';
 
 export default class CustomNavBar extends React.Component {
-  // constructor(props) {
-  //   super(props)
+  // componentWillReceiveProps(nextProps) {
+  //   if (!nextProps.creation) {
+  //     if (nextProps.cancelled) {
+  //       console.log('===============');
+  //       console.log('cancelled:', nextProps);
+  //       console.log('===============');
+  //       this.setState({
+  //         message: '',
+  //         value: 15,
+  //         image: null,
+  //         isLoading: false
+  //       });
+  //       nextProps.flushImage();
+  //       Actions.pop();
+  //     }
+  //   }
   // }
 
   _renderLeft() {
