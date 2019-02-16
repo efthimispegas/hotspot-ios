@@ -11,6 +11,7 @@ import {
   Image,
   Keyboard
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { Colors, Button } from '../../../common';
 
@@ -24,10 +25,7 @@ const CreateHotspotForm = ({
   _renderImage
 }) => {
   return (
-    <TouchableWithoutFeedback
-      style={styles.container}
-      onPress={() => Keyboard.dismiss()}
-    >
+    <KeyboardAwareScrollView style={styles.container}>
       <View style={{ flex: 1 }}>
         <View style={styles.messageContainer}>
           <View style={[styles.titleBox, { marginBottom: 20 }]}>
@@ -97,7 +95,7 @@ const CreateHotspotForm = ({
           <Button name="Create" onPress={_onSave} isLoading={state.isLoading} />
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -131,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#fff',
-    paddingVertical: 7,
+    paddingVertical: 15,
     backgroundColor: Colors.whiteColor
   },
   text: {

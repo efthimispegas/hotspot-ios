@@ -44,3 +44,8 @@ export const CLEAR_RECOMMENDATIONS = 'CLEAR_RECOMMENDATIONS';
 export const LOAD_HOTSPOTS = 'LOAD_HOTSPOTS';
 export const CREATE_HOTSPOT = 'CREATE_HOTSPOT';
 export const CANCEL_HOTSPOT = 'CANCEL_HOTSPOT';
+
+//--------------------
+//hotspots
+//--------------------
+export const SAVE_IMAGE = 'SAVE_IMAGE';

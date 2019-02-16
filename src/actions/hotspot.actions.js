@@ -1,4 +1,4 @@
-import { LOAD_HOTSPOTS } from './types';
+import { LOAD_HOTSPOTS, CREATE_HOTSPOT } from './types';
 import { Hotspot } from '../api';
 
 export function loadHotspots(coords) {
@@ -28,5 +28,19 @@ export function loadHotspots(coords) {
       };
     });
     dispatch({ type: LOAD_HOTSPOTS, payload: markers });
+  };
+}
+
+export function createHotspot(args) {
+  return async dispatch => {
+    const response = await Hotspot.createHotspot(args);
+    dispatch({ type: CREATE_HOTSPOT, payload: response });
+  };
+}
+
+export function create3DHotspot(hotspot) {
+  return async dispatch => {
+    const response = await Hotspot.createHotspot(hotspot);
+    dispatch({ type: CREATE_HOTSPOT, payload: response });
   };
 }

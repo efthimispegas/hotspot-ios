@@ -1,4 +1,4 @@
-import { LOAD_HOTSPOTS } from '../actions/types';
+import { LOAD_HOTSPOTS, CREATE_HOTSPOT } from '../actions/types';
 
 const INITIAL_STATE = {
   markers: null
@@ -10,6 +10,11 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         markers: action.payload
+      };
+    case CREATE_HOTSPOT:
+      return {
+        ...state,
+        creation: action.paylaod
       };
     default:
       return state;

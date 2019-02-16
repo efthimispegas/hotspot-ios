@@ -55,7 +55,7 @@ class HotspotApi {
       const { data } = await axios.get(`${this.path}/:hotspotId/comments`);
       return data;
     } catch (e) {
-      throw e;
+      throw new Error(e);
     }
   }
 
@@ -64,7 +64,7 @@ class HotspotApi {
       console.log('===============');
       console.log('args given:\n', args);
       console.log('===============');
-      const response = await axios.post(`/${this.path}/new`, args);
+      const response = await axios.post(`${this.path}/new`, args);
       return response;
     } catch (e) {
       throw e;

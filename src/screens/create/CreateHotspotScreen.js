@@ -14,6 +14,7 @@ import { Permissions, ImagePicker, Camera } from 'expo';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
 
 import { Colors, Button, Spinner } from '../../common';
 import CreateHotspotForm from './components/CreateHotspotForm';
@@ -22,8 +23,6 @@ import CustomNavBar from './components/CustomNavBar';
 
 class CreateHotspotScreen extends Component {
   state = {
-    city: '',
-    country: '',
     message: '',
     value: 15,
     picture: null,
@@ -54,11 +53,22 @@ class CreateHotspotScreen extends Component {
       alert('Hotspot needs permissions to access Camera Roll');
       return;
     }
-    const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
+    const meta = await ImagePicker.launchImageLibraryAsync({
       aspect: 1,
-      allowsEditing: true
+      allowsEditing: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true
     });
-    this.setState({ picture: uri });
+    const { cancelled, uri } = meta;
+    console.log('===============');
+    console.log('meta:', meta);
+    console.log('===============');
+    if (!cancelled) {
+      this.setState({
+        picture: uri
+      });
+      this.props.saveImage(meta);
+    }
   };
 
   _openCamera = async () => {
@@ -70,20 +80,24 @@ class CreateHotspotScreen extends Component {
       alert('Hotspot needs permissions to access your Camera');
       return;
     }
-    const { cancelled, uri } = await ImagePicker.launchCameraAsync({
-      allowsEditing: false
-    });
-    this.setState({
-      picture: uri
-    });
+    const { cancelled, uri } = meta;
+    console.log('===============');
+    console.log('meta:', meta);
+    console.log('===============');
+    if (!cancelled) {
+      this.setState({
+        picture: uri
+      });
+      this.props.saveImage(meta);
+    }
   };
 
   _renderImage = () => {
-    if (this.state.picture) {
+    if (this.props.image) {
       return (
         <Image
-          source={{ uri: this.state.picture }}
-          style={{ width: 60, height: 60, borderRadius: 30 }}
+          source={{ uri: this.props.image.uri }}
+          style={{ width: 128, height: 128 }}
         />
       );
     }
@@ -96,15 +110,17 @@ class CreateHotspotScreen extends Component {
   };
 
   _postMessage = () => {
-    const { value, message, city, country } = this.state;
-    console.log('===============');
-    console.log('[Create]:', this.state);
-    console.log('===============');
-    console.log('===============');
-    console.log('this.props:', this.props);
-    console.log('===============');
-    // const { position } = this.props;
+    //will also add user later, hardcode it for now
+    const { region, image } = this.props;
+    const { value, message } = this.state;
     //post message to the map
+    this.props.createHotspot({
+      loc: { coordinates: [region.latitude, region.longitude] },
+      file: image === undefined ? {} : image,
+      text: message,
+      user: { id: '5c539c398b7c1126bcfd984d', username: 'mikediamond' },
+      validity: value
+    });
     // const res = hotspotApi.createHotspot({
     //   validity: value,
     //   text: message,
@@ -199,17 +215,19 @@ class CreateHotspotScreen extends Component {
 const mapStateToProps = store => {
   return {
     region: store.location.region,
-    hotspots: null //<------------------- fill them
+    hotspots: store.hotspots.markers, //<------------------- fill them
+    image: store.gallery.image
   };
 };
 
-const dispatchStateToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
-    // createHotspot: bindActionCreators() <-------------
+    createHotspot: bindActionCreators(actions.createHotspot, dispatch),
+    saveImage: bindActionCreators(actions.saveImage, dispatch)
   };
 };
 
 export default connect(
-  null,
-  null
+  mapStateToProps,
+  mapDispatchToProps
 )(CreateHotspotScreen);
