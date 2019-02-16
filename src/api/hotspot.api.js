@@ -49,7 +49,6 @@ class HotspotApi {
     }
   }
 
-  //move it to CommentsApi
   async fetchHotspotComments() {
     try {
       const { data } = await axios.get(`${this.path}/:hotspotId/comments`);
@@ -61,17 +60,19 @@ class HotspotApi {
 
   async createHotspot(args) {
     try {
-      console.log('===============');
-      console.log('args given:\n', args);
-      console.log('===============');
+      // console.log('===============');
+      // console.log('[HotspotApi] create hotspot with args:', args);
+      // console.log('===============');
       const response = await axios.post(`${this.path}/new`, args);
+      // console.log('===============');
+      // console.log('[HotspotApi] response:', response);
+      // console.log('===============');
       return response;
     } catch (e) {
       throw new Error(e);
     }
   }
 
-  //move it to CommentApi
   async createHotspotComment(args) {
     try {
       const response = await axios.post(`${this.path}/new`, args);

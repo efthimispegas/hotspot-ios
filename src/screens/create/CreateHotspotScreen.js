@@ -30,21 +30,11 @@ class CreateHotspotScreen extends Component {
     isLoading: false
   };
 
-  componentDidMount() {
-    console.log('===============');
-    console.log('[CreateHotspotScreen] state:\n', this.state);
-    console.log('===============');
-    console.log('===============');
-    console.log('[CreateHotspotScreen] props:\n', this.props);
-    console.log('===============');
-  }
+  componentDidMount() {}
 
   componentWillReceiveProps(nextProps) {
     if (!nextProps.creation) {
       if (nextProps.cancelled) {
-        console.log('===============');
-        console.log('cancelled:', nextProps);
-        console.log('===============');
         this.setState({
           message: '',
           value: 15,
@@ -164,7 +154,6 @@ class CreateHotspotScreen extends Component {
         [
           {
             text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
             style: 'cancel'
           }
         ],
@@ -193,10 +182,6 @@ class CreateHotspotScreen extends Component {
   };
 
   render() {
-    console.log('===============');
-    console.log('[CreateHotspotScreen]:\n', this.props);
-    console.log('===============');
-
     return (
       <View style={{ flex: 1, backgroundColor: Colors.hotspotColor }}>
         <CustomNavBar title="Add a hotspot" />

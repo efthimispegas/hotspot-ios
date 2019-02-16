@@ -33,15 +33,15 @@ export function loadHotspots(coords) {
 
 export function createHotspot(args) {
   return async dispatch => {
-    const response = await Hotspot.createHotspot(args);
-    dispatch({ type: CREATE_HOTSPOT, payload: response });
+    const { data } = await Hotspot.createHotspot(args);
+    dispatch({ type: CREATE_HOTSPOT, payload: data });
   };
 }
 
 export function create3DHotspot(hotspot) {
   return async dispatch => {
-    const response = await Hotspot.createHotspot(hotspot);
-    dispatch({ type: CREATE_HOTSPOT, payload: response });
+    const { data } = await Hotspot.createHotspot(hotspot);
+    dispatch({ type: CREATE_HOTSPOT, payload: data });
   };
 }
 
