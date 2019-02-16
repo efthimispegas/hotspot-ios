@@ -17,13 +17,16 @@ export function loadHotspots(coords) {
       }
     });
     //produce the marker's attributes and forward them to the map
-    const markers = hotspots.map((hotspot, index) => {
+    const markers = hotspots.map(hotspot => {
+      const uri = hotspot.file.uri === undefined ? false : hotspot.file.uri;
+      const file = uri ? { uri, type: hotspot.file.type } : false;
       return {
-        lat: hotspot.loc.coordinates[0],
-        lng: hotspot.loc.coordinates[1],
-        title: `Hotspot - ${index + 1}`,
-        subtitle: hotspot.description,
-        text: hotspot.text,
+        ...hotspot,
+        coordinates: {
+          latitude: hotspot.loc.coordinates[0],
+          longitude: hotspot.loc.coordinates[1]
+        },
+        file,
         size: hotspot.marker_size
       };
     });

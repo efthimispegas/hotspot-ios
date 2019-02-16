@@ -148,3 +148,18 @@ export const getMarkerImage = (type, imageId) => {
   }
   return found.img;
 };
+
+export const hasImgFile = file => {
+  //first check if there is a file
+  if (file) {
+    if (file.type === 'image') {
+      //if so, return true
+      return true;
+    } else if (file.type === 'obj') {
+      //do something and return
+      return;
+    }
+  }
+  //if there is no file return false
+  return false;
+};

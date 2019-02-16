@@ -32,5 +32,13 @@ export const imageAssets = cachedAssets([
   require('../assets/flames/x2.png'),
   require('../assets/flames/x3.png'),
   require('../assets/flames/x4.png'),
-  require('../assets/flames/x5.png')
+  require('../assets/flames/x5.png'),
+  require('../assets/icons/add-image.png'),
+  require('../assets/icons/arrow-back.png'),
+  require('../assets/icons/camera.png'),
+  require('../assets/icons/chat.png'),
+  require('../assets/icons/exit.png'),
+  require('../assets/icons/location.png'),
+  require('../assets/icons/findmylocation.png'),
+  require('../assets/icons/user-unknown.png')
 ]);

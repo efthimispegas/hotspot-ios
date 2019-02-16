@@ -15,12 +15,15 @@ import MapView, {
 import { Actions } from 'react-native-router-flux';
 import _ from 'lodash';
 
-import SearchBar from './SearchBar';
-import SearchSuggestionsList from './SearchSuggestionsList';
+import {
+  CustomHotspotMarker,
+  CustomVenueMarker,
+  SearchBar,
+  SearchSuggestionsList,
+  ShowMyLocation,
+  FloatingActionButton
+} from './';
 import { getVenueCategory, getMarkerImage } from '../../../../helpers';
-import CustomMarker from './CustomMarker';
-import FloatingActionButton from './FloatingActionButton';
-import ShowMyLocation from './ShowMyLocation';
 
 const MapContainer = ({
   input,
@@ -89,23 +92,18 @@ const MapContainer = ({
           style={styles.mapContainer}
         >
           {/* Here we map the hotspots */}
-          {hotspots.map((marker, id) => {
+          {hotspots.map(marker => {
             return (
-              <Marker
-                key={id}
-                coordinate={{ latitude: marker.lat, longitude: marker.lng }}
-                title={marker.title}
-                image={getMarkerImage('flame', marker.size)}
-              >
-                <Callout onPress={_handleMarkerPress}>
-                  <Text style={styles.text}>{marker.title}</Text>
-                </Callout>
-              </Marker>
+              <CustomHotspotMarker
+                key={marker._id}
+                hotspot={marker}
+                _handleMarkerPress={_handleMarkerPress}
+              />
             );
           })}
           {/* Here we show the single selected venue */}
           {selectedVenue !== null && !_.isArrayLikeObject(selectedVenue) && (
-            <CustomMarker
+            <CustomVenueMarker
               selectedVenue={selectedVenue}
               _handleVenuePress={_handleVenuePress}
               isGeneral={false}
@@ -118,7 +116,7 @@ const MapContainer = ({
               const categoryId = getVenueCategory(venue);
               const img = getMarkerImage('category', categoryId);
               return (
-                <CustomMarker
+                <CustomVenueMarker
                   key={venue.id}
                   selectedVenue={venue}
                   _handleVenuePress={_handleVenuePress}
@@ -134,7 +132,7 @@ const MapContainer = ({
               const categoryId = getVenueCategory(venue);
               const img = getMarkerImage('category', categoryId);
               return (
-                <CustomMarker
+                <CustomVenueMarker
                   key={venue.id}
                   selectedVenue={venue}
                   _handleVenuePress={_handleVenuePress}

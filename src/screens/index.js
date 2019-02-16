@@ -7,3 +7,4 @@ export * from './AR';
 export * from './message';
 export * from './profile';
 export * from './settings';
+export * from './details';

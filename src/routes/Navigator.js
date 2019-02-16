@@ -26,7 +26,8 @@ import {
   MessageScreen,
   SettingsScreen,
   ProfileScreen,
-  EditProfileScreen
+  EditProfileScreen,
+  DetailsScreen
 } from '../screens';
 import { Colors } from '../common';
 import DrawerContent from './components/DrawerContent';
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   scene: {
-    backgroundColor: Colors.hotspotColor,
+    backgroundColor: Colors.whiteColor,
     shadowOpacity: 2,
     shadowRadius: 3
   },
@@ -165,13 +166,20 @@ export const AppNavigator = Actions.create(
               />
               <Scene
                 key="pm"
-                swipeEnabled={false}
+                gesturesEnabled={false}
                 hideTabBar
                 hideNavBar={false}
                 component={MessageScreen}
                 title="Messages"
               />
-
+              <Scene
+                key="details"
+                hideTabBar
+                hideNavBar
+                component={DetailsScreen}
+                title="Comments"
+                style={styles.scene}
+              />
               <Scene
                 key="profile"
                 title="Profile"

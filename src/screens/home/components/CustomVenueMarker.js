@@ -4,7 +4,12 @@ import { Title, H1, H2, H3 } from 'native-base';
 import { Marker, Callout } from 'react-native-maps';
 import { getMarkerImage, getVenueCategory } from '../../../../helpers';
 
-const CustomMarker = ({ isGeneral, selectedVenue, _handleVenuePress, img }) => {
+const CustomVenueMarker = ({
+  isGeneral,
+  selectedVenue,
+  _handleVenuePress,
+  img
+}) => {
   if (!isGeneral) {
     return (
       <Marker
@@ -63,4 +68,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CustomMarker;
+export default CustomVenueMarker;

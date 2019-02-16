@@ -1,26 +1,15 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Alert,
-  Keyboard,
-  TouchableWithoutFeedback
-} from 'react-native';
-import { Container } from 'native-base';
-import { Colors } from '../../common';
+import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Location } from 'expo';
-import MapView, { Marker, Callout } from 'react-native-maps';
 import geolib from 'geolib';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import LoadingScreen from '../loading/LoadingScreen';
-import MapContainer from './components/MapContainer';
-import { Hotspot } from '../../api';
 import * as actions from '../../actions'; //we import it as * to use it later in the bindActionCreators()
+
 import { Actions } from 'react-native-router-flux';
+import MapContainer from './components/MapContainer';
+import { LoadingScreen } from '../loading';
 
 //we bind the functions to this component's instance because if not,
 //the variables in each function will not refer to the component but to the window
@@ -78,11 +67,6 @@ class HomeScreen extends Component {
       else venues = nextProps.selectedVenue;
       this.setState({ selectedVenue: venues });
     }
-    // console.log('===============');
-    // console.log('venues to be rendered in next re-render:', venues);
-    // console.log('===============');
-    let hotspots = [];
-    //here we will check if the hotspots change, to re-render -> handle the creation
   }
 
   async _getMarkers() {
@@ -162,11 +146,6 @@ class HomeScreen extends Component {
     this.props.loadHotspots(mapRegionInput);
   };
 
-  _handleMarkerPress = marker => {
-    console.log('===============');
-    console.log('marker:\n', marker.nativeEvent);
-    console.log('===============');
-  };
   _handleVenuePress = venue => {
     console.log('===============');
     console.log('venue:\n', venue);
