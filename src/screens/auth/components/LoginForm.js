@@ -12,7 +12,7 @@ import { Button, Colors } from '../../../common';
 
 const LoginForm = ({
   _handleChangePassword,
-  _handleChangeUsername,
+  _handleChangeEmail,
   _handleDone,
   state
 }) => (
@@ -25,10 +25,13 @@ const LoginForm = ({
       <View style={styles.formContainer}>
         <View>
           <TextInput
-            placeholder="Username"
+            keyboardType="email-address"
+            autoFocus
+            autoCapitalize="none"
+            placeholder="Email"
             selectionColor={Colors.hotspotColor}
-            onChangeText={username => _handleChangeUsername(username)}
-            value={state.username}
+            onChangeText={email => _handleChangeEmail(email)}
+            value={state.email}
             style={styles.input}
           />
 

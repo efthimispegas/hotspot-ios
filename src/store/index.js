@@ -9,15 +9,23 @@ import {
 
 import rootReducer from '../reducers';
 import { AppNavigator } from '../routes/Navigator';
+import { watchLogin } from '../sagas';
 
 const loggerMiddleware = createLogger({ diff: true, collapsed: true });
 const navMiddleware = createReactNavigationReduxMiddleware(
   'root',
   state => state.nav
 );
+// const sagaMiddleware = createSagaMiddleware(watchLogin);
+
 //create our middlewares array that we will finally
 //use to create the store
-const middleware = [navMiddleware, thunkMiddleware, loggerMiddleware];
+const middleware = [
+  navMiddleware,
+  thunkMiddleware,
+  loggerMiddleware,
+  // sagaMiddleware
+];
 
 export const ReduxNavigator = reduxifyNavigator(AppNavigator, 'root');
 
@@ -27,3 +35,5 @@ export default createStore(
   undefined,
   compose(applyMiddleware(...middleware))
 );
+
+// sagaMiddleware.run(watchLogin);

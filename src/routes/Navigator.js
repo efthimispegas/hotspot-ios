@@ -23,15 +23,15 @@ import {
   LoginScreen,
   WelcomeScreen,
   CreateHotspotScreen,
-  MessageScreen,
+  MessageListScreen,
   SettingsScreen,
   ProfileScreen,
   EditProfileScreen,
-  DetailsScreen
+  CommentsScreen,
+  PrivateMessageScreen
 } from '../screens';
 import { Colors } from '../common';
 import DrawerContent from './components/DrawerContent';
-import CustomNavBar from '../screens/profile/components/CustomNavBar';
 
 const styles = StyleSheet.create({
   container: {
@@ -165,18 +165,25 @@ export const AppNavigator = Actions.create(
                 title="Add new hotspot"
               />
               <Scene
-                key="pm"
+                key="messages"
                 gesturesEnabled={false}
                 hideTabBar
                 hideNavBar
-                component={MessageScreen}
+                component={MessageListScreen}
                 title="Messages"
               />
               <Scene
-                key="details"
+                key="pm"
                 hideTabBar
                 hideNavBar
-                component={DetailsScreen}
+                component={PrivateMessageScreen}
+                title="Private Message"
+              />
+              <Scene
+                key="comments"
+                hideTabBar
+                hideNavBar
+                component={CommentsScreen}
                 title="Comments"
                 style={styles.scene}
               />

@@ -48,7 +48,7 @@ const CustomHotspotMarker = ({ hotspot }) => {
     console.log('===============');
     console.log('hotspot:', hotspot);
     console.log('===============');
-    Actions.details({ hotspot });
+    Actions.comments({ hotspot });
   };
 
   return (
@@ -119,8 +119,7 @@ const CustomHotspotMarker = ({ hotspot }) => {
 
 const styles = StyleSheet.create({
   callout: {
-    width: 300,
-    color: Colors.lightGreyColor
+    width: 300
   },
   marker: {
     alignItems: 'center',

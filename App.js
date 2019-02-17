@@ -4,16 +4,9 @@ import { StyleSheet, Text, View, Image } from 'react-native';
 import { fontAssets, imageAssets } from './helpers';
 import { Provider } from 'react-redux';
 
-import {
-  LoadingScreen,
-  ProfileScreen,
-  CreateHotspotScreen
-} from './src/screens';
 import { ReduxRouter } from './src/routes/Navigator';
 import store, { ReduxNavigator } from './src/store';
 import { Colors } from './src/common';
-import TestScreen from './src/screens/home/TestScreen';
-import MessageScreen from './src/screens/message/MessageScreen';
 
 export default class App extends Component {
   state = {
@@ -63,7 +56,6 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <View style={{ flex: 1 }}>
-          {/* <CreateHotspotScreen /> */}
           <ReduxRouter navigator={ReduxNavigator} />
         </View>
       </Provider>

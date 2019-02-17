@@ -1,3 +1,4 @@
-import DetailsScreen from './DetailsScreen';
+import CommentsScreen from './CommentsScreen';
+import PrivateMessageScreen from './PrivateMessageScreen';
 
-export { DetailsScreen };
+export { CommentsScreen, PrivateMessageScreen };

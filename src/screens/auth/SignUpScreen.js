@@ -4,6 +4,10 @@ import Expo, { Permissions, Location, AR } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
 import SignUpForm from './components/SignUpForm';
 
 class SignUpScreen extends Component {
@@ -154,4 +158,20 @@ class SignUpScreen extends Component {
   }
 }
 
-export default SignUpScreen;
+const mapStoreToProps = store => {
+  return {
+    authStatus: null,
+    user: null
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    basicSignup: null //bindActionCreators(actions.basicSignup, dispatch)
+  };
+};
+
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(SignUpScreen);

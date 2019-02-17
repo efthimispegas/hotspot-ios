@@ -3,10 +3,9 @@ import {
   StyleSheet,
   StatusBar,
   Image,
-  TouchableOpacity,
   ScrollView,
   ListView,
-  FlatList
+  TouchableOpacity
 } from 'react-native';
 import {
   View,
@@ -19,31 +18,38 @@ import {
   Button,
   Text
 } from 'native-base';
-import { Actions } from 'react-native-router-flux';
-import { Entypo, Ionicons } from '@expo/vector-icons';
-
-import { data } from './dummy';
-import { Colors, CustomNavBar } from '../../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Actions } from 'react-native-router-flux';
 
-class DetailsScreen extends React.Component {
+import { messages as dummyData } from './dummy';
+import { Colors, CustomNavBar } from '../../common';
+
+class MessageListScreen extends React.Component {
   state = {
     basic: true,
-    commentData: []
+    messageData: []
   };
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }); //truthy if row has changed
 
-  getCommentDetails() {
-    //here i will fetch the comments of the current user
+  deleteRow(secId, rowId, rowMap) {
+    rowMap[`${secId}${rowId}`].props.closeRow();
+    let newData = [...this.state.messageData];
+    newData.splice(rowId, 1);
+    this.setState({ messageData: newData });
+  }
+
+  getMessageDetails() {
+    //here i will fetch the messages of the current user
     //from my db
-    const comments = data;
-    return comments;
+    const message = dummyData;
+    return message;
   }
 
   componentDidMount() {
     //below is a nice boilerplate I will need, maybe
-    const results = this.getCommentDetails();
-    let commentArray = [];
+    const results = this.getMessageDetails();
+    let messageArray = [];
     results.forEach(value => {
       let message = {
         id: value._id,
@@ -52,27 +58,28 @@ class DetailsScreen extends React.Component {
         email: value.email,
         content: value.message
       };
-      commentArray.push(message);
+      messageArray.push(message);
     });
 
     this.setState({
-      commentData: commentArray
+      messageData: messageArray
     });
   }
 
-  // componentWillMount() {
+  privateMessage = data => {
+    console.log('===============');
+    console.log('data:', data);
+    console.log('===============');
+  };
 
-  // }
-
+  //if no messages then need to display "no mesages"
   render() {
-    console.log('===============');
-    console.log('[DetailsScreen]this.props:', this.props);
-    console.log('===============');
+    console.log('state', this.state.messageData);
 
     return (
-      <View style={{ backgroundColor: 'white' }}>
+      <View style={{ backgroundColor: Colors.whiteColor }}>
         <CustomNavBar
-          title="Comments"
+          title="Messages"
           leftTitle="Back"
           rightTitle={null}
           onLeft={Actions.pop}
@@ -83,8 +90,9 @@ class DetailsScreen extends React.Component {
         />
         <KeyboardAwareScrollView>
           <List
+            leftOpenValue={75}
             rightOpenValue={-75}
-            dataSource={this.ds.cloneWithRows(this.state.commentData)}
+            dataSource={this.ds.cloneWithRows(this.state.messageData)}
             renderRow={value => (
               <ListItem avatar>
                 <Left style={styles.avatarContainer}>
@@ -108,15 +116,27 @@ class DetailsScreen extends React.Component {
                 </Body>
               </ListItem>
             )}
-            renderRightHiddenRow={data => (
+            renderLeftHiddenRow={data => (
               <View style={styles.button}>
-                <TouchableOpacity onPress={() => alert(data)}>
+                <TouchableOpacity onPress={() => this.privateMessage(data)}>
                   <Entypo name="reply" size={32} color={Colors.blackColor} />
                 </TouchableOpacity>
               </View>
             )}
+            renderRightHiddenRow={(data, secId, rowId, rowMap) => (
+              <Button
+                full
+                danger
+                onPress={() => this.deleteRow(secId, rowId, rowMap)}
+              >
+                <Ionicons
+                  name="ios-trash"
+                  size={32}
+                  color={Colors.whiteColor}
+                />
+              </Button>
+            )}
           />
-          {/** Here goes the reply component */}
         </KeyboardAwareScrollView>
       </View>
     );
@@ -163,4 +183,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default DetailsScreen;
+export default MessageListScreen;

@@ -11,21 +11,37 @@ import {
 import { Actions } from 'react-native-router-flux';
 import Expo, { Permissions, Location } from 'expo';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
 import LoginForm from './components/LoginForm';
 
 class LoginScreen extends Component {
   state = {
     isLoading: false,
-    username: '',
-    password: '',
-    email: ''
+    email: '',
+    password: ''
   };
+
+  componentWillReceiveProps(nextProps) {
+    //whenever the login action is catched, and we have the confirmation
+    //that the user isLoggedIn, submit
+    if (nextProps.user) {
+      if (nextProps.user.isLoggedIn) {
+        console.log('===============');
+        console.log('[ComponentWillReceiveProps]:', nextProps.user);
+        console.log('===============');
+        this._handleSubmit();
+      }
+    }
+  }
 
   _handleChangePassword = password => {
     this.setState({ password });
   };
-  _handleChangeUsername = username => {
-    this.setState({ username });
+  _handleChangeEmail = email => {
+    this.setState({ email });
   };
 
   _handleDone = () => {
@@ -35,14 +51,14 @@ class LoginScreen extends Component {
 
   _handleSubmit = () => {
     this.setState({ isLoading: false });
-    Actions.main({ type: 'replace' });
+    Actions.main({ type: 'replace' }, this.props.user);
   };
   render() {
     return (
       <LoginForm
         state={this.state}
         _handleChangePassword={this._handleChangePassword.bind(this)}
-        _handleChangeUsername={this._handleChangeUsername.bind(this)}
+        _handleChangeEmail={this._handleChangeEmail.bind(this)}
         _handleDone={this._handleDone.bind(this)}
       />
     );
@@ -74,11 +90,26 @@ class LoginScreen extends Component {
       );
       this.setState({ isLoading: false });
     } else {
-      //then submit form and store the user's current location
-      this._handleSubmit();
+      //then dispatch login action to be catched from the watcher
+      const { email, password } = this.state;
+      this.props.login({ email, password });
     }
   }
 }
-export default LoginScreen;
 
-const styles = StyleSheet.create({});
+const mapStoreToProps = store => {
+  return {
+    user: store.auth
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    login: bindActionCreators(actions.login, dispatch)
+  };
+};
+
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(LoginScreen);

@@ -3,9 +3,10 @@ import {
   StyleSheet,
   StatusBar,
   Image,
+  TouchableOpacity,
   ScrollView,
   ListView,
-  TouchableOpacity
+  FlatList
 } from 'react-native';
 import {
   View,
@@ -18,38 +19,31 @@ import {
   Button,
   Text
 } from 'native-base';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Entypo, Ionicons } from '@expo/vector-icons';
 import { Actions } from 'react-native-router-flux';
+import { Entypo, Ionicons } from '@expo/vector-icons';
 
-import { messages as dummyData } from './dummy';
+import { data } from './dummy';
 import { Colors, CustomNavBar } from '../../common';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-class MessageScreen extends React.Component {
+class CommentsScreen extends React.Component {
   state = {
     basic: true,
-    messageData: []
+    commentData: []
   };
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }); //truthy if row has changed
 
-  deleteRow(secId, rowId, rowMap) {
-    rowMap[`${secId}${rowId}`].props.closeRow();
-    let newData = [...this.state.messageData];
-    newData.splice(rowId, 1);
-    this.setState({ messageData: newData });
-  }
-
-  getMessageDetails() {
-    //here i will fetch the messages of the current user
+  getCommentDetails() {
+    //here i will fetch the comments of the current user
     //from my db
-    const message = dummyData;
-    return message;
+    const comments = data;
+    return comments;
   }
 
   componentDidMount() {
     //below is a nice boilerplate I will need, maybe
-    const results = this.getMessageDetails();
-    let messageArray = [];
+    const results = this.getCommentDetails();
+    let commentArray = [];
     results.forEach(value => {
       let message = {
         id: value._id,
@@ -58,11 +52,11 @@ class MessageScreen extends React.Component {
         email: value.email,
         content: value.message
       };
-      messageArray.push(message);
+      commentArray.push(message);
     });
 
     this.setState({
-      messageData: messageArray
+      commentData: commentArray
     });
   }
 
@@ -70,14 +64,15 @@ class MessageScreen extends React.Component {
 
   // }
 
-  //if no messages then need to display "no mesages"
   render() {
-    console.log('state', this.state.messageData);
+    console.log('===============');
+    console.log('[DetailsScreen]this.props:', this.props);
+    console.log('===============');
 
     return (
-      <View style={{ backgroundColor: Colors.whiteColor }}>
+      <View style={{ backgroundColor: 'white' }}>
         <CustomNavBar
-          title="Messages"
+          title="Comments"
           leftTitle="Back"
           rightTitle={null}
           onLeft={Actions.pop}
@@ -88,9 +83,8 @@ class MessageScreen extends React.Component {
         />
         <KeyboardAwareScrollView>
           <List
-            leftOpenValue={75}
             rightOpenValue={-75}
-            dataSource={this.ds.cloneWithRows(this.state.messageData)}
+            dataSource={this.ds.cloneWithRows(this.state.commentData)}
             renderRow={value => (
               <ListItem avatar>
                 <Left style={styles.avatarContainer}>
@@ -114,27 +108,15 @@ class MessageScreen extends React.Component {
                 </Body>
               </ListItem>
             )}
-            renderLeftHiddenRow={data => (
+            renderRightHiddenRow={data => (
               <View style={styles.button}>
                 <TouchableOpacity onPress={() => alert(data)}>
                   <Entypo name="reply" size={32} color={Colors.blackColor} />
                 </TouchableOpacity>
               </View>
             )}
-            renderRightHiddenRow={(data, secId, rowId, rowMap) => (
-              <Button
-                full
-                danger
-                onPress={() => this.deleteRow(secId, rowId, rowMap)}
-              >
-                <Ionicons
-                  name="ios-trash"
-                  size={32}
-                  color={Colors.whiteColor}
-                />
-              </Button>
-            )}
           />
+          {/** Here goes the reply component */}
         </KeyboardAwareScrollView>
       </View>
     );
@@ -181,4 +163,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MessageScreen;
+export default CommentsScreen;

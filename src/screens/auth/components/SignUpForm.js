@@ -38,6 +38,9 @@ const SignUpForm = ({
           <View>
             <TextInput
               placeholder="Username"
+              enablesReturnKeyAutomatically
+              autoFocus
+              autoCapitalize="none"
               selectionColor={Colors.hotspotColor}
               onChangeText={username => _handleChangeUsername(username)}
               value={state.username}
@@ -46,6 +49,8 @@ const SignUpForm = ({
 
             <TextInput
               placeholder="Email"
+              enablesReturnKeyAutomatically
+              autoCapitalize="none"
               selectionColor={Colors.hotspotColor}
               onChangeText={email => _handleChangeEmail(email)}
               value={state.email}
@@ -55,6 +60,7 @@ const SignUpForm = ({
 
             <TextInput
               placeholder="Password"
+              enablesReturnKeyAutomatically
               selectionColor={Colors.hotspotColor}
               onChangeText={password1 => _handleChangePassword1(password1)}
               value={state.password1}
@@ -64,6 +70,7 @@ const SignUpForm = ({
 
             <TextInput
               placeholder="Confirm password"
+              enablesReturnKeyAutomatically
               selectionColor={Colors.hotspotColor}
               onChangeText={password2 => _handleChangePassword2(password2)}
               value={state.password2}

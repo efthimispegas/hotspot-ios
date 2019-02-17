@@ -1,3 +1,3 @@
-import MessageScreen from './MessageScreen';
+import MessageListScreen from './MessageListScreen';
 
-export { MessageScreen };
+export { MessageListScreen };

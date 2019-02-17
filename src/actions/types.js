@@ -5,9 +5,11 @@
 //--------------------
 //auth
 //--------------------
-export const LOGIN = 'LOGIN';
+export const LOGIN_BASIC = 'LOGIN_BASIC';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_GOOGLE = 'LOGIN_GOOGLE';
+export const LOGIN_FACEBOOK = 'LOGIN_FACEBOOK';
 
 export const REGISTER = 'REGISTER';
 export const REGISTER_ERROR = 'REGISTER_ERROR';
