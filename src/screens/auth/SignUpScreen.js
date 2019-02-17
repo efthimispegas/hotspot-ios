@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
-import Expo, { Permissions, Location, AR } from 'expo';
+import Expo, { Permissions, Location, AR, ImagePicker } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
@@ -9,10 +9,13 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import SignUpForm from './components/SignUpForm';
+import { Colors } from '../../common';
 
 class SignUpScreen extends Component {
   state = {
+    picture: null,
     username: '',
+    fullname: '',
     email: '',
     city: '',
     gender: 'male',
@@ -24,8 +27,92 @@ class SignUpScreen extends Component {
     isDatePickerVisible: false
   };
 
-  componentDidMount() {}
+  // componentWillReceiveProps(nextProps) {
+  //   //whenever the signup action is catched, and we have the confirmation
+  //   //that the user isLoggedIn, submit
+  //   if (nextProps.error) {
+  //     Alert.alert(
+  //       'There has been some auth error!',
+  //       'Blah blah blah...',
+  //       [{ text: 'Cancel' }],
+  //       { cancelable: true }
+  //     );
+  //     this.setState({
+  //       picture: null,
+  //       username: '',
+  //       fullname: '',
+  //       email: '',
+  //       city: '',
+  //       gender: 'male',
+  //       picker: 'key0',
+  //       birthday: null,
+  //       password1: '',
+  //       password2: '',
+  //       isLoading: false
+  //     });
+  //   }
+  //   if (nextProps.user) {
+  //     if (nextProps.user.isLoggedIn) {
+  //       console.log('===============');
+  //       console.log('[ComponentWillReceiveProps]:', nextProps.user);
+  //       console.log('===============');
+  //       this._handleSubmit();
+  //     }
+  //   }
+  // }
 
+  openCameraRoll = async () => {
+    const { status, permissions } = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL
+    );
+    if (status === 'denied') {
+      alert('Hotspot needs permissions to access Camera Roll');
+      return;
+    }
+    const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
+      aspect: 1,
+      allowsEditing: true
+    });
+    this.setState({ picture: uri });
+  };
+
+  openCamera = async () => {
+    const { status, permissions } = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL,
+      Permissions.CAMERA
+    );
+    if (status === 'denied') {
+      alert('Hotspot needs permissions to access your Camera');
+      return;
+    }
+    const { cancelled, uri } = await ImagePicker.launchCameraAsync({
+      allowsEditing: false
+    });
+    this.setState({
+      picture: uri
+    });
+  };
+
+  renderImage = () => {
+    if (this.state.picture) {
+      return (
+        <Image
+          source={{ uri: this.state.picture }}
+          style={{ width: 60, height: 60, borderRadius: 30 }}
+        />
+      );
+    }
+    return (
+      <Image
+        source={require('../../../assets/icons/user-unknown.png')}
+        style={{ width: 60, height: 60 }}
+      />
+    );
+  };
+
+  _handleChangeFullname = fullname => {
+    this.setState({ fullname });
+  };
   _handleChangeEmail = email => {
     this.setState({ email });
   };
@@ -103,21 +190,31 @@ class SignUpScreen extends Component {
   };
 
   render() {
+    // console.log('===============');
+    // console.log('[SignUpScreen]props:', this.props);
+    // console.log('===============');
     return (
-      <SignUpForm
-        state={this.state}
-        _handleChangePassword1={this._handleChangePassword1.bind(this)}
-        _handleChangePassword2={this._handleChangePassword2.bind(this)}
-        _handleChangeEmail={this._handleChangeEmail.bind(this)}
-        _handleChangeCity={this._handleChangeCity.bind(this)}
-        _handleChangeUsername={this._handleChangeUsername.bind(this)}
-        _checkBirthday={this._checkBirthday.bind(this)}
-        _checkGender={this._checkGender.bind(this)}
-        _handleDatePicked={this._handleDatePicked.bind(this)}
-        _showDatePicker={this._showDatePicker.bind(this)}
-        _hideDatePicker={this._hideDatePicker.bind(this)}
-        _handleDone={this._handleDone.bind(this)}
-      />
+      <View style={{ backgroundColor: Colors.hotspotColor }}>
+        <SignUpForm
+          {...this.props}
+          state={this.state}
+          openCamera={this.openCamera.bind(this)}
+          openCameraRoll={this.openCameraRoll.bind(this)}
+          renderImage={this.renderImage.bind(this)}
+          _handleChangePassword1={this._handleChangePassword1.bind(this)}
+          _handleChangePassword2={this._handleChangePassword2.bind(this)}
+          _handleChangeEmail={this._handleChangeEmail.bind(this)}
+          _handleChangeCity={this._handleChangeCity.bind(this)}
+          _handleChangeUsername={this._handleChangeUsername.bind(this)}
+          _handleChangeFullname={this._handleChangeFullname.bind(this)}
+          _checkBirthday={this._checkBirthday.bind(this)}
+          _checkGender={this._checkGender.bind(this)}
+          _handleDatePicked={this._handleDatePicked.bind(this)}
+          _showDatePicker={this._showDatePicker.bind(this)}
+          _hideDatePicker={this._hideDatePicker.bind(this)}
+          _handleDone={this._handleDone.bind(this)}
+        />
+      </View>
     );
   }
 
@@ -152,7 +249,22 @@ class SignUpScreen extends Component {
       );
       this.setState({ isLoading: false });
     } else {
-      //then submit form and store the user's current location
+      //do some validations
+
+      //send the user info to the server
+      // const user = {
+      //   username: this.state.username,
+      //   email: this.state.email,
+      //   password: this.state.password1,
+      //   fullname: this.state.fullname,
+      //   city: this.state.city,
+      //   gender: this.state.gender,
+      //   birthday: this.state.birthday,
+      //   avatar: this.state.picture
+      // };
+      //if everything matches, signup
+      // this.props.signup(user);
+
       this._handleSubmit();
     }
   }
@@ -160,14 +272,14 @@ class SignUpScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
-    authStatus: null,
-    user: null
+    user: store.auth,
+    error: store.auth.error
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    basicSignup: null //bindActionCreators(actions.basicSignup, dispatch)
+    signup: bindActionCreators(actions.signup, dispatch)
   };
 };
 

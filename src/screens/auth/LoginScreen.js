@@ -56,6 +56,7 @@ class LoginScreen extends Component {
   render() {
     return (
       <LoginForm
+        {...this.props}
         state={this.state}
         _handleChangePassword={this._handleChangePassword.bind(this)}
         _handleChangeEmail={this._handleChangeEmail.bind(this)}
@@ -90,9 +91,13 @@ class LoginScreen extends Component {
       );
       this.setState({ isLoading: false });
     } else {
-      //then dispatch login action to be catched from the watcher
-      const { email, password } = this.state;
-      this.props.login({ email, password });
+      //do some validations
+      //(...)
+      //401 = email and password don't match
+      //if everything matches dispatch login action to be catched from the watcher
+      // const { email, password } = this.state;
+      // this.props.login({ email, password });
+      this._handleSubmit();
     }
   }
 }

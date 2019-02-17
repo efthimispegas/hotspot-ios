@@ -7,6 +7,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Image,
+  Alert,
   TouchableOpacity,
   Dimensions
 } from 'react-native';
@@ -16,12 +17,18 @@ import moment from 'moment';
 import DatePicker from 'react-native-modal-datetime-picker';
 
 import { Colors, ButtonWithIcon, Button } from '../../../common';
+import { Divider } from 'react-native-elements';
 
 const SignUpForm = ({
+  error,
   state,
+  openCamera,
+  openCameraRoll,
+  renderImage,
   _handleChangeEmail,
   _handleChangeCity,
   _handleChangeUsername,
+  _handleChangeFullname,
   _handleChangePassword1,
   _handleChangePassword2,
   _handleDatePicked,
@@ -34,12 +41,36 @@ const SignUpForm = ({
   return (
     <KeyboardAwareScrollView>
       <View style={styles.mainContainer}>
+        <View style={styles.picture}>
+          <TouchableOpacity
+            onPress={() =>
+              Alert.alert(
+                'Set a Profile picture',
+                'Choose a photo from Camera Roll, or take a new one.',
+                [
+                  { text: 'Camera Roll', onPress: openCameraRoll },
+                  { text: 'Take picture', onPress: openCamera }
+                ]
+              )
+            }
+          >
+            {renderImage()}
+          </TouchableOpacity>
+        </View>
         <View style={styles.formContainer}>
+          <TextInput
+            placeholder="Full name"
+            enablesReturnKeyAutomatically
+            autoCapitalize="words"
+            selectionColor={Colors.hotspotColor}
+            onChangeText={fullname => _handleChangeFullname(fullname)}
+            value={state.fullname}
+            style={styles.input}
+          />
           <View>
             <TextInput
               placeholder="Username"
               enablesReturnKeyAutomatically
-              autoFocus
               autoCapitalize="none"
               selectionColor={Colors.hotspotColor}
               onChangeText={username => _handleChangeUsername(username)}
@@ -97,6 +128,11 @@ const SignUpForm = ({
               <TextInput
                 editable={false}
                 placeholder={_checkBirthday()}
+                placeholderTextColor={
+                  state.birthday != null
+                    ? Colors.hotspotColor
+                    : Colors.lightGreyColor
+                }
                 style={styles.input}
                 value={() => _checkBirthday()}
               />
@@ -133,6 +169,10 @@ const SignUpForm = ({
               </Picker>
             </TouchableOpacity>
 
+            <View style={styles.errorContainer}>
+              {/* <Text style={styles.errorText}>{error ? error. : null}</Text> */}
+            </View>
+
             <View style={styles.formButton}>
               <Button
                 isLoading={state.isLoading}
@@ -143,8 +183,19 @@ const SignUpForm = ({
           </View>
         </View>
 
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Errors will go here</Text>
+        <View style={styles.divider}>
+          <Divider style={{ backgroundColor: Colors.whiteColor, width: 120 }} />
+          <Text
+            style={{
+              fontStyle: 'italic',
+              color: Colors.whiteColor,
+              marginHorizontal: 10,
+              fontSize: 18
+            }}
+          >
+            OR
+          </Text>
+          <Divider style={{ backgroundColor: Colors.whiteColor, width: 120 }} />
         </View>
 
         <View style={styles.bottomContainer}>
@@ -153,7 +204,7 @@ const SignUpForm = ({
               buttonName="Sign Up with facebook"
               iconType="FontAwesome"
               iconName="facebook"
-              iconStyle={{ color: '#3b5998' }}
+              iconStyle={{ color: Colors.facebookColor }}
               onPress={() => console.log('facebook')}
             />
           </View>
@@ -162,7 +213,7 @@ const SignUpForm = ({
               buttonName="Sign Up with google"
               iconType="AntDesign"
               iconName="google"
-              iconStyle={{ color: '#db3236' }}
+              iconStyle={{ color: Colors.googleColor }}
               onPress={() => console.log('google')}
             />
           </View>
@@ -195,19 +246,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.hotspotColor,
     paddingHorizontal: 20,
-    paddingTop: 50
+    paddingTop: 20
   },
-  imageContainer: {
-    width: '21%',
-    height: '75%',
-    resizeMode: 'stretch',
-    marginTop: 20
+  picture: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 10
   },
   formContainer: {
     // backgroundColor: Colors.violetColor
   },
   formButton: {
-    marginTop: 30
+    marginTop: 30,
+    marginBottom: 10
   },
   input: {
     fontSize: 18,
@@ -231,10 +282,15 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginLeft: 20
   },
+  divider: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 20
+  },
   bottomContainer: {
     // backgroundColor: Colors.violetColor,
-    paddingVertical: 20,
-    marginTop: 120
+    paddingVertical: 20
   },
   facebookButton: {
     alignSelf: 'stretch',

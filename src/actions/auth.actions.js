@@ -7,7 +7,7 @@ import {
   LOGIN_SUCCESS,
   LOGOUT,
   LOGOUT_ERROR,
-  LOGIN_BASIC,
+  LOGIN_LOCAL,
   LOGIN_FACEBOOK,
   LOGIN_GOOGLE
 } from './types';
@@ -22,15 +22,12 @@ import { User } from '../api';
 export function login(user) {
   //refactor later with token
   return async dispatch => {
-    dispatch({ type: LOGIN_BASIC });
+    dispatch({ type: LOGIN_LOCAL });
     try {
       //here we will await the res of the query in the db for the token
-      const response = await User.login(user);
-      console.log('===============');
-      console.log('response:', response);
-      console.log('===============');
+      const data = await User.login(user);
       //and if we find the user we will login
-      // return dispatch(loginSuccess(data));
+      return dispatch(loginSuccess(data));
     } catch (e) {
       return dispatch(loginError(e));
     }
@@ -52,37 +49,22 @@ export function loginGoogle(user) {
 }
 
 export function signup(user) {
-  return {
-    type: REGISTER,
-    payload: user
+  return async dispatch => {
+    dispatch({ type: REGISTER });
+    try {
+      //here we will await the creation of the user in the db
+      const data = await User.register(user);
+      //and if everything is successful we signup
+      return dispatch(signupSuccess(data));
+    } catch (e) {
+      return dispatch(signupError(e));
+    }
   };
-  // return async dispatch => {
-  //   dispatch({ type: REGISTER });
-  //   try {
-  //     //here we will await the creation of the user in the db
-  //     //and if everything is successful we signup
-  //     return dispatch(loginSuccess(data));
-  //   } catch (e) {
-  //     return dispatch(loginError(e));
-  //   }
-  // };
 }
 
 export function logout() {
-  return async dispatch => {
-    dispatch({ type });
-    try {
-      //here we will await the release of the session token
-      //and then we will logout
-      return {
-        type: LOGOUT
-      };
-    } catch (e) {
-      return {
-        type: LOGOUT_ERROR,
-        error
-      };
-    }
+  return {
+    type: LOGOUT
   };
 }
 
@@ -91,11 +73,11 @@ export function logout() {
 //-----------------------
 
 //create the functionality that checks if the login was
-//successful or if there is an console.error();
-function loginSuccess(user) {
+//successful or if there is an error
+function loginSuccess({ token, user }) {
   return {
     type: LOGIN_SUCCESS,
-    payload: user
+    payload: { token, user }
   };
 }
 
@@ -108,15 +90,16 @@ function loginError(error) {
 
 //create the functionality that checks if the signup
 //was succesfull or if there was an error
-function signupSuccess() {
+function signupSuccess({ token, user }) {
   return {
     type: REGISTER_SUCCESS,
-    user: data.user
+    payload: { token, user }
   };
 }
 
-function signupError() {
+function signupError(e) {
   return {
-    type: REGISTER_ERROR
+    type: REGISTER_ERROR,
+    error: e
   };
 }

@@ -5,7 +5,7 @@
 //--------------------
 //auth
 //--------------------
-export const LOGIN_BASIC = 'LOGIN_BASIC';
+export const LOGIN_LOCAL = 'LOGIN_LOCAL';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_GOOGLE = 'LOGIN_GOOGLE';

@@ -3,7 +3,7 @@ export const Colors = {
   blackColor: '#373737',
   eggWhiteColor: '#eaebde',
   whiteColor: '#fff',
-  lightGreyColor: '#a7a7a7',
+  lightGreyColor: '#c2c2c2',
   mediumGreyColor: '#4e4c4cb6',
   darkGreyColor: '#2e2d2c',
   purpleColor: '#9b59b6',

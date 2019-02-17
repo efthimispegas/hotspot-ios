@@ -24,14 +24,23 @@ class UserApi {
     }
   }
 
+  async register(args) {
+    try {
+      //make an axios call to my server
+      const { data } = await axios.post(`/register`, args);
+      return data;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
   async login(args) {
     try {
       //make an axios call to my server
-      const res = await axios.post(`/users/login`, args);
+      const { data } = await axios.post(`/login`, args);
       console.log('===============');
-      console.log('data returned by axios:\n', res);
+      console.log('data returned by axios:\n', data);
       console.log('===============');
-      return res;
+      return data;
     } catch (e) {
       throw new Error(e);
     }
