@@ -49,9 +49,15 @@ class HotspotApi {
     }
   }
 
-  async fetchHotspotComments() {
+  async fetchHotspotComments(userId, hotspotId) {
     try {
-      const { data } = await axios.get(`${this.path}/:hotspotId/comments`);
+      const { data } = await axios.get(
+        `/${userId}${this.path}/${hotspotId}/comments`
+      );
+      console.log('===============');
+      console.log('data returned by axios:\n', data);
+      console.log('===============');
+
       return data;
     } catch (e) {
       throw new Error(e);

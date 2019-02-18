@@ -44,10 +44,8 @@ const CustomHotspotMarker = ({ hotspot }) => {
   };
 
   const _handleMarkerPress = () => {
-    //go to hotspot's details page with comments
-    console.log('===============');
-    console.log('hotspot:', hotspot);
-    console.log('===============');
+    //go to the details page with comments
+
     Actions.comments({ hotspot });
   };
 
@@ -59,7 +57,7 @@ const CustomHotspotMarker = ({ hotspot }) => {
       image={getMarkerImage('flame', hotspot.size)}
       style={styles.marker}
     >
-      <Callout style={styles.callout} onPress={() => {}}>
+      <Callout style={styles.callout}>
         <Card>
           <CardItem bordered>
             <Left>
@@ -106,7 +104,7 @@ const CustomHotspotMarker = ({ hotspot }) => {
                   color={Colors.hotspotColor}
                 />
                 <Text style={[styles.text, { fontSize: 12 }]}>{`${
-                  hotspot.views_count
+                  hotspot.comments_count
                 } Comments`}</Text>
               </Button>
             </Right>

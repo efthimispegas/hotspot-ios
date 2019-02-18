@@ -7,6 +7,7 @@ import home from './home.reducer';
 import menu from './menu.reducer';
 import hotspots from './hotspot.reducer';
 import gallery from './gallery.reducer';
+import comments from './comment.reducer'
 
 export default combineReducers({
   auth,
@@ -15,5 +16,6 @@ export default combineReducers({
   home,
   menu,
   hotspots,
-  gallery
+  gallery,
+  comments
 });

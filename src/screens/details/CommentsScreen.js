@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   ListView,
-  FlatList
+  FlatList,
+  Alert
 } from 'react-native';
 import {
   View,
@@ -21,10 +22,14 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { Entypo, Ionicons } from '@expo/vector-icons';
-
-import { data } from './dummy';
-import { Colors, CustomNavBar } from '../../common';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import moment from 'moment';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
+import { Colors, CustomNavBar } from '../../common';
 
 class CommentsScreen extends React.Component {
   state = {
@@ -33,26 +38,71 @@ class CommentsScreen extends React.Component {
   };
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }); //truthy if row has changed
 
-  getCommentDetails() {
-    //here i will fetch the comments of the current user
-    //from my db
-    const comments = data;
-    return comments;
+  async componentDidMount() {
+    this.getCommentDetails();
   }
 
-  componentDidMount() {
-    //below is a nice boilerplate I will need, maybe
-    const results = this.getCommentDetails();
+  componentWillReceiveProps(nextProps) {
+    console.log('===============');
+    console.log('[ComponentWillReceiveProps] nextProps:', nextProps);
+    console.log('===============');
+    console.log('===============');
+    console.log('this.props:', this.props);
+    console.log('===============');
+    if (nextProps.error) {
+      Alert.alert(
+        'Oops..Something went wrong!',
+        "We couldn't load the commetns from this hotspot, please try again later.",
+        [{ text: 'Cancel', style: 'cancel', onPress: Actions.pop }],
+        { cancelable: true }
+      );
+    }
+    if (this.props.comments === undefined) {
+      //the first time the component loads
+      this.updateCommentList(nextProps.comments);
+    } else {
+      if (nextProps.comments.length != this.props.comments.length) {
+        this.updateCommentList(nextProps.comments);
+      }
+    }
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   console.log('===============');
+  //   console.log('nextProps:', nextProps);
+  //   console.log('===============');
+  //   if (this.props.comments) {
+  //     if (nextProps.comments.length !== this.props.comments.length) {
+  //       return true;
+  //     }
+  //   }
+  //   return false;
+  // }
+
+  async getCommentDetails() {
+    //get the IDs of the current user and the selected hotspot, load:
+    //1. comments of the hotspot
+    //2. Views incremented by 1 if the user's view is new
+    //so here we need the action loadHotspotComments
+    const hotspotId = this.props.hotspot._id;
+    //destructure userId from props later
+    this.props.loadComments('5c6530a3dce16943b8572af3', hotspotId);
+  }
+
+  updateCommentList(comments) {
     let commentArray = [];
-    results.forEach(value => {
-      let message = {
-        id: value._id,
-        name: value.name,
-        avatar: value.picture,
-        email: value.email,
-        content: value.message
+    comments.forEach(el => {
+      let comment = {
+        id: el._id,
+        user: {
+          id: el.user.id,
+          username: el.user.username
+        },
+        // avatar: , //hardcode it for now
+        content: el.description,
+        created_at: el.created_at
       };
-      commentArray.push(message);
+      commentArray.push(comment);
     });
 
     this.setState({
@@ -60,17 +110,16 @@ class CommentsScreen extends React.Component {
     });
   }
 
-  // componentWillMount() {
-
-  // }
-
   render() {
     console.log('===============');
     console.log('[DetailsScreen]this.props:', this.props);
     console.log('===============');
+    console.log('===============');
+    console.log('[DetailsScreen]this.state:', this.state);
+    console.log('===============');
 
     return (
-      <View style={{ backgroundColor: 'white' }}>
+      <View style={{ ...StyleSheet.absoluteFill }}>
         <CustomNavBar
           title="Comments"
           leftTitle="Back"
@@ -81,7 +130,7 @@ class CommentsScreen extends React.Component {
           textColor={{ color: Colors.whiteColor }}
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />
-        <KeyboardAwareScrollView>
+        <KeyboardAwareScrollView style={{ backgroundColor: 'white' }}>
           <List
             rightOpenValue={-75}
             dataSource={this.ds.cloneWithRows(this.state.commentData)}
@@ -89,15 +138,15 @@ class CommentsScreen extends React.Component {
               <ListItem avatar>
                 <Left style={styles.avatarContainer}>
                   <Thumbnail
-                    source={{ uri: value.avatar }}
+                    source={require('../../../assets/icons/user-unknown.png')}
                     style={styles.image}
                   />
                 </Left>
                 <Body>
                   <View style={styles.topContainer}>
-                    <Text style={styles.name}>{value.name}</Text>
+                    <Text style={styles.name}>{value.user.username}</Text>
                     <Text note style={styles.time}>
-                      3 mins ago
+                      {moment(value.created_at).fromNow()}
                     </Text>
                   </View>
                   <View style={styles.bottomContainer}>
@@ -163,4 +212,21 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CommentsScreen;
+const mapStoreToProps = store => {
+  return {
+    user: null, //<-------------fill this when we have auth up and running
+    comments: store.comments.data.comments,
+    error: store.comments.error
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    loadComments: bindActionCreators(actions.loadComments, dispatch)
+  };
+};
+
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(CommentsScreen);

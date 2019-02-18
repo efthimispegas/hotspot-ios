@@ -16,11 +16,7 @@ const LoginForm = ({
   _handleDone,
   state
 }) => (
-  <TouchableWithoutFeedback
-    onPress={() => {
-      Keyboard.dismiss();
-    }}
-  >
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <View style={styles.mainContainer}>
       <View style={styles.formContainer}>
         <View>

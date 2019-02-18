@@ -44,8 +44,25 @@ export const CLEAR_RECOMMENDATIONS = 'CLEAR_RECOMMENDATIONS';
 //hotspots
 //--------------------
 export const LOAD_HOTSPOTS = 'LOAD_HOTSPOTS';
+export const LOAD_HOTSPOTS_SUCCESS = 'LOAD_HOTSPOTS_SUCCESS';
+export const LOAD_HOTSPOTS_ERROR = 'LOAD_HOTSPOTS_ERROR';
 export const CREATE_HOTSPOT = 'CREATE_HOTSPOT';
+export const CREATE_HOTSPOT_SUCCESS = 'CREATE_HOTSPOT_SUCCESS';
+export const CREATE_HOTSPOT_ERROR = 'CREATE_HOTSPOT_ERROR';
 export const CANCEL_HOTSPOT = 'CANCEL_HOTSPOT';
+
+
+//--------------------
+//comments
+//--------------------
+export const LOAD_COMMENTS = 'LOAD_COMMENTS';
+export const LOAD_COMMENTS_SUCCESS = 'LOAD_COMMENTS_SUCCESS';
+export const LOAD_COMMENTS_ERROR = 'LOAD_COMMENTS_ERROR';
+export const CREATE_COMMENT = 'CREATE_COMMENT';
+export const CREATE_COMMENT_SUCCESS = 'CREATE_COMMENT_SUCCESS';
+export const CREATE_COMMENT_ERROR = 'CREATE_COMMENT_ERROR';
+
+
 
 //--------------------
 //gallery

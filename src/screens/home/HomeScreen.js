@@ -104,7 +104,7 @@ class HomeScreen extends Component {
         this.setState({
           isLoading: false,
           isFirstLoad: false,
-          annotations: this.props.hotspots,
+          hotspots: this.props.hotspots,
           currentPosition: {
             latitude: coords.latitude,
             longitude: coords.longitude
@@ -133,7 +133,7 @@ class HomeScreen extends Component {
     this.setState({ mapRegionInput });
   };
 
-  _onRegionChangeComplete = mapRegionInput => {
+  _onRegionChangeComplete = async mapRegionInput => {
     this.setState({
       mapRegionInput
     });
@@ -142,8 +142,25 @@ class HomeScreen extends Component {
       //only if there has been a request
       this.props.fetchRecommendations(mapRegionInput, this.props.lookingFor);
     }
-    //when the region changes, reload
-    this.props.loadHotspots(mapRegionInput);
+    //when the region changes, check the distance from user position
+    if (!this.state.isFirstLoad) {
+      const mapRegion = {
+        latitude: mapRegionInput.latitude,
+        longitude: mapRegionInput.longitude
+      };
+      const userRegion = {
+        latitude: this.props.region.latitude,
+        longitude: this.props.region.longitude
+      };
+      //when the distance is greater than 5km, reload
+      if (geolib.getDistance(userRegion, mapRegion) > 5000) {
+        console.log('===============');
+        console.log('distance:', geolib.getDistance(userRegion, mapRegion));
+        console.log('===============');
+        //fetch hotspots in the new region, but still in a 5km radius
+        await this.props.loadHotspots(mapRegionInput);
+      }
+    }
   };
 
   _handleVenuePress = venue => {
@@ -156,9 +173,7 @@ class HomeScreen extends Component {
     if (this.state.isLoading) {
       return <LoadingScreen />;
     }
-    // console.log('===============');
-    // console.log('[HomeScreen] props:', this.props);
-    // console.log('===============');
+
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <MapContainer
