@@ -21,6 +21,7 @@ import {
   Text
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import { Location } from 'expo';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
@@ -86,7 +87,7 @@ class CommentsScreen extends React.Component {
     //so here we need the action loadHotspotComments
     const hotspotId = this.props.hotspot._id;
     //destructure userId from props later
-    this.props.loadComments('5c6530a3dce16943b8572af3', hotspotId);
+    this.props.loadComments('5c54b0e1231ce64440d8292b', hotspotId);
   }
 
   updateCommentList(comments) {
@@ -110,6 +111,12 @@ class CommentsScreen extends React.Component {
     });
   }
 
+  onBack = async () => {
+    //load hotspots to the specific coords
+    await this.props.loadHotspots(this.props.region);
+    Actions.pop();
+  };
+
   render() {
     console.log('===============');
     console.log('[DetailsScreen]this.props:', this.props);
@@ -124,7 +131,7 @@ class CommentsScreen extends React.Component {
           title="Comments"
           leftTitle="Back"
           rightTitle={null}
-          onLeft={Actions.pop}
+          onLeft={this.onBack}
           onRight={null}
           margins={{ marginLeft: 84 }}
           textColor={{ color: Colors.whiteColor }}
@@ -215,6 +222,7 @@ const styles = StyleSheet.create({
 const mapStoreToProps = store => {
   return {
     user: null, //<-------------fill this when we have auth up and running
+    region: store.location.region,
     comments: store.comments.data.comments,
     error: store.comments.error
   };
@@ -222,7 +230,9 @@ const mapStoreToProps = store => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadComments: bindActionCreators(actions.loadComments, dispatch)
+    loadComments: bindActionCreators(actions.loadComments, dispatch),
+    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch), //<---------------------
+    updateLocation: bindActionCreators(actions.updateLocation, dispatch)
   };
 };
 

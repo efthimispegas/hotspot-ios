@@ -55,6 +55,9 @@ class HomeScreen extends Component {
   componentWillReceiveProps(nextProps) {
     //create an array with the selected venue(s) and
     //change the state to re-render with the venues
+    console.log('===============');
+    console.log('nexProps:', nextProps);
+    console.log('===============');
     let venues = [];
     if (
       nextProps.isVenueSelected &&
