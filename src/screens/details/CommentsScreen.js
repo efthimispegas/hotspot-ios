@@ -18,7 +18,9 @@ import {
   Right,
   Thumbnail,
   Button,
-  Text
+  Text,
+  Card,
+  CardItem
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { Location } from 'expo';
@@ -31,6 +33,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import { Colors, CustomNavBar } from '../../common';
+import { renderImage } from '../../../helpers';
 
 class CommentsScreen extends React.Component {
   state = {
@@ -127,7 +130,7 @@ class CommentsScreen extends React.Component {
     console.log('===============');
     console.log('[DetailsScreen]this.state:', this.state);
     console.log('===============');
-
+    const { hotspot } = this.props;
     return (
       <View style={{ ...StyleSheet.absoluteFill }}>
         <CustomNavBar
@@ -141,6 +144,25 @@ class CommentsScreen extends React.Component {
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />
         <KeyboardAwareScrollView style={{ backgroundColor: 'white' }}>
+          <Card style={{ flex: 0 }}>
+            <CardItem bordered>
+              <Left>
+                <Thumbnail
+                  source={require('../../../assets/icons/user-unknown.png')}
+                />
+                <Body>
+                  <Text style={styles.name}>{hotspot.user.username}</Text>
+                  <Text note>{`${moment(hotspot.created_at).fromNow()}`}</Text>
+                </Body>
+              </Left>
+            </CardItem>
+            <CardItem bordered>
+              <Body style={{ flex: 1 }}>
+                <Text style={styles.message}>{hotspot.text}</Text>
+              </Body>
+            </CardItem>
+            {renderImage(hotspot)}
+          </Card>
           <List
             rightOpenValue={-75}
             dataSource={this.ds.cloneWithRows(this.state.commentData)}
@@ -160,9 +182,7 @@ class CommentsScreen extends React.Component {
                     </Text>
                   </View>
                   <View style={styles.bottomContainer}>
-                    <Text style={styles.message}>
-                      {value.content.substr(0, 30).concat('...')}
-                    </Text>
+                    <Text style={styles.message}>{value.content}</Text>
                   </View>
                 </Body>
               </ListItem>
@@ -204,11 +224,11 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   message: {
-    fontFamily: 'montserratExtraLight',
+    fontFamily: 'montserrat',
     fontSize: 16,
-    color: Colors.lightGreyColor,
     marginTop: 2,
-    marginBottom: 2
+    marginBottom: 2,
+    color: Colors.mediumGreyColor
   },
   time: {
     fontSize: 12,

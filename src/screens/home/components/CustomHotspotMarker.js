@@ -24,25 +24,11 @@ import { Marker, Callout } from 'react-native-maps';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 
-import { getMarkerImage, hasImgFile } from '../../../../helpers';
+import { getMarkerImage, renderImage } from '../../../../helpers';
 import { Colors, TouchableDebounce } from '../../../common';
 import { Actions } from 'react-native-router-flux';
 
 const CustomHotspotMarker = ({ hotspot }) => {
-  const renderImage = () => {
-    if (hasImgFile(hotspot.file)) {
-      return (
-        <CardItem cardBody>
-          <Image
-            source={{ uri: hotspot.file.uri }}
-            style={{ height: 180, width: null, flex: 1, borderRadius: 2 }}
-          />
-        </CardItem>
-      );
-    }
-    return null;
-  };
-
   const _handleMarkerPress = () => {
     //go to the details page with comments
 
@@ -77,10 +63,15 @@ const CustomHotspotMarker = ({ hotspot }) => {
           </CardItem>
           <CardItem bordered>
             <Body style={{ flex: 1 }}>
-              <Text note>{hotspot.description}</Text>
+              <Text
+                note
+                style={[styles.text, { color: Colors.mediumGreyColor }]}
+              >
+                {hotspot.description}
+              </Text>
             </Body>
           </CardItem>
-          {renderImage()}
+          {renderImage(hotspot)}
           <CardItem>
             <Left
               style={{

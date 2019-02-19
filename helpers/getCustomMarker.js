@@ -1,4 +1,7 @@
+import React from 'react';
 import _ from 'lodash';
+import { CardItem } from 'native-base';
+import { Image } from 'react-native';
 
 export const getVenueCategory = payload => {
   let category = undefined;
@@ -149,10 +152,10 @@ export const getMarkerImage = (type, imageId) => {
   return found.img;
 };
 
-export const hasImgFile = file => {
+const hasImgFile = file => {
   //first check if there is a file
-  if (file) {
-    if (file.type === 'image') {
+  if (file && file !== undefined) {
+    if (file.uri && file.uri !== null) {
       //if so, return true
       return true;
     } else if (file.type === 'obj') {
@@ -162,4 +165,33 @@ export const hasImgFile = file => {
   }
   //if there is no file return false
   return false;
+};
+
+export const renderImage = hotspot => {
+  if (hasImgFile(hotspot.file)) {
+    return (
+      <CardItem cardBody>
+        <Image
+          source={{ uri: hotspot.file.uri }}
+          style={{ height: 180, width: null, flex: 1, borderRadius: 2 }}
+        />
+      </CardItem>
+    );
+  }
+  return null;
+};
+
+//needs modifying
+export const renderUserThumbnail = user => {
+  if (hasImgFile(user.avatar)) {
+    return (
+      <CardItem cardBody>
+        <Image
+          source={{ uri: user.avatar.uri }}
+          style={{ height: 180, width: null, flex: 1, borderRadius: 2 }}
+        />
+      </CardItem>
+    );
+  }
+  return null;
 };
