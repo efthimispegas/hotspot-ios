@@ -67,11 +67,21 @@ const validateCreationForm = fields => {
   }
   return false;
 };
+const validateCommentReply = comment => {
+  if (!comment || comment.length < 1) {
+    return "Comments can't be empty 🤨";
+  }
+  if (comment.length < 3) {
+    return 'Comments need to be at least 3 characters long 😁';
+  }
+  return false;
+};
 
 export {
   validateInput,
   validateEmail,
   validateFullName,
   isButtonDisabled,
-  validateCreationForm
+  validateCreationForm,
+  validateCommentReply
 };

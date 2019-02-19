@@ -60,7 +60,7 @@ class FloatingActionButton extends Component {
 
           <ActionButton.Item
             buttonColor={Colors.hotspotColor}
-            onPress={() => Actions.pm()}
+            onPress={() => Actions.messages()}
             size={58}
           >
             <AntDesign name="message1" size={32} color="white" />

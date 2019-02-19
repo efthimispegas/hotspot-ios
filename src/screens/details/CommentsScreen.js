@@ -31,7 +31,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import { Colors, CustomNavBar, Spinner } from '../../common';
-import { renderImage } from '../../../helpers';
+import { renderImage, validateCommentReply } from '../../../helpers';
 
 class CommentsScreen extends React.Component {
   constructor(props) {
@@ -131,16 +131,26 @@ class CommentsScreen extends React.Component {
   };
 
   addNewComment = async () => {
-    const comment = {
-      text: this.state.newComment,
-      user: {
-        id: '5c54b0e1231ce64440d8292b', //hardcode them for now
-        username: 'Pot'
-      }
-    };
-    const hotspotId = this.hotspot._id;
-    //destructure userId from props later
-    await this.props.addComment(comment, hotspotId);
+    const error = validateCommentReply(this.state.newComment);
+    if (error) {
+      Alert.alert(
+        'Sorry, but...',
+        `${error}`,
+        [{ text: 'Cancel', style: 'cancel' }],
+        { cancellable: true }
+      );
+    } else {
+      const comment = {
+        text: this.state.newComment,
+        user: {
+          id: '5c54b0e1231ce64440d8292b', //hardcode them for now
+          username: 'Pot'
+        }
+      };
+      const hotspotId = this.hotspot._id;
+      //destructure userId from props later
+      await this.props.addComment(comment, hotspotId);
+    }
     //clear the comment input
     this.setState({ ...this.state, newComment: '' });
     //then reload comments
