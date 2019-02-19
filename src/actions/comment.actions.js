@@ -21,15 +21,20 @@ export function loadComments(userId, hotspotId) {
   };
 }
 
-export function createComment(userId, hotspotId) {
+export function createComment(newComment, hotspotId) {
   return async dispatch => {
-    dispatch({ type: LOAD_COMMENTS });
+    dispatch({ type: CREATE_COMMENT });
 
     try {
-      const data = await Hotspot.fetchHotspotComments(userId, hotspotId);
-      dispatch(loadCommentsSuccess(data));
+      const userId = newComment.user.id;
+      const { comment } = await Hotspot.createHotspotComment(
+        userId,
+        hotspotId,
+        newComment
+      );
+      dispatch(createCommentSuccess(comment));
     } catch (error) {
-      dispatch(loadCommentsError(error));
+      dispatch(createCommentError(error));
     }
   };
 }
@@ -46,7 +51,7 @@ function loadCommentsSuccess(data) {
   };
 }
 
-function createCommentsSuccess(data) {
+function createCommentSuccess(data) {
   return {
     type: CREATE_COMMENT_SUCCESS,
     payload: data

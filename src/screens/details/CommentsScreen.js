@@ -1,13 +1,12 @@
 import React from 'react';
 import {
   StyleSheet,
-  StatusBar,
-  Image,
   TouchableOpacity,
-  ScrollView,
   ListView,
-  FlatList,
-  Alert
+  Alert,
+  Dimensions,
+  TextInput,
+  Image
 } from 'react-native';
 import {
   View,
@@ -15,12 +14,11 @@ import {
   ListItem,
   Left,
   Body,
-  Right,
   Thumbnail,
-  Button,
   Text,
   Card,
-  CardItem
+  CardItem,
+  InputGroup
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { Location } from 'expo';
@@ -32,14 +30,20 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
-import { Colors, CustomNavBar } from '../../common';
+import { Colors, CustomNavBar, Spinner } from '../../common';
 import { renderImage } from '../../../helpers';
 
 class CommentsScreen extends React.Component {
-  state = {
-    basic: true,
-    commentData: []
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      basic: true,
+      commentData: [],
+      newComment: ''
+    };
+    this.hotspot = props.hotspot;
+    this.replyRef = React.createRef();
+  }
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }); //truthy if row has changed
 
   async componentDidMount() {
@@ -79,7 +83,10 @@ class CommentsScreen extends React.Component {
     if (this.props.comments === undefined) {
       //the first time it loads
       return true;
-    } else if (nextState.commentData.length !== this.state.commentData.length) {
+    } else if (
+      nextState.commentData.length !== this.state.commentData.length ||
+      this.state.newComment.length !== nextState.newComment.length
+    ) {
       //every other time, update only when a new comment is added
       return true;
     }
@@ -91,8 +98,8 @@ class CommentsScreen extends React.Component {
     //1. comments of the hotspot
     //2. Views incremented by 1 if the user's view is new
     //so here we need the action loadHotspotComments
-    const hotspotId = this.props.hotspot._id;
-    //destructure userId from props later
+    const hotspotId = this.hotspot._id;
+    //destructure userId from props later, we need it for the views
     this.props.loadComments('5c54b0e1231ce64440d8292b', hotspotId);
   }
 
@@ -123,6 +130,23 @@ class CommentsScreen extends React.Component {
     Actions.pop();
   };
 
+  addNewComment = async () => {
+    const comment = {
+      text: this.state.newComment,
+      user: {
+        id: '5c54b0e1231ce64440d8292b', //hardcode them for now
+        username: 'Pot'
+      }
+    };
+    const hotspotId = this.hotspot._id;
+    //destructure userId from props later
+    await this.props.addComment(comment, hotspotId);
+    //clear the comment input
+    this.setState({ ...this.state, newComment: '' });
+    //then reload comments
+    this.getCommentDetails();
+  };
+
   render() {
     console.log('===============');
     console.log('[DetailsScreen]this.props:', this.props);
@@ -131,6 +155,15 @@ class CommentsScreen extends React.Component {
     console.log('[DetailsScreen]this.state:', this.state);
     console.log('===============');
     const { hotspot } = this.props;
+    if (!this.props.comments) {
+      return (
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Spinner size="large" />
+        </View>
+      );
+    }
     return (
       <View style={{ ...StyleSheet.absoluteFill }}>
         <CustomNavBar
@@ -189,13 +222,33 @@ class CommentsScreen extends React.Component {
             )}
             renderRightHiddenRow={data => (
               <View style={styles.button}>
-                <TouchableOpacity onPress={() => alert(data)}>
+                <TouchableOpacity onPress={() => this.replyRef.current.focus()}>
                   <Entypo name="reply" size={32} color={Colors.blackColor} />
                 </TouchableOpacity>
               </View>
             )}
           />
-          {/** Here goes the reply component */}
+          <View style={styles.commentWrapper}>
+            <TextInput
+              ref={this.replyRef}
+              multiline
+              placeholder="Add a comment..."
+              placeholderTextColor={Colors.darkGreyColor}
+              selectionColor={Colors.hotspotColor}
+              style={styles.comment}
+              onChangeText={newComment => this.setState({ newComment })}
+              value={this.state.newComment}
+            />
+            <TouchableOpacity
+              onPress={this.addNewComment}
+              style={styles.buttonWrapper}
+            >
+              <Image
+                source={require('../../../assets/icons/send.png')}
+                style={{ height: 24, width: 24 }}
+              />
+            </TouchableOpacity>
+          </View>
         </KeyboardAwareScrollView>
       </View>
     );
@@ -239,6 +292,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.hotspotColor
+  },
+  commentWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10
+  },
+  comment: {
+    flex: 1,
+    alignSelf: 'center',
+    fontFamily: 'montserratLight',
+    fontSize: 16,
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+    lineHeight: 30,
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: Colors.hotspotColor,
+    borderRadius: 30,
+    color: Colors.hotspotColor
+    // backgroundColor: Colors.whiteColor
+  },
+  buttonWrapper: {
+    height: 40,
+    width: 40,
+    marginLeft: 8,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.hotspotColor
   }
 });
 
@@ -254,7 +342,8 @@ const mapStoreToProps = store => {
 const mapDispatchToProps = dispatch => {
   return {
     loadComments: bindActionCreators(actions.loadComments, dispatch),
-    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch), //<---------------------
+    addComment: bindActionCreators(actions.createComment, dispatch),
+    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch),
     updateLocation: bindActionCreators(actions.updateLocation, dispatch)
   };
 };

@@ -16,6 +16,7 @@ class HotspotApi {
     this.path = `/hotspots`;
   }
 
+  /** [Not used anymore...] */
   async fetchHotspots(position) {
     try {
       console.log('===============');
@@ -49,21 +50,6 @@ class HotspotApi {
     }
   }
 
-  async fetchHotspotComments(userId, hotspotId) {
-    try {
-      const { data } = await axios.get(
-        `/${userId}${this.path}/${hotspotId}/comments`
-      );
-      console.log('===============');
-      console.log('data returned by axios:\n', data);
-      console.log('===============');
-
-      return data;
-    } catch (e) {
-      throw new Error(e);
-    }
-  }
-
   async createHotspot(args) {
     try {
       // console.log('===============');
@@ -79,10 +65,32 @@ class HotspotApi {
     }
   }
 
-  async createHotspotComment(args) {
+  async fetchHotspotComments(userId, hotspotId) {
     try {
-      const response = await axios.post(`${this.path}/new`, args);
-      return response;
+      const { data } = await axios.get(
+        `/${userId}${this.path}/${hotspotId}/comments`
+      );
+      console.log('===============');
+      console.log('data returned by axios:\n', data);
+      console.log('===============');
+
+      return data;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
+  async createHotspotComment(userId, hotspotId, args) {
+    try {
+      const { data } = await axios.post(
+        `/${userId}${this.path}/${hotspotId}/comments/new`,
+        args
+      );
+      console.log('===============');
+      console.log('data returned from axios:', data);
+      console.log('===============');
+
+      return data;
     } catch (e) {
       throw new Error(e);
     }
