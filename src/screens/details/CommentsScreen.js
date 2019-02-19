@@ -43,6 +43,7 @@ class CommentsScreen extends React.Component {
     this.getCommentDetails();
   }
 
+  //here add any actions that need to be taken every time new props are received
   componentWillReceiveProps(nextProps) {
     console.log('===============');
     console.log('[ComponentWillReceiveProps] nextProps:', nextProps);
@@ -58,27 +59,29 @@ class CommentsScreen extends React.Component {
         { cancelable: true }
       );
     }
-    if (this.props.comments === undefined) {
-      //the first time the component loads
+    if (nextProps.comments) {
       this.updateCommentList(nextProps.comments);
-    } else {
-      if (nextProps.comments.length != this.props.comments.length) {
-        this.updateCommentList(nextProps.comments);
-      }
     }
   }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   console.log('===============');
-  //   console.log('nextProps:', nextProps);
-  //   console.log('===============');
-  //   if (this.props.comments) {
-  //     if (nextProps.comments.length !== this.props.comments.length) {
-  //       return true;
-  //     }
-  //   }
-  //   return false;
-  // }
+  //here add any checks that need to be made after the component receives props
+  //in order to determine whether or not it will update
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('===============');
+    console.log('[ShouldUpdate]nextProps:', nextProps);
+    console.log('===============');
+    console.log('===============');
+    console.log('[ShouldUpdate]nextState:', nextState);
+    console.log('===============');
+    if (this.props.comments === undefined) {
+      //the first time it loads
+      return true;
+    } else if (nextState.commentData.length !== this.state.commentData.length) {
+      //every other time, update only when a new comment is added
+      return true;
+    }
+    return false;
+  }
 
   async getCommentDetails() {
     //get the IDs of the current user and the selected hotspot, load:

@@ -25,7 +25,7 @@ import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 
 import { getMarkerImage, hasImgFile } from '../../../../helpers';
-import { Colors } from '../../../common';
+import { Colors, TouchableDebounce } from '../../../common';
 import { Actions } from 'react-native-router-flux';
 
 const CustomHotspotMarker = ({ hotspot }) => {
@@ -76,28 +76,41 @@ const CustomHotspotMarker = ({ hotspot }) => {
             </Left>
           </CardItem>
           <CardItem bordered>
-            <TouchableWithoutFeedback onPress={_handleMarkerPress}>
-              <Body style={{ flex: 1 }}>
-                <Text note>{hotspot.description}</Text>
-              </Body>
-            </TouchableWithoutFeedback>
+            <Body style={{ flex: 1 }}>
+              <Text note>{hotspot.description}</Text>
+            </Body>
           </CardItem>
           {renderImage()}
           <CardItem>
-            <Left>
-              <Button transparent onPress={_handleMarkerPress}>
-                <Ionicons
-                  name="ios-thumbs-up"
-                  size={18}
-                  color={Colors.hotspotColor}
-                />
-                <Text style={[styles.text, { fontSize: 12 }]}>{`${
-                  hotspot.views_count
-                } Views`}</Text>
-              </Button>
+            <Left
+              style={{
+                flexDirection: 'row',
+                flex: 0.6,
+                alignItems: 'flex-start',
+                justifyContent: 'center'
+              }}
+            >
+              <Ionicons
+                name="ios-thumbs-up"
+                size={18}
+                color={Colors.hotspotColor}
+              />
+              <Text style={[styles.text, { fontSize: 12 }]}>{`${
+                hotspot.views_count
+              } Views`}</Text>
             </Left>
             <Right>
-              <Button transparent onPress={_handleMarkerPress}>
+              <TouchableDebounce
+                style={{
+                  flexDirection: 'row',
+                  flex: 1,
+                  alignItems: 'center',
+                  paddingHorizontal: 10
+                }}
+                transparent={true}
+                activeOpacity={0.2}
+                onPress={_handleMarkerPress}
+              >
                 <Ionicons
                   name="ios-chatbubbles"
                   size={18}
@@ -106,7 +119,7 @@ const CustomHotspotMarker = ({ hotspot }) => {
                 <Text style={[styles.text, { fontSize: 12 }]}>{`${
                   hotspot.comments_count
                 } Comments`}</Text>
-              </Button>
+              </TouchableDebounce>
             </Right>
           </CardItem>
         </Card>
