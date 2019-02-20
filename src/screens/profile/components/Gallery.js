@@ -11,15 +11,13 @@ import {
   Modal
 } from 'react-native';
 import { List, ListItem } from 'native-base';
-import { getImageList } from './components/dummy';
-import { Spinner, Colors } from '../../common';
-import GalleryImage from './components/GalleryImage';
-
-import { images } from './components/dummy';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-class GalleryScreen extends Component {
+import { Spinner, Colors } from '../../../common';
+import GalleryImage from './GalleryImage';
+import { images } from './dummy';
+
+class Gallery extends Component {
   state = {
     gallery: null,
     modalImage: null,
@@ -128,4 +126,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default GalleryScreen;
+export default Gallery;

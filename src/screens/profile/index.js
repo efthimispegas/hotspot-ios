@@ -1,4 +1,4 @@
 import ProfileScreen from './ProfileScreen';
 import EditProfileScreen from './EditProfileScreen';
 
-export { EditProfileScreen, ProfileScreen };
+export { ProfileScreen, EditProfileScreen };
