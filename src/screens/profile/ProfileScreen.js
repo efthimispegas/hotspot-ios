@@ -26,6 +26,7 @@ class ProfileScreen extends Component {
   _getUser = async () => {
     //hardcode id for now
     const { user } = await User.fetchUser('5c539c398b7c1126bcfd984d');
+    await this.props.loadGallery('5c539c398b7c1126bcfd984d');
     this.setState({ user });
   };
 
@@ -59,7 +60,7 @@ class ProfileScreen extends Component {
             user={user}
             _handleValueChange={this._handleValueChange}
           />
-          <Gallery />
+          <Gallery {...this.props} />
         </ScrollView>
       </View>
     );
@@ -69,14 +70,17 @@ class ProfileScreen extends Component {
 const mapStoreToProps = store => {
   return {
     user: null, //<---------------fill this when auth is running
-    gallery: null //<--------------|
+    gallery: store.gallery.collection
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadGallery: null //bindActionCreators(actions.loadGallery, dispatch)
+    loadGallery: bindActionCreators(actions.getUserGallery, dispatch)
   };
 };
 
-export default connect()(ProfileScreen);
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(ProfileScreen);

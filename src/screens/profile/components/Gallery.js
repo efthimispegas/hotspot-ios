@@ -27,21 +27,13 @@ class Gallery extends Component {
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
   async componentDidMount() {
-    const gallery = images;
-    // let imageArray = [];
-    // gallery.forEach((el, i) => {
-    //   let image = {
-    //     id: i,
-    //     uri: el
-    //   };
-    //   imageArray.push(image);
-    // });
+    const gallery = this.props.gallery;
     this.setState({ gallery, isLoading: false });
   }
 
   toggleModal = (isVisible, index) => {
     if (index) {
-      this.setState({ modalImage: this.state.gallery[index] });
+      this.setState({ modalImage: this.state.gallery[index].uri });
     }
     this.setState({ isModalVisible: isVisible });
   };
@@ -76,18 +68,18 @@ class Gallery extends Component {
             >
               <AntDesign name="close" size={24} color="white" />
             </TouchableOpacity>
-            <GalleryImage source={this.state.modalImage} />
+            <GalleryImage uri={this.state.modalImage} />
           </View>
         </Modal>
 
         {this.state.gallery.map((image, i) => {
           return (
             <TouchableWithoutFeedback
-              key={i}
+              key={image._id}
               onPress={() => this.toggleModal(true, i)}
             >
               <View style={styles.imageWrapper}>
-                <GalleryImage source={image} />
+                <GalleryImage uri={image.uri} />
               </View>
             </TouchableWithoutFeedback>
           );

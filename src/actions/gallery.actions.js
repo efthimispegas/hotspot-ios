@@ -3,7 +3,9 @@ import {
   UPLOAD_IMAGE_SUCCESS,
   UPLOAD_IMAGE_ERROR,
   SAVE_IMAGE,
-  FLUSH_IMAGE
+  FLUSH_IMAGE,
+  GET_USER_GALLERY_ERROR,
+  GET_USER_GALLERY_SUCESS
 } from './types';
 import { Gallery } from '../api';
 
@@ -16,8 +18,6 @@ export function saveImage(uri) {
 
 export function uploadImage(userId, uri) {
   return async dispatch => {
-    dispatch({ type: UPLOAD_IMAGE });
-
     try {
       const file = {
         uri,
@@ -25,33 +25,24 @@ export function uploadImage(userId, uri) {
       };
       const response = await Gallery.imageUpload(userId, file);
 
-      return dispatch(uploadImageSuccess(response));
+      return dispatch({ type: UPLOAD_IMAGE_SUCCESS, payload: response });
     } catch (error) {
-      return dispatch(uploadImageError(error));
+      return dispatch({ type: UPLOAD_IMAGE_ERROR, error });
+    }
+  };
+}
+
+export function getUserGallery(userId) {
+  return async dispatch => {
+    try {
+      const { gallery } = await Gallery.fetchUserGallery(userId);
+      dispatch({ type: GET_USER_GALLERY_SUCESS, payload: gallery });
+    } catch (error) {
+      return dispatch({ type: GET_USER_GALLERY_ERROR, error });
     }
   };
 }
 
 export function flushImage() {
   return { type: FLUSH_IMAGE };
-}
-
-//-----------------------
-//action handlers
-//-----------------------
-
-//SUCCESS case handlers
-function uploadImageSuccess(data) {
-  return {
-    type: UPLOAD_IMAGE_SUCCESS,
-    payload: data
-  };
-}
-
-//ERROR case handlers
-function uploadImageError(error) {
-  return {
-    type: UPLOAD_IMAGE_SUCCESS,
-    error
-  };
 }

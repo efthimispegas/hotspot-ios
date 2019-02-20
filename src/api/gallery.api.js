@@ -28,7 +28,7 @@ class GalleryApi {
       //make an axios call to somewhere
       const { data } = await axios.get(`${this.getPath(userId)}`);
       console.log('===============');
-      console.log('data returned by axios:\n', data);
+      console.log('gallery returned by axios:\n', data);
       console.log('===============');
       return data;
     } catch (e) {

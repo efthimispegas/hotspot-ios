@@ -5,7 +5,7 @@ const WIDTH = Dimensions.get('window').width;
 
 export default class GalleryImage extends Component {
   render() {
-    return <Image source={this.props.source} style={styles.image} />;
+    return <Image source={{ uri: this.props.uri }} style={styles.image} />;
   }
 }
 
