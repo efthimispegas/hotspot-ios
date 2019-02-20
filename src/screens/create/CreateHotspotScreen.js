@@ -26,6 +26,7 @@ class CreateHotspotScreen extends Component {
     message: '',
     value: 15,
     image: null,
+    meta: null,
     isLoading: false
   };
 
@@ -61,21 +62,17 @@ class CreateHotspotScreen extends Component {
       alert('Hotspot needs permissions to access Camera Roll');
       return;
     }
-    const meta = await ImagePicker.launchImageLibraryAsync({
+    const { cancelled, uri } = await ImagePicker.launchImageLibraryAsync({
       aspect: 1,
       allowsEditing: true,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      base64: true
+      mediaTypes: ImagePicker.MediaTypeOptions.Images
     });
-    const { cancelled, uri } = meta;
-    console.log('===============');
-    console.log('meta:', meta);
-    console.log('===============');
     if (!cancelled) {
       this.setState({
         image: uri
       });
-      this.props.saveImage(meta);
+      //save image to the store as hotspot's file
+      this.props.saveImage(uri);
     }
   };
 
@@ -88,15 +85,16 @@ class CreateHotspotScreen extends Component {
       alert('Hotspot needs permissions to access your Camera');
       return;
     }
-    const { cancelled, uri } = meta;
-    console.log('===============');
-    console.log('meta:', meta);
-    console.log('===============');
+    const { cancelled, uri } = await ImagePicker.launchCameraAsync({
+      aspect: 1,
+      allowsEditing: true
+    });
     if (!cancelled) {
       this.setState({
         image: uri
       });
-      this.props.saveImage(meta);
+      //save image to the store as hotspot's file
+      this.props.saveImage(uri);
     }
   };
 
@@ -104,7 +102,7 @@ class CreateHotspotScreen extends Component {
     if (this.props.image) {
       return (
         <Image
-          source={{ uri: this.props.image.uri }}
+          source={{ uri: this.props.image }}
           style={{ width: 128, height: 128 }}
         />
       );
@@ -117,7 +115,17 @@ class CreateHotspotScreen extends Component {
     );
   };
 
-  _postMessage = () => {
+  _saveImage = async () => {
+    const { image } = this.state;
+    if (image) {
+      //and also upload it to the db collection as seperate file, for user's gallery
+      const userId = '5c539c398b7c1126bcfd984d';
+      await this.props.uploadImage(userId, image);
+    }
+    this._postMessage();
+  };
+
+  _postMessage = async () => {
     //will also add user later, hardcode it for now
     const { region, image } = this.props;
     const { value, message } = this.state;
@@ -140,6 +148,8 @@ class CreateHotspotScreen extends Component {
     });
     //flush the data, since they've been sent to the db
     this.props.flushImage();
+    //reload the hotspots, to refresh the homescreen
+    await this.props.loadHotspots(this.props.region);
     Actions.pop();
   };
 
@@ -165,11 +175,12 @@ class CreateHotspotScreen extends Component {
       });
       return;
     }
+
     Alert.alert(
       'Create Hotspot?',
       'If you agree press "OK" and your message will be posted!',
       [
-        { text: 'OK', onPress: () => this._postMessage() },
+        { text: 'OK', onPress: () => this._saveImage() },
         {
           text: 'Cancel',
           onPress: () => this.props.cancelCreation(),
@@ -224,7 +235,9 @@ const mapStateToProps = store => {
 const mapDispatchToProps = dispatch => {
   return {
     createHotspot: bindActionCreators(actions.createHotspot, dispatch),
+    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch),
     saveImage: bindActionCreators(actions.saveImage, dispatch),
+    uploadImage: bindActionCreators(actions.uploadImage, dispatch),
     flushImage: bindActionCreators(actions.flushImage, dispatch),
     cancelCreation: bindActionCreators(actions.cancelCreation, dispatch)
   };

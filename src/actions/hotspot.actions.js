@@ -52,8 +52,8 @@ export function createHotspot(args) {
   return async dispatch => {
     dispatch({ type: CREATE_HOTSPOT });
     try {
-      const { data } = await Hotspot.createHotspot(args);
-      dispatch(createHotspotSuccess(data));
+      const { hotspot } = await Hotspot.createHotspot(args);
+      dispatch(createHotspotSuccess(hotspot));
     } catch (error) {
       return dispatch(createHotspotError(error));
     }
@@ -99,7 +99,7 @@ function loadHotspotsError(error) {
 }
 function createHotspotError(error) {
   return {
-    type: CREATE_HOTSPOTS_ERROR,
+    type: CREATE_HOTSPOT_ERROR,
     error
   };
 }

@@ -51,7 +51,6 @@ export const CREATE_HOTSPOT_SUCCESS = 'CREATE_HOTSPOT_SUCCESS';
 export const CREATE_HOTSPOT_ERROR = 'CREATE_HOTSPOT_ERROR';
 export const CANCEL_HOTSPOT = 'CANCEL_HOTSPOT';
 
-
 //--------------------
 //comments
 //--------------------
@@ -62,10 +61,11 @@ export const CREATE_COMMENT = 'CREATE_COMMENT';
 export const CREATE_COMMENT_SUCCESS = 'CREATE_COMMENT_SUCCESS';
 export const CREATE_COMMENT_ERROR = 'CREATE_COMMENT_ERROR';
 
-
-
 //--------------------
 //gallery
 //--------------------
 export const SAVE_IMAGE = 'SAVE_IMAGE';
 export const FLUSH_IMAGE = 'FLUSH_IMAGE';
+export const UPLOAD_IMAGE = 'UPLOAD_IMAGE';
+export const UPLOAD_IMAGE_SUCCESS = 'UPLOAD_IMAGE_SUCCESS';
+export const UPLOAD_IMAGE_ERROR = 'UPLOAD_IMAGE_ERROR';

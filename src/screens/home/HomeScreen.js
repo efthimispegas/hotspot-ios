@@ -37,8 +37,13 @@ class HomeScreen extends Component {
   //determines whether a change in props or state should trigger a re-render
   //returns true or false correspondingly
   async shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.hotspots !== null) {
+      if (this.props.hotspots.length !== nextProps.hotspots.length) {
+        return true;
+      }
+    }
     if (
-      nextProps.hotspots !== this.props.hotspots ||
+      this.props.hotspots !== nextProps.hotspots ||
       nextState.currentPosition !== this.state.currentPosition ||
       nextState.selectedVenue !== this.state.selectedVenue ||
       nextProps.input !== this.props.input ||
@@ -52,12 +57,9 @@ class HomeScreen extends Component {
   }
 
   //called when component may be receiving new props, make sure to check nextProps and existing state
-  componentWillReceiveProps(nextProps) {
+  async componentWillReceiveProps(nextProps) {
     //create an array with the selected venue(s) and
     //change the state to re-render with the venues
-    console.log('===============');
-    console.log('nexProps:', nextProps);
-    console.log('===============');
     let venues = [];
     if (
       nextProps.isVenueSelected &&

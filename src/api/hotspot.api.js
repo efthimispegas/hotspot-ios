@@ -55,11 +55,11 @@ class HotspotApi {
       // console.log('===============');
       // console.log('[HotspotApi] create hotspot with args:', args);
       // console.log('===============');
-      const response = await axios.post(`${this.path}/new`, args);
-      // console.log('===============');
-      // console.log('[HotspotApi] response:', response);
-      // console.log('===============');
-      return response;
+      const { data } = await axios.post(`${this.path}/new`, args);
+      console.log('===============');
+      console.log('[HotspotApi] created hotspot:', data);
+      console.log('===============');
+      return data;
     } catch (e) {
       throw new Error(e);
     }

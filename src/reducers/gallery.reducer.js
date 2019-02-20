@@ -1,4 +1,9 @@
-import { SAVE_IMAGE, FLUSH_IMAGE } from '../actions/types';
+import {
+  SAVE_IMAGE,
+  FLUSH_IMAGE,
+  UPLOAD_IMAGE_SUCCESS,
+  UPLOAD_IMAGE_ERROR
+} from '../actions/types';
 
 const INITIAL_STATE = {};
 
@@ -8,6 +13,16 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         image: action.payload
+      };
+    case UPLOAD_IMAGE_SUCCESS:
+      return {
+        ...state,
+        message: action.payload
+      };
+    case UPLOAD_IMAGE_ERROR:
+      return {
+        ...state,
+        error: action.error
       };
     case FLUSH_IMAGE:
       return {

@@ -4,6 +4,10 @@ import { List, ListItem, Left, Button, Body, Right, Switch } from 'native-base';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Actions } from 'react-native-router-flux';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
 import { User } from '../../api';
 import { Colors, Spinner, CustomNavBar } from '../../common';
 import ProfileLst from './components/ProfileList';
@@ -62,4 +66,17 @@ class ProfileScreen extends Component {
   }
 }
 
-export default ProfileScreen;
+const mapStoreToProps = store => {
+  return {
+    user: null, //<---------------fill this when auth is running
+    gallery: null //<--------------|
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    loadGallery: null //bindActionCreators(actions.loadGallery, dispatch)
+  };
+};
+
+export default connect()(ProfileScreen);
