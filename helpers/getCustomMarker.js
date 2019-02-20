@@ -152,23 +152,8 @@ export const getMarkerImage = (type, imageId) => {
   return found.img;
 };
 
-const hasImgFile = file => {
-  //first check if there is a file
-  if (file && file !== undefined) {
-    if (file.uri && file.uri !== null) {
-      //if so, return true
-      return true;
-    } else if (file.type === 'obj') {
-      //do something and return
-      return;
-    }
-  }
-  //if there is no file return false
-  return false;
-};
-
 export const renderImage = hotspot => {
-  if (hasImgFile(hotspot.file)) {
+  if (typeof hotspot.file.uri === 'string') {
     return (
       <CardItem cardBody>
         <Image

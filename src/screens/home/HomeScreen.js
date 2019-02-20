@@ -89,6 +89,7 @@ class HomeScreen extends Component {
         this.props.updateLocation(coords);
         //load hotspots to the specific coords
         await this.props.loadHotspots(coords);
+
         //watch last position, when the promise is resolved returns remove() function
         //then we can clear watch by calling this.watchID.remove()
         this.watchID = await Location.watchPositionAsync(
@@ -157,14 +158,9 @@ class HomeScreen extends Component {
         latitude: this.props.region.latitude,
         longitude: this.props.region.longitude
       };
-      //when the distance is greater than 5km, reload
-      if (geolib.getDistance(userRegion, mapRegion) > 5000) {
-        console.log('===============');
-        console.log('distance:', geolib.getDistance(userRegion, mapRegion));
-        console.log('===============');
-        //fetch hotspots in the new region, but still in a 5km radius
-        await this.props.loadHotspots(mapRegionInput);
-      }
+
+      //fetch hotspots in the new region, but still in a 0.5km radius
+      await this.props.loadHotspots(mapRegionInput);
     }
   };
 

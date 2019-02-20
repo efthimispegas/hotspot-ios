@@ -30,9 +30,10 @@ class CreateHotspotScreen extends Component {
     isLoading: false
   };
 
-  componentDidMount() {}
-
   componentWillReceiveProps(nextProps) {
+    console.log('===============');
+    console.log('nextProps:', nextProps);
+    console.log('===============');
     if (!nextProps.creation) {
       if (nextProps.cancelled) {
         this.setState({
@@ -132,7 +133,9 @@ class CreateHotspotScreen extends Component {
     //post message to the map
     this.props.createHotspot({
       loc: { coordinates: [region.latitude, region.longitude] },
-      file: image === undefined ? {} : image,
+      file: {
+        uri: image === undefined ? null : image
+      },
       text: message,
       user: { id: '5c539c398b7c1126bcfd984d', username: 'mikediamond' },
       validity: value
@@ -146,7 +149,6 @@ class CreateHotspotScreen extends Component {
       value: 15,
       isLoading: false
     });
-    //flush the data, since they've been sent to the db
     this.props.flushImage();
     //reload the hotspots, to refresh the homescreen
     await this.props.loadHotspots(this.props.region);
@@ -175,7 +177,7 @@ class CreateHotspotScreen extends Component {
       });
       return;
     }
-
+    //if no errors, verify and post
     Alert.alert(
       'Create Hotspot?',
       'If you agree press "OK" and your message will be posted!',
@@ -191,7 +193,9 @@ class CreateHotspotScreen extends Component {
     );
   };
 
-  _onCancel = () => {
+  _onCancel = async () => {
+    //reload the hotspots, to refresh the homescreen
+    await this.props.loadHotspots(this.props.region);
     //do some canceling
     this.props.cancelCreation();
   };

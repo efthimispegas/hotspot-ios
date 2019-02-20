@@ -11,8 +11,6 @@ import { Hotspot } from '../api';
 
 export function loadHotspots(coords) {
   return async dispatch => {
-    dispatch({ type: LOAD_HOTSPOTS });
-
     try {
       let { hotspots } = await Hotspot.fetchHotspotsWithinRadius(coords); //will refactor later, with (coords, token)
       //adjust the marker's size according to the views_count
@@ -41,21 +39,20 @@ export function loadHotspots(coords) {
           size: hotspot.marker_size
         };
       });
-      return dispatch(loadHotspotsSuccess(markers));
+      return dispatch({ type: LOAD_HOTSPOTS_SUCCESS, payload: markers });
     } catch (error) {
-      return dispatch(loadHotspotsError(error));
+      return dispatch({ type: LOAD_HOTSPOTS_ERROR, error });
     }
   };
 }
 
 export function createHotspot(args) {
   return async dispatch => {
-    dispatch({ type: CREATE_HOTSPOT });
     try {
       const { hotspot } = await Hotspot.createHotspot(args);
-      dispatch(createHotspotSuccess(hotspot));
+      dispatch({ type: CREATE_HOTSPOT_SUCCESS, payload: hotspot });
     } catch (error) {
-      return dispatch(createHotspotError(error));
+      return dispatch({ type: CREATE_HOTSPOT_ERROR, error });
     }
   };
 }
@@ -69,37 +66,4 @@ export function create3DHotspot(hotspot) {
 
 export function cancelCreation() {
   return { type: CANCEL_HOTSPOT };
-}
-
-//-----------------------
-//action handlers
-//-----------------------
-
-//SUCCESS case handlers
-function loadHotspotsSuccess(markers) {
-  return {
-    type: LOAD_HOTSPOTS_SUCCESS,
-    payload: markers
-  };
-}
-
-function createHotspotSuccess(data) {
-  return {
-    type: CREATE_HOTSPOT_SUCCESS,
-    payload: data
-  };
-}
-
-//ERROR case handlers
-function loadHotspotsError(error) {
-  return {
-    type: LOAD_HOTSPOTS_ERROR,
-    error
-  };
-}
-function createHotspotError(error) {
-  return {
-    type: CREATE_HOTSPOT_ERROR,
-    error
-  };
 }
