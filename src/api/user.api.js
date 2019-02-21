@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { domainUrl } from '../config/domainUrl';
+import ErrorHandler from './error.api';
 
 axios.defaults.baseURL = domainUrl;
 // axios.defaults.headers.common['Authorization'] = '<AUTH_TOKEN>';
@@ -8,19 +9,19 @@ axios.defaults.baseURL = domainUrl;
 // const fakeUserId = '5c54b1a4231ce64440d8292f';
 class UserApi {
   constructor() {
-    this.path = `/users`;
+    this.getPath = userId => `/users/${userId}`;
   }
 
   async fetchUser(userId) {
     try {
       //make an axios call to somewhere
-      const { data } = await axios.get(`${this.path}/${userId}`);
+      const { data } = await axios.get(`${this.getPath(userId)}`);
       console.log('===============');
       console.log('data returned by axios:\n', data);
       console.log('===============');
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw new ErrorHandler(e.message).error;
     }
   }
 
@@ -28,9 +29,12 @@ class UserApi {
     try {
       //make an axios call to my server
       const { data } = await axios.post(`/register`, args);
+      console.log('===============');
+      console.log('data from axios:', data);
+      console.log('===============');
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw new ErrorHandler(e.message).error;
     }
   }
   async login(args) {
@@ -42,21 +46,21 @@ class UserApi {
       console.log('===============');
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw new ErrorHandler(e.message).error;
     }
   }
 
   async updateUser(nextUser) {
     try {
       const { data } = await axios.post(
-        `${this.path}/${nextUser._id}/update`,
+        `${this.getPath(nextUser._id)}/edit`,
         nextUser
       );
       console.log('===============');
       console.log('data returned by axios:', data);
       console.log('===============');
     } catch (e) {
-      throw new Error(e);
+      throw e.message;
     }
   }
 }

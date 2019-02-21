@@ -9,57 +9,30 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import SignUpForm from './components/SignUpForm';
+import { validateInput } from '../../../helpers';
 import { Colors } from '../../common';
 
 class SignUpScreen extends Component {
   state = {
     picture: null,
-    username: '',
-    fullname: '',
-    email: '',
-    city: '',
+    username: null,
+    fullname: null,
+    email: null,
+    city: null,
     gender: 'male',
     picker: 'key0',
     birthday: null,
-    password1: '',
-    password2: '',
+    password1: null,
+    password2: null,
     isLoading: false,
-    isDatePickerVisible: false
+    isDatePickerVisible: false,
+    errors: {
+      email: null,
+      username: null,
+      password: null,
+      fullname: null
+    }
   };
-
-  // componentWillReceiveProps(nextProps) {
-  //   //whenever the signup action is catched, and we have the confirmation
-  //   //that the user isLoggedIn, submit
-  //   if (nextProps.error) {
-  //     Alert.alert(
-  //       'There has been some auth error!',
-  //       'Blah blah blah...',
-  //       [{ text: 'Cancel' }],
-  //       { cancelable: true }
-  //     );
-  //     this.setState({
-  //       picture: null,
-  //       username: '',
-  //       fullname: '',
-  //       email: '',
-  //       city: '',
-  //       gender: 'male',
-  //       picker: 'key0',
-  //       birthday: null,
-  //       password1: '',
-  //       password2: '',
-  //       isLoading: false
-  //     });
-  //   }
-  //   if (nextProps.user) {
-  //     if (nextProps.user.isLoggedIn) {
-  //       console.log('===============');
-  //       console.log('[ComponentWillReceiveProps]:', nextProps.user);
-  //       console.log('===============');
-  //       this._handleSubmit();
-  //     }
-  //   }
-  // }
 
   openCameraRoll = async () => {
     const { status, permissions } = await Permissions.askAsync(
@@ -131,23 +104,6 @@ class SignUpScreen extends Component {
     this.setState({ city });
   };
 
-  _handleDone = () => {
-    this._confirmPasswordMatch();
-  };
-
-  _confirmPasswordMatch = () => {
-    const { password1, password2 } = this.state;
-
-    if (password1 !== password2) {
-      Alert.alert('Try again', 'Please make sure your passwords match!');
-      return;
-    } else {
-      //passwords is match
-      this.setState({ isLoading: true });
-      this._enableServicesAsync();
-    }
-  };
-
   _showDatePicker = () => {
     this.setState({ isDatePickerVisible: true });
   };
@@ -157,9 +113,6 @@ class SignUpScreen extends Component {
   };
 
   _handleDatePicked = birthday => {
-    console.log('===============');
-    console.log('date:', birthday);
-    console.log('===============');
     this.setState({ birthday });
     this._hideDatePicker();
   };
@@ -181,18 +134,81 @@ class SignUpScreen extends Component {
     this.setState({ picker: value, gender: 'female' });
   };
 
+  _handleDone = () => {
+    this.setState({ isLoading: true });
+    this._confirmPasswordMatch();
+  };
+
+  _confirmPasswordMatch = () => {
+    const { password1, password2 } = this.state;
+
+    if (password1 !== password2) {
+      Alert.alert('Try again', 'Please make sure your passwords match!');
+      this.setState({ isLoading: false });
+      return;
+    }
+    this._confirmNotEmpty();
+  };
+
+  _confirmNotEmpty = () => {
+    const { username, email, password1, fullname, city, birthday } = this.state;
+    if (
+      username === null ||
+      email === null ||
+      password1 === null ||
+      fullname === null ||
+      city === null ||
+      birthday === null
+    ) {
+      Alert.alert('Not so fast...🤔', 'All fields are required');
+      this.setState({ isLoading: false });
+      return;
+    }
+    this._enableServicesAsync();
+  };
+
+  _validateField = (type, input, requiredLength) => {
+    const errors = validateInput(type, input, requiredLength);
+
+    if (type === 'email') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, email: errors }
+      });
+    } else if (type === 'password') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, password: errors }
+      });
+    } else if (type === 'fullname') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, fullname: errors }
+      });
+    } else if (type === 'username') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, username: errors }
+      });
+    }
+  };
+
   _handleSubmit = () => {
-    this.setState({ isLoading: false });
-    console.log('===============');
-    console.log('[SignUpScreen] new user:', this.state);
-    console.log('===============');
+    if (this.props.error) {
+      if (this.props.error.code === 403) {
+        Alert.alert(`Email ${this.props.error.message}`);
+        this.setState({ isLoading: false });
+        return;
+      }
+    }
+
     Actions.main({ type: 'replace' });
   };
 
   render() {
-    // console.log('===============');
-    // console.log('[SignUpScreen]props:', this.props);
-    // console.log('===============');
+    console.log('===============');
+    console.log('[SignUpScreen]state:', this.state);
+    console.log('===============');
     return (
       <View style={{ backgroundColor: Colors.hotspotColor }}>
         <SignUpForm
@@ -212,6 +228,7 @@ class SignUpScreen extends Component {
           _handleDatePicked={this._handleDatePicked.bind(this)}
           _showDatePicker={this._showDatePicker.bind(this)}
           _hideDatePicker={this._hideDatePicker.bind(this)}
+          _validateField={this._validateField.bind(this)}
           _handleDone={this._handleDone.bind(this)}
         />
       </View>
@@ -250,22 +267,32 @@ class SignUpScreen extends Component {
       this.setState({ isLoading: false });
     } else {
       //do some validations
+      const { email, password, username, fullname } = this.state.errors;
+      if (
+        email === null &&
+        username === null &&
+        fullname === null &&
+        password === null
+      ) {
+        //send the user info to the server
+        const user = {
+          username: this.state.username,
+          email: this.state.email,
+          password: this.state.password1,
+          fullname: this.state.fullname,
+          city: this.state.city,
+          gender: this.state.gender,
+          birthday: this.state.birthday,
+          avatar: this.state.picture
+        };
+        console.log('===============');
+        console.log('[SignUpScreen]user to be sent to the server:', user);
+        console.log('===============');
+        // if everything matches, signup
+        await this.props.signup(user);
 
-      //send the user info to the server
-      // const user = {
-      //   username: this.state.username,
-      //   email: this.state.email,
-      //   password: this.state.password1,
-      //   fullname: this.state.fullname,
-      //   city: this.state.city,
-      //   gender: this.state.gender,
-      //   birthday: this.state.birthday,
-      //   avatar: this.state.picture
-      // };
-      //if everything matches, signup
-      // this.props.signup(user);
-
-      this._handleSubmit();
+        this._handleSubmit();
+      }
     }
   }
 }

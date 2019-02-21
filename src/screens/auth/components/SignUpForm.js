@@ -36,6 +36,7 @@ const SignUpForm = ({
   _hideDatePicker,
   _checkBirthday,
   _checkGender,
+  _validateField,
   _handleDone
 }) => {
   return (
@@ -59,127 +60,144 @@ const SignUpForm = ({
         </View>
         <View style={styles.formContainer}>
           <TextInput
-            placeholder="Full name"
+            placeholder="Username"
             enablesReturnKeyAutomatically
+            autoCapitalize="none"
+            selectionColor={Colors.hotspotColor}
+            onChangeText={username => _handleChangeUsername(username)}
+            value={state.username}
+            onBlur={() => _validateField('username', state.username, 3)}
+            style={styles.input}
+          />
+          {state.errors.username !== null ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{state.errors.username}</Text>
+            </View>
+          ) : null}
+          <TextInput
+            placeholder="Email"
+            enablesReturnKeyAutomatically
+            autoCapitalize="none"
+            selectionColor={Colors.hotspotColor}
+            onChangeText={email => _handleChangeEmail(email)}
+            onBlur={() => _validateField('email', state.email, null)}
+            value={state.email}
+            style={styles.input}
+            keyboardType="email-address"
+          />
+          {state.errors.email !== null ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{state.errors.email}</Text>
+            </View>
+          ) : null}
+
+          <TextInput
+            placeholder="Password"
+            enablesReturnKeyAutomatically
+            selectionColor={Colors.hotspotColor}
+            onChangeText={password1 => _handleChangePassword1(password1)}
+            onBlur={() => _validateField('password', state.password1, 6)}
+            value={state.password1}
+            secureTextEntry={true}
+            style={styles.input}
+          />
+          {state.errors.password !== null ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{state.errors.password}</Text>
+            </View>
+          ) : null}
+
+          <TextInput
+            placeholder="Confirm password"
+            enablesReturnKeyAutomatically
+            selectionColor={Colors.hotspotColor}
+            onChangeText={password2 => _handleChangePassword2(password2)}
+            value={state.password2}
+            secureTextEntry={true}
+            style={styles.input}
+          />
+
+          <TextInput
+            placeholder="Full name"
             autoCapitalize="words"
             selectionColor={Colors.hotspotColor}
             onChangeText={fullname => _handleChangeFullname(fullname)}
+            onBlur={() => _validateField('fullname', state.fullname, null)}
             value={state.fullname}
             style={styles.input}
           />
-          <View>
-            <TextInput
-              placeholder="Username"
-              enablesReturnKeyAutomatically
-              autoCapitalize="none"
-              selectionColor={Colors.hotspotColor}
-              onChangeText={username => _handleChangeUsername(username)}
-              value={state.username}
-              style={styles.input}
-            />
-
-            <TextInput
-              placeholder="Email"
-              enablesReturnKeyAutomatically
-              autoCapitalize="none"
-              selectionColor={Colors.hotspotColor}
-              onChangeText={email => _handleChangeEmail(email)}
-              value={state.email}
-              style={styles.input}
-              keyboardType="email-address"
-            />
-
-            <TextInput
-              placeholder="Password"
-              enablesReturnKeyAutomatically
-              selectionColor={Colors.hotspotColor}
-              onChangeText={password1 => _handleChangePassword1(password1)}
-              value={state.password1}
-              secureTextEntry={true}
-              style={styles.input}
-            />
-
-            <TextInput
-              placeholder="Confirm password"
-              enablesReturnKeyAutomatically
-              selectionColor={Colors.hotspotColor}
-              onChangeText={password2 => _handleChangePassword2(password2)}
-              value={state.password2}
-              secureTextEntry={true}
-              style={styles.input}
-            />
-
-            <TextInput
-              placeholder="City"
-              selectionColor={Colors.hotspotColor}
-              onChangeText={city => _handleChangeCity(city)}
-              value={state.city}
-              style={styles.input}
-            />
-
-            <NativeButton
-              transparent
-              onPress={_showDatePicker}
-              style={[
-                styles.input,
-                { width: Dimensions.get('window').width - 40 }
-              ]}
-            >
-              <TextInput
-                editable={false}
-                placeholder={_checkBirthday()}
-                placeholderTextColor={
-                  state.birthday != null
-                    ? Colors.hotspotColor
-                    : Colors.lightGreyColor
-                }
-                style={styles.input}
-                value={() => _checkBirthday()}
-              />
-            </NativeButton>
-            <TouchableOpacity style={[styles.input, { paddingVertical: 0 }]}>
-              <Picker
-                mode="dropdown"
-                placeholder="Select you gender"
-                textStyle={{
-                  flex: 1,
-                  color: Colors.hotspotColor,
-                  fontFamily: 'montserrat'
-                }}
-                itemTextStyle={{
-                  color: Colors.hotspotColor,
-                  fontFamily: 'montserrat'
-                }}
-                headerStyle={{
-                  backgroundColor: Colors.hotspotColor,
-                  fontFamily: 'montserrat'
-                }}
-                headerBackButtonText="Cancel"
-                headerBackButtonTextStyle={{ color: Colors.whiteColor }}
-                headerTitleStyle={{
-                  color: Colors.whiteColor,
-                  fontSize: 20,
-                  fontWeight: 'bold'
-                }}
-                selectedValue={state.picker}
-                onValueChange={_checkGender}
-              >
-                <Picker.Item label="male" value="key0" />
-                <Picker.Item label="female" value="key1" />
-              </Picker>
-            </TouchableOpacity>
-
+          {state.errors.fullname !== null ? (
             <View style={styles.errorContainer}>
-              {/* <Text style={styles.errorText}>{error ? error. : null}</Text> */}
+              <Text style={styles.errorText}>{state.errors.fullname}</Text>
             </View>
+          ) : null}
 
-            <View style={styles.formButton}>
-              <Button
-                isLoading={state.isLoading}
-                name="Done"
-                onPress={_handleDone}
-              />
-            </View>
+          <TextInput
+            placeholder="City"
+            selectionColor={Colors.hotspotColor}
+            onChangeText={city => _handleChangeCity(city)}
+            value={state.city}
+            style={styles.input}
+          />
+
+          <NativeButton
+            transparent
+            onPress={_showDatePicker}
+            style={[
+              styles.input,
+              { width: Dimensions.get('window').width - 40 }
+            ]}
+          >
+            <TextInput
+              editable={false}
+              placeholder={_checkBirthday()}
+              placeholderTextColor={
+                state.birthday != null
+                  ? Colors.hotspotColor
+                  : Colors.lightGreyColor
+              }
+              style={styles.input}
+              value={() => _checkBirthday()}
+            />
+          </NativeButton>
+          <TouchableOpacity style={[styles.input, { paddingVertical: 0 }]}>
+            <Picker
+              mode="dropdown"
+              placeholder="Select you gender"
+              textStyle={{
+                flex: 1,
+                color: Colors.hotspotColor,
+                fontFamily: 'montserrat'
+              }}
+              itemTextStyle={{
+                color: Colors.hotspotColor,
+                fontFamily: 'montserrat'
+              }}
+              headerStyle={{
+                backgroundColor: Colors.hotspotColor,
+                fontFamily: 'montserrat'
+              }}
+              headerBackButtonText="Cancel"
+              headerBackButtonTextStyle={{ color: Colors.whiteColor }}
+              headerTitleStyle={{
+                color: Colors.whiteColor,
+                fontSize: 20,
+                fontWeight: 'bold'
+              }}
+              selectedValue={state.picker}
+              onValueChange={_checkGender}
+            >
+              <Picker.Item label="male" value="key0" />
+              <Picker.Item label="female" value="key1" />
+            </Picker>
+          </TouchableOpacity>
+
+          <View style={styles.formButton}>
+            <Button
+              isLoading={state.isLoading}
+              name="Done"
+              onPress={_handleDone}
+            />
           </View>
         </View>
 
@@ -254,7 +272,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   formContainer: {
-    // backgroundColor: Colors.violetColor
+    flex: 1,
+    backgroundColor: Colors.violetColor
   },
   formButton: {
     marginTop: 30,
@@ -274,13 +293,16 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.whiteColor
   },
   errorContainer: {
-    // backgroundColor: Colors.pinkColor
+    flex: 1,
+    backgroundColor: Colors.pinkColor,
+    paddingBottom: 10
   },
   errorText: {
+    flex: 1,
     color: Colors.redColor,
     fontFamily: 'montserrat',
     fontSize: 15,
-    marginLeft: 20
+    marginLeft: 10
   },
   divider: {
     flexDirection: 'row',

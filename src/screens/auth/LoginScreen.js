@@ -24,19 +24,6 @@ class LoginScreen extends Component {
     password: ''
   };
 
-  componentWillReceiveProps(nextProps) {
-    //whenever the login action is catched, and we have the confirmation
-    //that the user isLoggedIn, submit
-    if (nextProps.user) {
-      if (nextProps.user.isLoggedIn) {
-        console.log('===============');
-        console.log('[ComponentWillReceiveProps]:', nextProps.user);
-        console.log('===============');
-        this._handleSubmit();
-      }
-    }
-  }
-
   _handleChangePassword = password => {
     this.setState({ password });
   };

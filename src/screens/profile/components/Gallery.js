@@ -10,12 +10,10 @@ import {
   ScrollView,
   Modal
 } from 'react-native';
-import { List, ListItem } from 'native-base';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { Spinner, Colors } from '../../../common';
 import GalleryImage from './GalleryImage';
-import { images } from './dummy';
 
 class Gallery extends Component {
   state = {

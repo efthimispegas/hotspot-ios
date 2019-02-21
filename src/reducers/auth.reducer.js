@@ -30,7 +30,7 @@ export default (state = INITIAL_STATE, action) => {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        user: action.payload,
+        user: { info: action.payload.info, token: action.payload.token },
         isLoggedIn: true,
         error: false
       };

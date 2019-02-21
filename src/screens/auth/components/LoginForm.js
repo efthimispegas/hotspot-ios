@@ -30,7 +30,9 @@ const LoginForm = ({
             value={state.email}
             style={styles.input}
           />
-
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Errors will go here</Text>
+          </View>
           <TextInput
             placeholder="Password"
             selectionColor={Colors.hotspotColor}
@@ -39,7 +41,9 @@ const LoginForm = ({
             secureTextEntry={true}
             style={styles.input}
           />
-
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Errors will go here</Text>
+          </View>
           <View style={styles.formButton}>
             <Button
               isLoading={state.isLoading}
@@ -48,10 +52,6 @@ const LoginForm = ({
             />
           </View>
         </View>
-      </View>
-
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Errors will go here</Text>
       </View>
     </View>
   </TouchableWithoutFeedback>
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   formContainer: {
+    flex: 1
     // backgroundColor: Colors.violetColor
   },
   formButton: {
@@ -90,13 +91,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.whiteColor
   },
   errorContainer: {
-    // backgroundColor: Colors.pinkColor
+    backgroundColor: Colors.pinkColor,
+    paddingBottom: 10
   },
   errorText: {
     color: Colors.redColor,
     fontFamily: 'montserrat',
     fontSize: 15,
-    marginLeft: 20
+    marginLeft: 10
   }
 });
 

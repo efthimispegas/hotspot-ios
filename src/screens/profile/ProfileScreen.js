@@ -34,6 +34,10 @@ class ProfileScreen extends Component {
     this.setState({ public: value });
   }
 
+  async _handleLogout() {
+    console.log('log out');
+  }
+
   render() {
     const { user } = this.state;
     if (!user) {
@@ -50,7 +54,7 @@ class ProfileScreen extends Component {
           rightTitle="Edit"
           onLeft={Actions.pop}
           onRight={() => Actions.edit()}
-          margins={{ marginLeft: 105, marginRight: 100 }}
+          margins={{ marginLeft: 105, marginRight: 110 }}
           textColor={{ color: Colors.whiteColor }}
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />
@@ -58,6 +62,7 @@ class ProfileScreen extends Component {
           <ProfileLst
             state={this.state}
             user={user}
+            _handleLogout={this._handleLogout}
             _handleValueChange={this._handleValueChange}
           />
           <Gallery {...this.props} />

@@ -22,14 +22,13 @@ import { User } from '../api';
 export function login(user) {
   //refactor later with token
   return async dispatch => {
-    dispatch({ type: LOGIN_LOCAL });
     try {
       //here we will await the res of the query in the db for the token
       const data = await User.login(user);
       //and if we find the user we will login
-      return dispatch(loginSuccess(data));
-    } catch (e) {
-      return dispatch(loginError(e));
+      return dispatch({ type: LOGIN_LOCAL_SUCCESS, payload: data });
+    } catch (error) {
+      return dispatch({ type: LOGIN_LOCAL_SUCCESS, error });
     }
   };
 }
@@ -50,14 +49,13 @@ export function loginGoogle(user) {
 
 export function signup(user) {
   return async dispatch => {
-    dispatch({ type: REGISTER });
     try {
       //here we will await the creation of the user in the db
-      const data = await User.register(user);
+      const { token, info } = await User.register(user);
       //and if everything is successful we signup
-      return dispatch(signupSuccess(data));
-    } catch (e) {
-      return dispatch(signupError(e));
+      return dispatch({ type: REGISTER_SUCCESS, payload: { token, info } });
+    } catch (error) {
+      return dispatch({ type: REGISTER_ERROR, error });
     }
   };
 }
@@ -65,41 +63,5 @@ export function signup(user) {
 export function logout() {
   return {
     type: LOGOUT
-  };
-}
-
-//-----------------------
-//action handlers
-//-----------------------
-
-//create the functionality that checks if the login was
-//successful or if there is an error
-function loginSuccess({ token, user }) {
-  return {
-    type: LOGIN_SUCCESS,
-    payload: { token, user }
-  };
-}
-
-function loginError(error) {
-  return {
-    type: LOGIN_ERROR,
-    error
-  };
-}
-
-//create the functionality that checks if the signup
-//was succesfull or if there was an error
-function signupSuccess({ token, user }) {
-  return {
-    type: REGISTER_SUCCESS,
-    payload: { token, user }
-  };
-}
-
-function signupError(e) {
-  return {
-    type: REGISTER_ERROR,
-    error: e
   };
 }

@@ -16,6 +16,8 @@ class HotspotApi {
     this.path = `/hotspots`;
   }
 
+  /**   Hotspots    */
+
   /** [Not used anymore...] */
   async fetchHotspots(position) {
     try {
@@ -64,6 +66,24 @@ class HotspotApi {
       throw new Error(e);
     }
   }
+
+  async editHotspot(userId, hotspotId, args) {
+    try {
+      const { data } = await axios.post(
+        `/${userId}${this.path}/${hotspotId}/edit`,
+        args
+      );
+      console.log('===============');
+      console.log('data returned from axios:', data);
+      console.log('===============');
+
+      return data;
+    } catch (e) {
+      throw new Error(e);
+    }
+  }
+
+  /**  Comments    */
 
   async fetchHotspotComments(userId, hotspotId) {
     try {

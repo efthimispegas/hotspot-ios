@@ -16,6 +16,7 @@ import { FontAwesome, Ionicons, Foundation } from '@expo/vector-icons';
 import DatePicker from 'react-native-modal-datetime-picker';
 import moment from 'moment';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { Actions } from 'react-native-router-flux';
 
 import { User } from '../../api';
 import { Colors, Spinner, CustomNavBar } from '../../common';
@@ -148,7 +149,7 @@ class EditProfileScreen extends Component {
       });
       return;
     }
-    //submit form
+    //make sure to check if the new email is taken
   };
 
   _handleDone = () => {
@@ -171,7 +172,7 @@ class EditProfileScreen extends Component {
           rightTitle="Done"
           onLeft={Actions.pop}
           onRight={this._handleDone}
-          margins={{ marginLeft: 30, marginRight: 30 }}
+          margins={{ marginLeft: 50, marginRight: 50 }}
           textColor={{ color: Colors.whiteColor }}
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />

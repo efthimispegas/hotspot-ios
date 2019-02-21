@@ -5,7 +5,7 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 import { Colors } from '../../../common';
 
-const ProfileLst = ({ state, user, _handleValueChange }) => (
+const ProfileLst = ({ state, user, _handleValueChange, _handleLogout }) => (
   <View style={styles.container}>
     <View style={styles.picture}>
       <Image
@@ -137,6 +137,13 @@ const ProfileLst = ({ state, user, _handleValueChange }) => (
               />
             </Button>
           </Right>
+        </ListItem>
+        <ListItem icon style={{ alignItems: 'center' }}>
+          <Button transparent onPress={_handleLogout}>
+            <Text style={{ color: Colors.redColor, fontSize: 18 }}>
+              Log out
+            </Text>
+          </Button>
         </ListItem>
         <ListItem itemDivider>
           <Text style={styles.separator}>GALLERY</Text>

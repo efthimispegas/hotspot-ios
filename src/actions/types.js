@@ -5,17 +5,17 @@
 //--------------------
 //auth
 //--------------------
-export const LOGIN_LOCAL = 'LOGIN_LOCAL';
-export const LOGIN_ERROR = 'LOGIN_ERROR';
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_GOOGLE = 'LOGIN_GOOGLE';
-export const LOGIN_FACEBOOK = 'LOGIN_FACEBOOK';
+export const LOGIN_LOCAL_SUCCESS = 'LOGIN_LOCAL_SUCCESS';
+export const LOGIN_LOCAL_ERROR = 'LOGIN_LOCAL_ERROR';
+export const LOGIN_GOOGLE_SUCCESS = 'LOGIN_GOOGLE_SUCCESS';
+export const LOGIN_GOOGLE_ERROR = 'LOGIN_GOOGLE_ERROR';
+export const LOGIN_FACEBOOK_SUCCESS = 'LOGIN_FACEBOOK_SUCCESS';
+export const LOGIN_FACEBOOK_ERROR = 'LOGIN_FACEBOOK_ERROR';
 
-export const REGISTER = 'REGISTER';
 export const REGISTER_ERROR = 'REGISTER_ERROR';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 
-export const LOGOUT = 'LOGOUT';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 export const LOGOUT_ERROR = 'LOGOUT_ERROR';
 
 //--------------------
