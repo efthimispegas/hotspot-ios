@@ -5,6 +5,8 @@
 //--------------------
 //auth
 //--------------------
+export const ACCESS_TOKEN = 'access_token';
+
 export const LOGIN_LOCAL_SUCCESS = 'LOGIN_LOCAL_SUCCESS';
 export const LOGIN_LOCAL_ERROR = 'LOGIN_LOCAL_ERROR';
 export const LOGIN_GOOGLE_SUCCESS = 'LOGIN_GOOGLE_SUCCESS';

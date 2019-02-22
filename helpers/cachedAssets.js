@@ -33,6 +33,7 @@ export const imageAssets = cachedAssets([
   require('../assets/flames/x3.png'),
   require('../assets/flames/x4.png'),
   require('../assets/flames/x5.png'),
+  require('../assets/icons/plus.png'),
   require('../assets/icons/add-image.png'),
   require('../assets/icons/arrow-back.png'),
   require('../assets/icons/camera.png'),

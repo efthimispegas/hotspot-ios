@@ -1,15 +1,48 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, Animated } from 'react-native';
-
-import { Button, Colors } from '../../common';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  Animated,
+  AsyncStorage
+} from 'react-native';
 import { Actions } from 'react-native-router-flux';
+
+import SplashScreen from './SplashScreen';
+import { Button, Colors, Spinner } from '../../common';
+import { ACCESS_TOKEN } from '../../actions/types';
 
 class WelcomeScreen extends Component {
   state = {
+    isLoading: true,
     //starting point of button's state (we don't see it)
     opacity: new Animated.Value(0),
     position: new Animated.Value(0)
   };
+
+  async componentDidMount() {
+    const token = await this.getToken();
+
+    if (token) {
+      this.setState({ isLoading: false });
+      Actions.main({ type: 'replace' });
+      // return;
+    } else {
+      this.setState({ isLoading: false });
+      this._addOpacityAnimation();
+      this._addTransitionAnimation();
+    }
+  }
+
+  async getToken() {
+    try {
+      const token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   _addOpacityAnimation = () => {
     Animated.timing(this.state.opacity, {
@@ -26,18 +59,10 @@ class WelcomeScreen extends Component {
     }).start();
   };
 
-  componentDidMount() {
-    this._addOpacityAnimation();
-    this._addTransitionAnimation();
-  }
-
-  _checkAuth = () => {
-    setTimeout(() => {
-      Actions.login();
-    }, 1500);
-  };
-
   render() {
+    if (this.state.isLoading) {
+      return <SplashScreen />;
+    }
     const { opacity, position } = this.state;
     const translateTitle = position.interpolate({
       inputRange: [0, 1],

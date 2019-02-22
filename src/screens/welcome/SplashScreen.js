@@ -3,17 +3,6 @@ import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
 class SplashScreen extends Component {
-  componentDidMount() {
-    this._setDelay();
-  }
-
-  _setDelay = () => {
-    setTimeout(() => {
-      //not Actions.welcome();
-      //use replace when you don't want the transision efect
-      Actions.replace('welcome');
-    }, 3000);
-  };
   render() {
     return (
       <ImageBackground

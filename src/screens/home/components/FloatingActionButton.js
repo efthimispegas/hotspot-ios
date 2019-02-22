@@ -10,10 +10,20 @@ import { Colors } from '../../../common';
 class FloatingActionButton extends Component {
   _renderFabIcon(active) {
     if (!active) {
-      return <AntDesign name="plus" size={46} color="white" />;
+      return (
+        <Image
+          source={require('../../../../assets/icons/plus.png')}
+          style={{ width: 38, height: 38 }}
+        />
+      );
     }
     if (active) {
-      return <AntDesign name="plus" size={46} color="white" />;
+      return (
+        <Image
+          source={require('../../../../assets/icons/plus.png')}
+          style={{ width: 38, height: 38 }}
+        />
+      );
     }
   }
   render() {

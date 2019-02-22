@@ -6,7 +6,8 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
   StyleSheet,
-  Alert
+  Alert,
+  AsyncStorage
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Expo, { Permissions, Location } from 'expo';
@@ -16,6 +17,7 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import LoginForm from './components/LoginForm';
+import { ACCESS_TOKEN } from '../../actions/types';
 
 class LoginScreen extends Component {
   state = {
@@ -23,6 +25,31 @@ class LoginScreen extends Component {
     email: '',
     password: ''
   };
+
+  // async componentDidMount() {
+  //   const token = await this.getToken();
+  //   if (token) {
+  //     Actions.main({ type: 'replace' });
+  //   }
+  // }
+
+  async storeToken(accessToken) {
+    try {
+      await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
+      this.getToken();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getToken() {
+    try {
+      const token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   _handleChangePassword = password => {
     this.setState({ password });
@@ -36,7 +63,7 @@ class LoginScreen extends Component {
     this._enableServicesAsync();
   };
 
-  _handleSubmit = () => {
+  _handleSubmit = async () => {
     if (this.props.error) {
       if (this.props.error.code === 401) {
         Alert.alert(`Email and password don't match. `);
@@ -44,6 +71,7 @@ class LoginScreen extends Component {
         return;
       }
     }
+    await this.storeToken(this.props.user.user.token);
     this.setState({ isLoading: false });
     Actions.main({ type: 'replace' });
   };
@@ -92,6 +120,7 @@ class LoginScreen extends Component {
       //if everything matches dispatch login action to be catched from the watcher
       const { email, password } = this.state;
       await this.props.login({ email, password });
+
       this._handleSubmit();
     }
   }
