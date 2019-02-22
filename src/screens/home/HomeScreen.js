@@ -202,7 +202,7 @@ class HomeScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
-    user: store.auth,
+    user: store.auth.user,
     hotspots: store.hotspots.markers,
     region: store.location.region,
     showMyLocation: store.location.showMyLocation,

@@ -2,7 +2,10 @@ import {
   REGISTER_SUCCESS,
   REGISTER_ERROR,
   LOGIN_LOCAL_SUCCESS,
-  LOGIN_LOCAL_ERROR
+  LOGIN_LOCAL_ERROR,
+  GET_USER_SUCCESS,
+  GET_USER_ERROR,
+  LOGOUT
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -40,6 +43,25 @@ export default (state = INITIAL_STATE, action) => {
         user: null,
         isLoggedIn: false,
         error: action.error
+      };
+    case GET_USER_SUCCESS:
+      //we exchanged token for user info
+      return {
+        ...state,
+        user: { ...state.user, info: action.payload },
+        isLoggedIn: true
+      };
+    case GET_USER_ERROR:
+      return {
+        ...state,
+        error: action.error
+      };
+    case LOGOUT:
+      return {
+        ...state,
+        user: null,
+        isLoggedIn: false,
+        error: false
       };
     default:
       return state;

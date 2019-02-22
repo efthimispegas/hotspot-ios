@@ -36,7 +36,6 @@ class LoginScreen extends Component {
   async storeToken(accessToken) {
     try {
       await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
-      this.getToken();
     } catch (error) {
       throw error;
     }
@@ -71,7 +70,7 @@ class LoginScreen extends Component {
         return;
       }
     }
-    await this.storeToken(this.props.user.user.token);
+    await this.storeToken(this.props.user.token);
     this.setState({ isLoading: false });
     Actions.main({ type: 'replace' });
   };
@@ -119,6 +118,12 @@ class LoginScreen extends Component {
       //401 = email and password don't match
       //if everything matches dispatch login action to be catched from the watcher
       const { email, password } = this.state;
+      console.log('===============');
+      console.log('[LoginScreen]data to be sent to the server:', {
+        email,
+        password
+      });
+      console.log('===============');
       await this.props.login({ email, password });
 
       this._handleSubmit();
@@ -128,7 +133,7 @@ class LoginScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
-    user: store.auth,
+    user: store.auth.user,
     error: store.auth.error
   };
 };

@@ -9,6 +9,10 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
 import SplashScreen from './SplashScreen';
 import { Button, Colors, Spinner } from '../../common';
 import { ACCESS_TOKEN } from '../../actions/types';
@@ -23,9 +27,12 @@ class WelcomeScreen extends Component {
 
   async componentDidMount() {
     const token = await this.getToken();
-
+    console.log('===============');
+    console.log('[WelcomeScreen]:', token);
+    console.log('===============');
     if (token) {
       this.setState({ isLoading: false });
+      this.props.getUser(token);
       Actions.main({ type: 'replace' });
       // return;
     } else {
@@ -131,8 +138,6 @@ class WelcomeScreen extends Component {
   }
 }
 
-export default WelcomeScreen;
-
 const styles = StyleSheet.create({
   welcomeMainContainer: {
     flex: 1,
@@ -194,3 +199,19 @@ const styles = StyleSheet.create({
     marginTop: 10
   }
 });
+
+const mapStoreToProps = store => {
+  return {
+    user: null //<------------------
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getUser: bindActionCreators(actions.getUser, dispatch)
+  };
+};
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(WelcomeScreen);

@@ -9,10 +9,10 @@ import {
 } from './types';
 import { Hotspot } from '../api';
 
-export function loadHotspots(coords) {
+export function loadHotspots(coords, token) {
   return async dispatch => {
     try {
-      let { hotspots } = await Hotspot.fetchHotspotsWithinRadius(coords); //will refactor later, with (coords, token)
+      let { hotspots } = await Hotspot.fetchHotspotsWithinRadius(coords, token); //will refactor later, with (coords, token)
       //adjust the marker's size according to the views_count
       hotspots.forEach((hotspot, index) => {
         if (hotspot.views_count < 10) {

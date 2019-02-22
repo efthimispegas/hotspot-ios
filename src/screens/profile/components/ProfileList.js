@@ -5,7 +5,12 @@ import { FontAwesome, Ionicons } from '@expo/vector-icons';
 
 import { Colors } from '../../../common';
 
-const ProfileLst = ({ state, user, _handleValueChange, _handleLogout }) => (
+const ProfileLst = ({
+  publicAccount,
+  user,
+  _handleValueChange,
+  _handleLogout
+}) => (
   <View style={styles.container}>
     <View style={styles.picture}>
       <Image
@@ -111,7 +116,7 @@ const ProfileLst = ({ state, user, _handleValueChange, _handleLogout }) => (
           <Body />
           <Right>
             <Switch
-              value={state.public}
+              value={publicAccount}
               onValueChange={value => _handleValueChange(value)}
             />
           </Right>

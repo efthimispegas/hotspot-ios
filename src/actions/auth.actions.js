@@ -1,13 +1,13 @@
 import {
-  REGISTER,
   REGISTER_ERROR,
   REGISTER_SUCCESS,
   LOGIN_LOCAL_SUCCESS,
   LOGIN_LOCAL_ERROR,
-  LOGOUT_SUCCESS,
-  LOGOUT_ERROR,
   LOGIN_FACEBOOK,
-  LOGIN_GOOGLE
+  LOGIN_GOOGLE,
+  GET_USER_SUCCESS,
+  GET_USER_ERROR,
+  LOGOUT
 } from './types';
 import { User } from '../api';
 
@@ -40,6 +40,17 @@ export function signup(user) {
       return dispatch({ type: REGISTER_SUCCESS, payload: { token, info } });
     } catch (error) {
       return dispatch({ type: REGISTER_ERROR, error });
+    }
+  };
+}
+
+export function getUser(token) {
+  return async dispatch => {
+    try {
+      const { info } = await User.fetchUser(token);
+      return dispatch({ type: GET_USER_SUCCESS, payload: info });
+    } catch (error) {
+      return dispatch({ type: GET_USER_ERROR, error });
     }
   };
 }

@@ -12,10 +12,10 @@ class UserApi {
     this.getPath = userId => `/users/${userId}`;
   }
 
-  async fetchUser(userId) {
+  async fetchUser(access_token) {
     try {
       //make an axios call to somewhere
-      const { data } = await axios.get(`${this.getPath(userId)}`);
+      const { data } = await axios.post('/verify', { access_token });
       console.log('===============');
       console.log('data returned by axios:\n', data);
       console.log('===============');

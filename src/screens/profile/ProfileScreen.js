@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  AsyncStorage
+} from 'react-native';
 import { List, ListItem, Left, Button, Body, Right, Switch } from 'native-base';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { Actions } from 'react-native-router-flux';
@@ -12,39 +19,68 @@ import { User } from '../../api';
 import { Colors, Spinner, CustomNavBar } from '../../common';
 import ProfileLst from './components/ProfileList';
 import Gallery from './components/Gallery';
+import { ACCESS_TOKEN } from '../../actions/types';
 
 class ProfileScreen extends Component {
   state = {
+    isLoading: true,
     user: null,
-    public: true
+    publicAccount: true
   };
 
-  componentDidMount() {
-    this._getUser();
+  async componentDidMount() {
+    const token = await this.getToken();
+    console.log('===============');
+    console.log('[ProfileScreen]:', token);
+    console.log('===============');
+    if (token) {
+      this._getUser(token);
+      // return;
+    } else {
+      this.setState({ isLoading: false });
+    }
   }
 
-  _getUser = async () => {
-    //hardcode id for now
-    const { user } = await User.fetchUser('5c539c398b7c1126bcfd984d');
-    await this.props.loadGallery('5c539c398b7c1126bcfd984d');
-    this.setState({ user });
+  async getToken() {
+    try {
+      const token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  _getUser = async token => {
+    await this.props.getUser(token);
+    this.setState({ user: this.props.user.info });
+    this._getUserGallery(this.props.user.info);
+  };
+
+  _getUserGallery = async user => {
+    await this.props.loadGallery(user._id);
+    this.setState({ isLoading: false });
   };
 
   async _handleValueChange(value) {
     this.setState({ public: value });
   }
 
-  async _handleLogout() {
-    console.log('log out');
-  }
+  _handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem(ACCESS_TOKEN);
+      await this.props.logout();
+      Actions.auth({ type: 'replace' });
+    } catch (error) {
+      throw error;
+    }
+  };
 
   render() {
-    const { user } = this.state;
-    if (!user) {
+    if (this.state.isLoading) {
       return <Spinner size="large" />;
     }
     console.log('===============');
-    console.log('[ProfileScreen]:', this.state);
+    console.log('[ProfileScreen] state:', this.state);
     console.log('===============');
     return (
       <View>
@@ -60,8 +96,7 @@ class ProfileScreen extends Component {
         />
         <ScrollView>
           <ProfileLst
-            state={this.state}
-            user={user}
+            {...this.state}
             _handleLogout={this._handleLogout}
             _handleValueChange={this._handleValueChange}
           />
@@ -74,14 +109,16 @@ class ProfileScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
-    user: null, //<---------------fill this when auth is running
+    user: store.auth.user,
     gallery: store.gallery.collection
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadGallery: bindActionCreators(actions.getUserGallery, dispatch)
+    getUser: bindActionCreators(actions.getUser, dispatch),
+    loadGallery: bindActionCreators(actions.getUserGallery, dispatch),
+    logout: bindActionCreators(actions.logout, dispatch)
   };
 };
 

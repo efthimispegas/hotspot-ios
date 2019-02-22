@@ -78,7 +78,7 @@ export const AppNavigator = Actions.create(
       <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
         <Lightbox key="lightbox">
           <Stack key="root" titleStyle={{ alignSelf: 'center' }} hideNavBar>
-            <Scene key="auth">
+            <Scene key="auth" gesturesEnabled={false}>
               <Scene
                 key="welcome"
                 component={WelcomeScreen}
