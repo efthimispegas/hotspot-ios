@@ -170,7 +170,10 @@ export const renderImage = hotspot => {
 export const renderProfilePicture = avatar => {
   if (typeof avatar.uri === 'string') {
     return (
-      <Image source={{ uri: avatar.uri }} style={{ width: 60, height: 60 }} />
+      <Image
+        source={{ uri: avatar.uri }}
+        style={{ width: 60, height: 60, borderRadius: 30 }}
+      />
     );
   }
   return (

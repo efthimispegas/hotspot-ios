@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
-import { User } from '../../api';
 import { Colors, Spinner, CustomNavBar } from '../../common';
 import ProfileLst from './components/ProfileList';
 import Gallery from './components/Gallery';
@@ -31,6 +30,12 @@ class ProfileScreen extends Component {
   async componentDidMount() {
     this.setState({ user: this.props.user.info });
     this._getUserGallery(this.props.user.info);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.user.info !== nextProps.user.info) {
+      this.setState({ user: nextProps.user.info });
+    }
   }
 
   _getUserGallery = async user => {

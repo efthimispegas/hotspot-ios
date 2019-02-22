@@ -5,7 +5,9 @@ import {
   LOGIN_LOCAL_ERROR,
   GET_USER_SUCCESS,
   GET_USER_ERROR,
-  LOGOUT
+  LOGOUT,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -52,6 +54,18 @@ export default (state = INITIAL_STATE, action) => {
         isLoggedIn: true
       };
     case GET_USER_ERROR:
+      return {
+        ...state,
+        error: action.error
+      };
+    case UPDATE_USER_SUCCESS:
+      //we exchanged token for user info
+      return {
+        ...state,
+        user: { ...state.user, info: action.payload },
+        isLoggedIn: true
+      };
+    case UPDATE_USER_ERROR:
       return {
         ...state,
         error: action.error

@@ -20,7 +20,6 @@ import { Colors, ButtonWithIcon, Button } from '../../../common';
 import { Divider } from 'react-native-elements';
 
 const SignUpForm = ({
-  error,
   state,
   openCamera,
   openCameraRoll,

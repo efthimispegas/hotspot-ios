@@ -22,36 +22,42 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
-import { User } from '../../api';
 import { Colors, Spinner, CustomNavBar } from '../../common';
+import { renderProfilePicture, validateInput } from '../../../helpers';
 
 class EditProfileScreen extends Component {
   //implemet the a-reducer logic -> when i navigate from profile to edit
   //make sure to pass the user data (gender,username,email,city etc) along
-  state = {
-    prevvUser: null,
-    nextUser: {
-      email: null,
-      password: null,
-      confirmPassword: null,
-      username: null,
-      fullname: null,
-      gender: null,
-      city: null,
-      birthday: null
-    },
-    picker: 'key0',
-    isDatePickerVisible: false,
-    picture: null
-  };
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      prevvUser: this.props.user,
+      nextUser: {
+        email: null,
+        password: null,
+        confirmPassword: null,
+        username: null,
+        fullname: null,
+        gender: null,
+        city: null,
+        birthday: null
+      },
+      picker: 'key0',
+      isDatePickerVisible: false,
+      picture: null,
+      errors: {
+        email: null,
+        username: null,
+        password: null,
+        fullname: null
+      }
+    };
+  }
   componentDidMount() {
-    const { user } = this.props;
-    if (user.gender === 'male') {
-      this.setState({ ...this.state, prevvUser: user, picker: 'key0' });
-      return;
-    }
-    this.setState({ ...this.state, prevvUser: user, picker: 'key1' });
+    console.log('===============');
+    console.log('[ComponentDidMoutb]prevvSUer:', this.state.prevvUser);
+    console.log('===============');
   }
 
   openCameraRoll = async () => {
@@ -94,13 +100,19 @@ class EditProfileScreen extends Component {
           style={{ width: 60, height: 60, borderRadius: 30 }}
         />
       );
+    } else {
+      return renderProfilePicture(this.props.user.avatar);
     }
-    return (
-      <Image
-        source={require('../../../assets/icons/user.png')}
-        style={{ width: 60, height: 60 }}
-      />
-    );
+  };
+
+  renderSpinner = () => {
+    if (this.state.isLoading) {
+      return (
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Spinner />
+        </View>
+      );
+    }
   };
 
   _showDatePicker = () => {
@@ -127,6 +139,11 @@ class EditProfileScreen extends Component {
     return moment(prevvUser.birthday).format('DD[-]MM[-]YYYY');
   }
 
+  _handleDone = () => {
+    this.setState({ isLoading: true });
+    this._checkPasswordMatch();
+  };
+
   _checkPasswordMatch = () => {
     const { password, confirmPassword } = this.state.nextUser;
 
@@ -141,25 +158,116 @@ class EditProfileScreen extends Component {
           ...this.state.nextUser,
           password: null,
           confirmPassword: null
-        }
+        },
+        isLoading: false
       });
       return;
     }
-    //make sure to check if the new email is taken
+    this._confirmNotEmpty();
   };
 
-  _handleDone = () => {
-    //also a-reducer logic -> create an action
+  //modify this to check whether a field hasn't changed,
+  //to revert it back to prevvUser value
+  _confirmNotEmpty = () => {
+    let {
+      username,
+      email,
+      password,
+      fullname,
+      city,
+      birthday,
+      gender
+    } = this.state.nextUser;
+    let { avatar } = this.state.prevvUser;
+    if (username === null || username === '') {
+      username = this.state.prevvUser.username;
+    }
+    if (fullname === null || fullname === '') {
+      fullname = this.state.prevvUser.fullname;
+    }
+    if (email === null || email === '') {
+      email = this.state.prevvUser.email;
+    }
+    if (password === null || password === '') {
+      password = this.state.prevvUser.password;
+    }
+    if (city === null || city === '') {
+      city = this.state.prevvUser.city;
+    }
+    if (birthday === null || birthday === '') {
+      birthday = this.state.prevvUser.birthday;
+    }
+    if (gender === null || gender === '') {
+      gender = this.state.prevvUser.gender;
+    }
+    if (this.state.picture !== null) {
+      avatar['uri'] = this.state.picture;
+    }
+    const nextUser = {
+      public: this.state.prevvUser.public,
+      username,
+      fullname,
+      email,
+      password,
+      city,
+      birthday,
+      gender,
+      avatar,
+      _id: this.state.prevvUser._id
+    };
+    console.log('===============');
+    console.log('updates for the user:', nextUser);
+    console.log('===============');
+    this.setState({
+      ...this.state,
+      nextUser
+    });
+    this._handleSubmit(nextUser);
+  };
+
+  _handleSubmit = async nextUser => {
+    this.setState({ isLoading: false });
+    if (this.props.error) {
+      if (this.props.error.code === 403) {
+        Alert.alert(`Email ${this.props.error.message}`);
+        return;
+      }
+    }
+    await this.props.updateUserProfile(nextUser);
+    Actions.pop();
+  };
+
+  _validateField = (type, input, requiredLength) => {
+    //if input hasn't change don't throw error
+    if (input === null || input === '') {
+      return;
+    }
+    const errors = validateInput(type, input, requiredLength);
+
+    if (type === 'email') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, email: errors }
+      });
+    } else if (type === 'password') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, password: errors }
+      });
+    } else if (type === 'fullname') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, fullname: errors }
+      });
+    } else if (type === 'username') {
+      this.setState({
+        ...this.state,
+        errors: { ...this.state.errors, username: errors }
+      });
+    }
   };
 
   render() {
-    const { prevvUser } = this.state;
-    if (!prevvUser) {
-      return <Spinner size="large" />;
-    }
-    console.log('===============');
-    console.log('[EditProfileScreen]:', this.state);
-    console.log('===============');
     return (
       <View>
         <CustomNavBar
@@ -172,6 +280,7 @@ class EditProfileScreen extends Component {
           textColor={{ color: Colors.whiteColor }}
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />
+        {this.renderSpinner()}
         <KeyboardAwareScrollView>
           <View style={styles.container}>
             <View style={styles.picture}>
@@ -260,8 +369,9 @@ class EditProfileScreen extends Component {
                   </Body>
                   <Right>
                     <TextInput
-                      textContentType="username"
-                      placeholder={prevvUser.username}
+                      placeholder={this.state.prevvUser.username}
+                      enablesReturnKeyAutomatically
+                      autoCapitalize="none"
                       selectionColor={Colors.hotspotColor}
                       value={this.state.nextUser.username}
                       onChangeText={username =>
@@ -270,10 +380,24 @@ class EditProfileScreen extends Component {
                           nextUser: { ...this.state.nextUser, username }
                         })
                       }
+                      onBlur={() =>
+                        this._validateField(
+                          'username',
+                          this.state.nextUser.username,
+                          3
+                        )
+                      }
                       style={styles.input}
                     />
                   </Right>
                 </ListItem>
+                {this.state.errors.username !== null ? (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      {this.state.errors.username}
+                    </Text>
+                  </View>
+                ) : null}
                 <ListItem icon>
                   <Left>
                     <Button
@@ -292,6 +416,7 @@ class EditProfileScreen extends Component {
                   </Body>
                   <Right>
                     <TextInput
+                      autoCapitalize="none"
                       keyboardType="email-address"
                       placeholder="Your new email"
                       selectionColor={Colors.hotspotColor}
@@ -303,9 +428,19 @@ class EditProfileScreen extends Component {
                           nextUser: { ...this.state.nextUser, email }
                         })
                       }
+                      onBlur={() =>
+                        this._validateField('email', this.state.nextUser.email)
+                      }
                     />
                   </Right>
                 </ListItem>
+                {this.state.errors.email !== null ? (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      {this.state.errors.email}
+                    </Text>
+                  </View>
+                ) : null}
                 <ListItem icon>
                   <Left>
                     <Button
@@ -335,9 +470,23 @@ class EditProfileScreen extends Component {
                           nextUser: { ...this.state.nextUser, password }
                         })
                       }
+                      onBlur={() =>
+                        this._validateField(
+                          'password',
+                          this.state.nextUser.password,
+                          6
+                        )
+                      }
                     />
                   </Right>
                 </ListItem>
+                {this.state.errors.password !== null ? (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      {this.state.errors.password}
+                    </Text>
+                  </View>
+                ) : null}
                 <ListItem icon>
                   <Left />
                   <Body>
@@ -356,7 +505,6 @@ class EditProfileScreen extends Component {
                           nextUser: { ...this.state.nextUser, confirmPassword }
                         })
                       }
-                      onBlur={this._checkPasswordMatch}
                     />
                   </Right>
                 </ListItem>
@@ -380,8 +528,8 @@ class EditProfileScreen extends Component {
                     <TextInput
                       textContentType="familyName"
                       placeholder={
-                        prevvUser.fullname
-                          ? prevvUser.fullname
+                        this.state.prevvUser.fullname
+                          ? this.state.prevvUser.fullname
                           : 'Enter your full name'
                       }
                       selectionColor={Colors.hotspotColor}
@@ -393,9 +541,22 @@ class EditProfileScreen extends Component {
                           nextUser: { ...this.state.nextUser, fullname }
                         })
                       }
+                      onBlur={() =>
+                        this._validateField(
+                          'fullname',
+                          this.state.nextUser.fullname
+                        )
+                      }
                     />
                   </Right>
                 </ListItem>
+                {this.state.errors.fullname !== null ? (
+                  <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>
+                      {this.state.errors.fullname}
+                    </Text>
+                  </View>
+                ) : null}
                 <ListItem icon>
                   <Left />
                   <Body>
@@ -404,7 +565,7 @@ class EditProfileScreen extends Component {
                   <Right>
                     <Button transparent onPress={this._showDatePicker}>
                       <Text style={styles.input}>
-                        {this._checkBirthday(prevvUser)}
+                        {this._checkBirthday(this.state.prevvUser)}
                       </Text>
                     </Button>
                   </Right>
@@ -428,7 +589,7 @@ class EditProfileScreen extends Component {
                   <Right>
                     <TextInput
                       textContentType="location"
-                      placeholder={prevvUser.city}
+                      placeholder={this.state.prevvUser.city}
                       selectionColor={Colors.hotspotColor}
                       value={this.state.nextUser.city}
                       onChangeText={city =>
@@ -460,7 +621,7 @@ class EditProfileScreen extends Component {
                 color: Colors.whiteColor,
                 fontWeight: '500'
               }}
-              date={new Date(prevvUser.birthday)}
+              date={new Date(this.state.prevvUser.birthday)}
             />
             <View style={{ height: 100 }} />
           </View>
@@ -491,6 +652,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.hotspotColor,
     marginRight: 15
+  },
+
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    paddingBottom: 5,
+    paddingRight: 20
+  },
+  errorText: {
+    flex: 1,
+    color: Colors.redColor,
+    fontStyle: 'italic',
+    fontSize: 15,
+    marginLeft: 10
   }
 });
 
@@ -502,8 +678,11 @@ const mapStoreToProps = store => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    updateUserProfile: null //<--------------------------
+    updateUserProfile: bindActionCreators(actions.updateProfile, dispatch)
   };
 };
 
-export default connect(mapStoreToProps)(EditProfileScreen);
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(EditProfileScreen);

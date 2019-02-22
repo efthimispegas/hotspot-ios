@@ -5,10 +5,6 @@
 //--------------------
 //auth
 //--------------------
-export const ACCESS_TOKEN = 'access_token';
-export const GET_USER_SUCCESS = 'GET_USER_SUCCESS';
-export const GET_USER_ERROR = 'GET_USER_ERROR';
-
 export const LOGIN_LOCAL_SUCCESS = 'LOGIN_LOCAL_SUCCESS';
 export const LOGIN_LOCAL_ERROR = 'LOGIN_LOCAL_ERROR';
 export const LOGIN_GOOGLE_SUCCESS = 'LOGIN_GOOGLE_SUCCESS';
@@ -21,6 +17,14 @@ export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 
 export const LOGOUT = 'LOGOUT';
 
+//--------------------
+//user
+//--------------------
+export const ACCESS_TOKEN = 'access_token';
+export const GET_USER_SUCCESS = 'GET_USER_SUCCESS';
+export const GET_USER_ERROR = 'GET_USER_ERROR';
+export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
+export const UPDATE_USER_ERROR = 'UPDATE_USER_ERROR';
 //--------------------
 //location
 //--------------------

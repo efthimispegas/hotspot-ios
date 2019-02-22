@@ -5,9 +5,11 @@ import {
   LOGIN_LOCAL_ERROR,
   LOGIN_FACEBOOK,
   LOGIN_GOOGLE,
+  LOGOUT,
   GET_USER_SUCCESS,
   GET_USER_ERROR,
-  LOGOUT
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_ERROR
 } from './types';
 import { User } from '../api';
 
@@ -44,17 +46,6 @@ export function signup(user) {
   };
 }
 
-export function getUser(token) {
-  return async dispatch => {
-    try {
-      const { info } = await User.fetchUser(token);
-      return dispatch({ type: GET_USER_SUCCESS, payload: info });
-    } catch (error) {
-      return dispatch({ type: GET_USER_ERROR, error });
-    }
-  };
-}
-
 export function logout() {
   return {
     type: LOGOUT
@@ -72,5 +63,27 @@ export function loginGoogle(user) {
   return {
     type: LOGIN_GOOGLE,
     payload: user
+  };
+}
+
+export function getUser(token) {
+  return async dispatch => {
+    try {
+      const { info } = await User.fetchUser(token);
+      return dispatch({ type: GET_USER_SUCCESS, payload: info });
+    } catch (error) {
+      return dispatch({ type: GET_USER_ERROR, error });
+    }
+  };
+}
+
+export function updateProfile(args) {
+  return async dispatch => {
+    try {
+      const { info } = await User.updateUser(args);
+      return dispatch({ type: UPDATE_USER_SUCCESS, payload: info });
+    } catch (error) {
+      return dispatch({ type: UPDATE_USER_ERROR, error });
+    }
   };
 }

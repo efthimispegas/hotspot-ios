@@ -143,7 +143,10 @@ class SignUpScreen extends Component {
     const { password1, password2 } = this.state;
 
     if (password1 !== password2) {
-      Alert.alert('Try again', 'Please make sure your passwords match!');
+      Alert.alert(
+        "Passwords don't match!",
+        'Make sure you enter the same password in both fields!'
+      );
       this.setState({ isLoading: false });
       return;
     }
