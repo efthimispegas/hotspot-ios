@@ -29,32 +29,9 @@ class ProfileScreen extends Component {
   };
 
   async componentDidMount() {
-    const token = await this.getToken();
-    console.log('===============');
-    console.log('[ProfileScreen]:', token);
-    console.log('===============');
-    if (token) {
-      this._getUser(token);
-      // return;
-    } else {
-      this.setState({ isLoading: false });
-    }
-  }
-
-  async getToken() {
-    try {
-      const token = await AsyncStorage.getItem(ACCESS_TOKEN);
-      return token;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  _getUser = async token => {
-    await this.props.getUser(token);
     this.setState({ user: this.props.user.info });
     this._getUserGallery(this.props.user.info);
-  };
+  }
 
   _getUserGallery = async user => {
     await this.props.loadGallery(user._id);

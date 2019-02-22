@@ -18,6 +18,10 @@ import moment from 'moment';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Actions } from 'react-native-router-flux';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
 import { User } from '../../api';
 import { Colors, Spinner, CustomNavBar } from '../../common';
 
@@ -42,7 +46,12 @@ class EditProfileScreen extends Component {
   };
 
   componentDidMount() {
-    this._getUser();
+    const { user } = this.props;
+    if (user.gender === 'male') {
+      this.setState({ ...this.state, prevvUser: user, picker: 'key0' });
+      return;
+    }
+    this.setState({ ...this.state, prevvUser: user, picker: 'key1' });
   }
 
   openCameraRoll = async () => {
@@ -94,16 +103,6 @@ class EditProfileScreen extends Component {
     );
   };
 
-  _getUser = async () => {
-    //hardcode id for now
-    const { user } = await User.fetchUser('5c539c398b7c1126bcfd984d');
-    if (user.gender === 'male') {
-      this.setState({ ...this.state, prevvUser: user, picker: 'key0' });
-      return;
-    }
-    this.setState({ ...this.state, prevvUser: user, picker: 'key1' });
-  };
-
   _showDatePicker = () => {
     this.setState({ isDatePickerVisible: true });
   };
@@ -113,9 +112,6 @@ class EditProfileScreen extends Component {
   };
 
   _handleDatePicked = birthday => {
-    console.log('===============');
-    console.log('date:', birthday);
-    console.log('===============');
     this.setState({
       ...this.state,
       nextUser: { ...this.state.nextUser, birthday }
@@ -128,7 +124,7 @@ class EditProfileScreen extends Component {
     if (birthday) {
       return moment(birthday).format('DD[-]MM[-]YYYY');
     }
-    return prevvUser.birthday;
+    return moment(prevvUser.birthday).format('DD[-]MM[-]YYYY');
   }
 
   _checkPasswordMatch = () => {
@@ -498,4 +494,16 @@ const styles = StyleSheet.create({
   }
 });
 
-export default EditProfileScreen;
+const mapStoreToProps = store => {
+  return {
+    user: store.auth.user.info
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    updateUserProfile: null //<--------------------------
+  };
+};
+
+export default connect(mapStoreToProps)(EditProfileScreen);

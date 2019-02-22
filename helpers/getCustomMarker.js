@@ -167,16 +167,16 @@ export const renderImage = hotspot => {
 };
 
 //needs modifying
-export const renderUserThumbnail = user => {
-  if (hasImgFile(user.avatar)) {
+export const renderProfilePicture = avatar => {
+  if (typeof avatar.uri === 'string') {
     return (
-      <CardItem cardBody>
-        <Image
-          source={{ uri: user.avatar.uri }}
-          style={{ height: 180, width: null, flex: 1, borderRadius: 2 }}
-        />
-      </CardItem>
+      <Image source={{ uri: avatar.uri }} style={{ width: 60, height: 60 }} />
     );
   }
-  return null;
+  return (
+    <Image
+      source={require('../assets/icons/user.png')}
+      style={{ width: 60, height: 60 }}
+    />
+  );
 };

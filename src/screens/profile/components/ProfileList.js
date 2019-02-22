@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { List, ListItem, Left, Button, Body, Right, Switch } from 'native-base';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 
 import { Colors } from '../../../common';
+import { renderProfilePicture } from '../../../../helpers';
 
 const ProfileLst = ({
   publicAccount,
@@ -12,12 +14,7 @@ const ProfileLst = ({
   _handleLogout
 }) => (
   <View style={styles.container}>
-    <View style={styles.picture}>
-      <Image
-        source={require('../../../../assets/icons/user.png')}
-        style={{ width: 60, height: 60 }}
-      />
-    </View>
+    <View style={styles.picture}>{renderProfilePicture(user.avatar)}</View>
     <View style={styles.settings}>
       <List>
         <ListItem itemDivider>
@@ -87,7 +84,9 @@ const ProfileLst = ({
             <Text style={styles.listItem}>Birthday</Text>
           </Body>
           <Right>
-            <Text style={styles.listItem}>{user.birthday}</Text>
+            <Text style={styles.listItem}>
+              {moment(user.birthday).format('DD[-]MM[-]YYYY')}
+            </Text>
           </Right>
         </ListItem>
         <ListItem icon>
