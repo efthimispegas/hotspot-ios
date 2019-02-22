@@ -13,7 +13,7 @@ import { Ionicons, Entypo, FontAwesome } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import * as menuActions from '../../actions';
+import * as actions from '../../actions';
 import { Colors, CardSection } from '../../common';
 
 const API_DEBOUNCE_TIME = 2000;
@@ -70,6 +70,7 @@ class DrawerContent extends Component {
 
   onClearPress = () => {
     this.props.clearRecommendations();
+    this.props.clearSelectedVenue();
     Actions.drawerClose();
   };
 
@@ -217,13 +218,14 @@ const mapStoreToProps = store => {
 const mapDispatchToProps = dispatch => {
   return {
     fetchRecommendations: bindActionCreators(
-      menuActions.fetchRecommendations,
+      actions.fetchRecommendations,
       dispatch
     ),
     clearRecommendations: bindActionCreators(
-      menuActions.clearRecommendations,
+      actions.clearRecommendations,
       dispatch
-    )
+    ),
+    clearSelectedVenue: bindActionCreators(actions.clearSelectedVenue, dispatch)
   };
 };
 

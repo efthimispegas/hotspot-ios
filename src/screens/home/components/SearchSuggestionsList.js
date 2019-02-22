@@ -1,7 +1,6 @@
 import React from 'react';
-import { Text, StyleSheet, Dimensions, Keyboard } from 'react-native';
+import { Text, StyleSheet, Dimensions, Keyboard, Image } from 'react-native';
 import { List, ListItem, View, Left, Body } from 'native-base';
-import { MaterialIcons } from '@expo/vector-icons';
 import _ from 'lodash';
 
 import { Colors } from '../../../common';
@@ -19,9 +18,6 @@ const SearchSuggestionsList = ({
     clearSearchInput();
   }
   if (input.length > 3 && _.isArrayLikeObject(suggestions)) {
-    console.log('===============');
-    console.log('got in the first if bc is array');
-    console.log('===============');
     return (
       <View style={styles.searchResultsWrapper}>
         <List
@@ -36,7 +32,10 @@ const SearchSuggestionsList = ({
                 avatar
               >
                 <Left style={styles.leftContainer}>
-                  <MaterialIcons style={styles.leftIcon} name="location-on" />
+                  <Image
+                    source={require('../../../../assets/icons/location-on.png')}
+                    style={{ width: 24, height: 24 }}
+                  />
                 </Left>
                 <Body>
                   <Text style={styles.primaryText}>{suggestion.name}</Text>
@@ -59,7 +58,6 @@ const SearchSuggestionsList = ({
       </View>
     );
   } else {
-    console.log('toggled searchlist');
     return null;
   }
 };

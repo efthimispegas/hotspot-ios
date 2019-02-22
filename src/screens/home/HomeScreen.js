@@ -60,17 +60,23 @@ class HomeScreen extends Component {
   async componentWillReceiveProps(nextProps) {
     //create an array with the selected venue(s) and
     //change the state to re-render with the venues
+    console.log('===============');
+    console.log('[ComponentWillReceiveProps] Home nextProps:', nextProps);
+    console.log('===============');
     let venues = [];
     if (
       nextProps.isVenueSelected &&
-      nextProps.isVenueSelected !== undefined &&
-      this.state.selectedVenue !== [] &&
+      (nextProps.isVenueSelected !== null ||
+        nextProps.isVenueSelected !== undefined) &&
+      (this.state.selectedVenue !== [] || this.state.selectedVenue !== null) &&
       this.state.selectedVenue !== nextProps.selectedVenue
     ) {
       if (nextProps.selectedVenue.length > 1)
         venues = [...nextProps.selectedVenue];
       else venues = nextProps.selectedVenue;
       this.setState({ selectedVenue: venues });
+    } else if (!nextProps.isVenueSelected && nextProps.selectedVenue === null) {
+      this.setState({ selectedVenue: null });
     }
   }
 

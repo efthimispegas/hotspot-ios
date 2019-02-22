@@ -45,21 +45,7 @@ const MapContainer = ({
   _handleVenuePress
 }) => {
   const { currentPosition, markers, selectedVenue } = state;
-
-  //if the user selected a venue, then we change the mapview
-  //region to the venue's location ;)
-  let mapRegion = state.mapRegion;
-  if (
-    !_.isArrayLikeObject(selectedVenue) &&
-    (selectedVenue != undefined || selectedVenue != null)
-  ) {
-    mapRegion = {
-      latitude: selectedVenue.location.lat,
-      latitudeDelta: 0.00922 * 0.8,
-      longitude: selectedVenue.location.lng,
-      longitudeDelta: 0.00421
-    };
-  }
+  let { mapRegion } = state;
 
   //if the "show my location" button is pressed
   //we reset the mapview to show the user's location

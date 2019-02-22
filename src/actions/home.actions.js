@@ -11,6 +11,7 @@ import {
   TOGGLE_SEARCH_LIST,
   GET_SEARCH_SUGGESTIONS,
   GET_SELECTED_VENUE,
+  CLEAR_SELECTED_VENUE,
   GET_GENERAL_VENUES
 } from './types';
 import { Foursquare } from '../api/foursquare.api';
@@ -64,11 +65,14 @@ export function getSelectedVenue(id) {
     dispatch({ type: GET_SELECTED_VENUE, payload: venue });
   };
 }
+export function clearSelectedVenue() {
+  return async dispatch => {
+    dispatch({ type: CLEAR_SELECTED_VENUE });
+  };
+}
 
 export function toggleSearchSuggestionsList() {
   return {
     type: TOGGLE_SEARCH_LIST
   };
 }
-
-

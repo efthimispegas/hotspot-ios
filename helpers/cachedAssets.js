@@ -40,6 +40,7 @@ export const imageAssets = cachedAssets([
   require('../assets/icons/chat.png'),
   require('../assets/icons/exit.png'),
   require('../assets/icons/location.png'),
+  require('../assets/icons/location-on.png'),
   require('../assets/icons/findmylocation.png'),
   require('../assets/icons/user-unknown.png')
 ]);
