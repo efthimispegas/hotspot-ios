@@ -154,10 +154,15 @@ class SignUpScreen extends Component {
     const { username, email, password1, fullname, city, birthday } = this.state;
     if (
       username === null ||
+      username === '' ||
       email === null ||
+      email === '' ||
       password1 === null ||
+      password1 === '' ||
       fullname === null ||
+      fullname === '' ||
       city === null ||
+      city === '' ||
       birthday === null
     ) {
       Alert.alert('Not so fast...🤔', 'All fields are required');
@@ -201,7 +206,7 @@ class SignUpScreen extends Component {
         return;
       }
     }
-
+    this.setState({ isLoading: false });
     Actions.main({ type: 'replace' });
   };
 

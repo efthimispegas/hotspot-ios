@@ -37,9 +37,17 @@ class LoginScreen extends Component {
   };
 
   _handleSubmit = () => {
+    if (this.props.error) {
+      if (this.props.error.code === 401) {
+        Alert.alert(`Email and password don't match. `);
+        this.setState({ isLoading: false });
+        return;
+      }
+    }
     this.setState({ isLoading: false });
-    Actions.main({ type: 'replace' }, this.props.user);
+    Actions.main({ type: 'replace' });
   };
+
   render() {
     return (
       <LoginForm
@@ -82,8 +90,8 @@ class LoginScreen extends Component {
       //(...)
       //401 = email and password don't match
       //if everything matches dispatch login action to be catched from the watcher
-      // const { email, password } = this.state;
-      // this.props.login({ email, password });
+      const { email, password } = this.state;
+      await this.props.login({ email, password });
       this._handleSubmit();
     }
   }
@@ -91,7 +99,8 @@ class LoginScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
-    user: store.auth
+    user: store.auth,
+    error: store.auth.error
   };
 };
 
