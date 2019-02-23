@@ -5,7 +5,12 @@ import ActionButton from 'react-native-action-button';
 import { Ionicons, AntDesign, Entypo } from '@expo/vector-icons';
 import { Actions } from 'react-native-router-flux';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../../actions';
+
 import { Colors } from '../../../common';
+import { renderProfilePicture } from '../../../../helpers';
 
 class FloatingActionButton extends Component {
   _renderFabIcon(active) {
@@ -27,6 +32,10 @@ class FloatingActionButton extends Component {
     }
   }
   render() {
+    const { user } = this.props;
+    const image = (
+      <Image source={require('../../../../assets/icons/user-no-outline.png')} />
+    );
     return (
       <View style={[styles.container, { flex: 1, backgroundColor: '#f3f3f3' }]}>
         {/* Rest of the app comes ABOVE the action button component !*/}
@@ -47,9 +56,11 @@ class FloatingActionButton extends Component {
             onPress={() => Actions.profile()}
             size={58}
           >
-            <Image
-              source={require('../../../../assets/icons/user-no-outline.png')}
-            />
+            {renderProfilePicture(user.info.avatar, image, {
+              width: 60,
+              height: 60,
+              borderRadius: 30
+            })}
           </ActionButton.Item>
 
           <ActionButton.Item
@@ -70,7 +81,7 @@ class FloatingActionButton extends Component {
 
           <ActionButton.Item
             buttonColor={Colors.hotspotColor}
-            onPress={() => Actions.messages()}
+            onPress={() => Actions.hotspots()}
             size={58}
           >
             <AntDesign name="message1" size={32} color="white" />
@@ -99,4 +110,10 @@ const styles = StyleSheet.create({
   }
 });
 
-export default FloatingActionButton;
+const mapStoreToProps = store => {
+  return {
+    user: store.auth.user
+  };
+};
+
+export default connect(mapStoreToProps)(FloatingActionButton);

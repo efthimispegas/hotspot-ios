@@ -5,7 +5,9 @@ import {
   CREATE_HOTSPOT,
   CREATE_HOTSPOT_SUCCESS,
   CREATE_HOTSPOT_ERROR,
-  CANCEL_HOTSPOT
+  CANCEL_HOTSPOT,
+  LOAD_USER_HOTSPOTS_ERROR,
+  LOAD_USER_HOTSPOTS_SUCCESS
 } from './types';
 import { Hotspot } from '../api';
 
@@ -64,6 +66,17 @@ export function create3DHotspot(hotspot) {
   };
 }
 
-export function cancelCreation() {
-  return { type: CANCEL_HOTSPOT };
+export function cancelCreation(cancelled) {
+  return { type: CANCEL_HOTSPOT, payload: cancelled };
+}
+
+export function loadUserHotspots(userId) {
+  return async dispatch => {
+    try {
+      const { docs } = await Hotspot.fetchUserHotspots(userId);
+      dispatch({ type: LOAD_USER_HOTSPOTS_SUCCESS, payload: docs });
+    } catch (error) {
+      return dispatch({ type: LOAD_USER_HOTSPOTS_ERROR, error });
+    }
+  };
 }

@@ -128,7 +128,7 @@ class CreateHotspotScreen extends Component {
 
   _postMessage = async () => {
     //will also add user later, hardcode it for now
-    const { region, image } = this.props;
+    const { region, image, user } = this.props;
     const { value, message } = this.state;
     //post message to the map
     this.props.createHotspot({
@@ -137,7 +137,11 @@ class CreateHotspotScreen extends Component {
         uri: image === undefined ? null : image
       },
       text: message,
-      user: { id: '5c539c398b7c1126bcfd984d', username: 'mikediamond' },
+      user: {
+        id: user.info._id,
+        username: user.info.username,
+        avatar: user.info.avatar
+      },
       validity: value
     });
     //refresh screen and redirect after successful post
@@ -197,7 +201,8 @@ class CreateHotspotScreen extends Component {
     //reload the hotspots, to refresh the homescreen
     await this.props.loadHotspots(this.props.region);
     //do some canceling
-    this.props.cancelCreation();
+    this.props.cancelCreation(true);
+    this.props.cancelCreation(false);
   };
 
   render() {
@@ -228,6 +233,7 @@ class CreateHotspotScreen extends Component {
 
 const mapStateToProps = store => {
   return {
+    user: store.auth.user,
     region: store.location.region,
     hotspots: store.hotspots.markers,
     image: store.gallery.image,

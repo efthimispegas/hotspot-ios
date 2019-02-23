@@ -18,15 +18,10 @@ class HotspotApi {
 
   /**   Hotspots    */
 
-  /** [Not used anymore...] */
-  async fetchHotspots(position) {
+  async fetchUserHotspots(userId) {
     try {
-      console.log('===============');
-      console.log('[HotspotApi]\nposition:\n', position);
-      console.log('===============');
-      //now we just return all the hotspots
-      //next steps: use the users position to limit the returned hotspots
-      const { data } = await axios.get(this.path);
+      //we just return all the user's hotspots
+      const { data } = await axios.get(`/users/${userId}${this.path}`);
       console.log('===============');
       console.log('data returned by axios:\n', data);
       console.log('===============');

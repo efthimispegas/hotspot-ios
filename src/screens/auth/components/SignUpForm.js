@@ -16,7 +16,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import moment from 'moment';
 import DatePicker from 'react-native-modal-datetime-picker';
 
-import { Colors, ButtonWithIcon, Button } from '../../../common';
+import {
+  Colors,
+  ButtonWithIcon,
+  Button,
+  CustomDebouncedButton
+} from '../../../common';
 import { Divider } from 'react-native-elements';
 
 const SignUpForm = ({
@@ -192,7 +197,12 @@ const SignUpForm = ({
           </TouchableOpacity>
 
           <View style={styles.formButton}>
-            <Button
+            {/* <Button
+              isLoading={state.isLoading}
+              name="Done"
+              onPress={_handleDone}
+            /> */}
+            <CustomDebouncedButton
               isLoading={state.isLoading}
               name="Done"
               onPress={_handleDone}
@@ -271,8 +281,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   formContainer: {
-    flex: 1,
-    backgroundColor: Colors.violetColor
+    flex: 1
   },
   formButton: {
     marginTop: 30,
@@ -293,13 +302,12 @@ const styles = StyleSheet.create({
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: Colors.pinkColor,
     paddingBottom: 10
   },
   errorText: {
     flex: 1,
     color: Colors.redColor,
-    fontFamily: 'montserrat',
+    fontFamily: 'montserratItalic',
     fontSize: 15,
     marginLeft: 10
   },

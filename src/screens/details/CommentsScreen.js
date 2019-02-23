@@ -31,37 +31,34 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import { Colors, CustomNavBar, Spinner } from '../../common';
-import { renderImage, validateCommentReply } from '../../../helpers';
+import { validateCommentReply, renderProfilePicture } from '../../../helpers';
+import HotspotPost from './components/HotspotPost';
+import CommentsList from './components/CommentsList';
+import ReplyBox from './components/ReplyBox';
 
 class CommentsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      basic: true,
       commentData: [],
       newComment: ''
     };
     this.hotspot = props.hotspot;
+    this.user = props.user;
     this.replyRef = React.createRef();
   }
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }); //truthy if row has changed
 
   async componentDidMount() {
-    this.getCommentDetails();
+    await this.getCommentDetails();
   }
 
   //here add any actions that need to be taken every time new props are received
   componentWillReceiveProps(nextProps) {
-    console.log('===============');
-    console.log('[ComponentWillReceiveProps] nextProps:', nextProps);
-    console.log('===============');
-    console.log('===============');
-    console.log('this.props:', this.props);
-    console.log('===============');
     if (nextProps.error) {
       Alert.alert(
         'Oops..Something went wrong!',
-        "We couldn't load the commetns from this hotspot, please try again later.",
+        "We couldn't load the comments from this hotspot, please try again later.",
         [{ text: 'Cancel', style: 'cancel', onPress: Actions.pop }],
         { cancelable: true }
       );
@@ -74,12 +71,6 @@ class CommentsScreen extends React.Component {
   //here add any checks that need to be made after the component receives props
   //in order to determine whether or not it will update
   shouldComponentUpdate(nextProps, nextState) {
-    console.log('===============');
-    console.log('[ShouldUpdate]nextProps:', nextProps);
-    console.log('===============');
-    console.log('===============');
-    console.log('[ShouldUpdate]nextState:', nextState);
-    console.log('===============');
     if (this.props.comments === undefined) {
       //the first time it loads
       return true;
@@ -97,10 +88,9 @@ class CommentsScreen extends React.Component {
     //get the IDs of the current user and the selected hotspot, load:
     //1. comments of the hotspot
     //2. Views incremented by 1 if the user's view is new
-    //so here we need the action loadHotspotComments
     const hotspotId = this.hotspot._id;
-    //destructure userId from props later, we need it for the views
-    this.props.loadComments('5c54b0e1231ce64440d8292b', hotspotId);
+    const userId = this.user._id;
+    await this.props.loadComments(userId, hotspotId);
   }
 
   updateCommentList(comments) {
@@ -108,11 +98,7 @@ class CommentsScreen extends React.Component {
     comments.forEach(el => {
       let comment = {
         id: el._id,
-        user: {
-          id: el.user.id,
-          username: el.user.username
-        },
-        // avatar: , //hardcode it for now
+        user: el.user,
         content: el.description,
         created_at: el.created_at
       };
@@ -141,20 +127,20 @@ class CommentsScreen extends React.Component {
       );
     } else {
       const comment = {
-        text: this.state.newComment,
-        user: {
-          id: '5c54b0e1231ce64440d8292b', //hardcode them for now
-          username: 'Pot'
-        }
+        text: this.state.newComment
       };
       const hotspotId = this.hotspot._id;
+      const userId = this.user._id;
       //destructure userId from props later
-      await this.props.addComment(comment, hotspotId);
+      await this.props.addComment(userId, hotspotId, comment);
     }
     //clear the comment input
     this.setState({ ...this.state, newComment: '' });
     //then reload comments
     this.getCommentDetails();
+  };
+  _handleChangeText = newComment => {
+    this.setState({ newComment });
   };
 
   render() {
@@ -164,7 +150,6 @@ class CommentsScreen extends React.Component {
     console.log('===============');
     console.log('[DetailsScreen]this.state:', this.state);
     console.log('===============');
-    const { hotspot } = this.props;
     if (!this.props.comments) {
       return (
         <View
@@ -187,162 +172,27 @@ class CommentsScreen extends React.Component {
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />
         <KeyboardAwareScrollView style={{ backgroundColor: 'white' }}>
-          <Card style={{ flex: 0 }}>
-            <CardItem bordered>
-              <Left>
-                <Thumbnail
-                  source={require('../../../assets/icons/user-unknown.png')}
-                />
-                <Body>
-                  <Text style={styles.name}>{hotspot.user.username}</Text>
-                  <Text note>{`${moment(hotspot.created_at).fromNow()}`}</Text>
-                </Body>
-              </Left>
-            </CardItem>
-            <CardItem bordered>
-              <Body style={{ flex: 1 }}>
-                <Text style={styles.message}>{hotspot.text}</Text>
-              </Body>
-            </CardItem>
-            {renderImage(hotspot)}
-          </Card>
-          <List
-            rightOpenValue={-75}
-            dataSource={this.ds.cloneWithRows(this.state.commentData)}
-            renderRow={value => (
-              <ListItem avatar>
-                <Left style={styles.avatarContainer}>
-                  <Thumbnail
-                    source={require('../../../assets/icons/user-unknown.png')}
-                    style={styles.image}
-                  />
-                </Left>
-                <Body>
-                  <View style={styles.topContainer}>
-                    <Text style={styles.name}>{value.user.username}</Text>
-                    <Text note style={styles.time}>
-                      {moment(value.created_at).fromNow()}
-                    </Text>
-                  </View>
-                  <View style={styles.bottomContainer}>
-                    <Text style={styles.message}>{value.content}</Text>
-                  </View>
-                </Body>
-              </ListItem>
-            )}
-            renderRightHiddenRow={data => (
-              <View style={styles.button}>
-                <TouchableOpacity onPress={() => this.replyRef.current.focus()}>
-                  <Entypo name="reply" size={32} color={Colors.blackColor} />
-                </TouchableOpacity>
-              </View>
-            )}
+          <HotspotPost hotspot={this.hotspot} />
+          <CommentsList
+            ds={this.ds}
+            commentData={this.state.commentData}
+            replyRef={this.replyRef}
           />
-          <View style={styles.commentWrapper}>
-            <TextInput
-              ref={this.replyRef}
-              multiline
-              placeholder="Add a comment..."
-              placeholderTextColor={Colors.darkGreyColor}
-              selectionColor={Colors.hotspotColor}
-              style={styles.comment}
-              onChangeText={newComment => this.setState({ newComment })}
-              value={this.state.newComment}
-            />
-            <TouchableOpacity
-              onPress={this.addNewComment}
-              style={styles.buttonWrapper}
-            >
-              <Image
-                source={require('../../../assets/icons/send.png')}
-                style={{ height: 24, width: 24 }}
-              />
-            </TouchableOpacity>
-          </View>
+          <ReplyBox
+            replyRef={this.replyRef}
+            state={this.state}
+            _handleChangeText={this._handleChangeText.bind(this)}
+            addNewComment={this.addNewComment}
+          />
         </KeyboardAwareScrollView>
       </View>
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  avatarContainer: {
-    flexDirection: 'row',
-    paddingLeft: 10,
-    marginBottom: 5
-  },
-  image: {
-    width: 40,
-    height: 40,
-    borderRadius: 20
-  },
-  topContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  name: {
-    fontFamily: 'montserrat',
-    fontSize: 16
-  },
-  message: {
-    fontFamily: 'montserrat',
-    fontSize: 16,
-    marginTop: 2,
-    marginBottom: 2,
-    color: Colors.mediumGreyColor
-  },
-  time: {
-    fontSize: 12,
-    paddingRight: 10
-  },
-  button: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.hotspotColor
-  },
-  commentWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10
-  },
-  comment: {
-    flex: 1,
-    alignSelf: 'center',
-    fontFamily: 'montserratLight',
-    fontSize: 16,
-    paddingHorizontal: 6,
-    paddingVertical: 6,
-    lineHeight: 30,
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: Colors.hotspotColor,
-    borderRadius: 30,
-    color: Colors.hotspotColor
-    // backgroundColor: Colors.whiteColor
-  },
-  buttonWrapper: {
-    height: 40,
-    width: 40,
-    marginLeft: 8,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: Colors.hotspotColor
-  }
-});
 
 const mapStoreToProps = store => {
   return {
-    user: null, //<-------------fill this when we have auth up and running
+    user: store.auth.user.info,
     region: store.location.region,
     comments: store.comments.data.comments,
     error: store.comments.error

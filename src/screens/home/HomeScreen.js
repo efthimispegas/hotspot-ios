@@ -10,6 +10,7 @@ import * as actions from '../../actions'; //we import it as * to use it later in
 import { Actions } from 'react-native-router-flux';
 import MapContainer from './components/MapContainer';
 import { LoadingScreen } from '../loading';
+import { Spinner } from '../../common';
 
 //we bind the functions to this component's instance because if not,
 //the variables in each function will not refer to the component but to the window
@@ -63,6 +64,7 @@ class HomeScreen extends Component {
     console.log('===============');
     console.log('[ComponentWillReceiveProps] Home nextProps:', nextProps);
     console.log('===============');
+
     let venues = [];
     if (
       nextProps.isVenueSelected &&
@@ -180,6 +182,9 @@ class HomeScreen extends Component {
     if (this.state.isLoading) {
       return <LoadingScreen />;
     }
+    if (!this.props.isLoggedIn) {
+      return <Spinner />;
+    }
 
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -202,6 +207,7 @@ class HomeScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
+    isLoggedIn: store.auth.isLoggedIn,
     user: store.auth.user,
     hotspots: store.hotspots.markers,
     region: store.location.region,
@@ -218,8 +224,7 @@ const mapStoreToProps = store => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch), //<---------------------
-    openHotspot: null, //<----------------------fill them
+    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch),
     updateLocation: bindActionCreators(actions.updateLocation, dispatch),
     getMyLocation: bindActionCreators(actions.getMyLocation, dispatch),
     getSearchInput: bindActionCreators(actions.getSearchInput, dispatch),

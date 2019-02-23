@@ -28,6 +28,7 @@ import { getVenueCategory, getMarkerImage } from '../../../../helpers';
 const MapContainer = ({
   input,
   hotspots,
+  user,
   suggestions,
   recommendations,
   getSearchInput,
@@ -83,6 +84,7 @@ const MapContainer = ({
               <CustomHotspotMarker
                 key={marker._id}
                 hotspot={marker}
+                user={user.info}
                 _handleMarkerPress={_handleMarkerPress}
               />
             );

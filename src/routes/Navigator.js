@@ -23,7 +23,7 @@ import {
   LoginScreen,
   WelcomeScreen,
   CreateHotspotScreen,
-  MessageListScreen,
+  HotspotListScreen,
   SettingsScreen,
   ProfileScreen,
   EditProfileScreen,
@@ -103,6 +103,15 @@ export const AppNavigator = Actions.create(
                   tabStyle={{ shadowOpacity: 1, shadowRadius: 1 }}
                 >
                   <Scene
+                    key="register"
+                    hideNavBar
+                    panHandlers={null}
+                    component={SignUpScreen}
+                    title="Register"
+                    rightTitle="Login"
+                    onRight={() => alert('Right Button pressed!')}
+                  />
+                  <Scene
                     key="login"
                     hideNavBar
                     panHandlers={null}
@@ -111,15 +120,6 @@ export const AppNavigator = Actions.create(
                     back={true}
                     backTitle="Register"
                     onBack={() => alert('Left Button pressed!')}
-                  />
-                  <Scene
-                    key="register"
-                    hideNavBar
-                    panHandlers={null}
-                    component={SignUpScreen}
-                    title="Register"
-                    rightTitle="Login"
-                    onRight={() => alert('Right Button pressed!')}
                   />
                 </Tabs>
               </Scene>
@@ -165,19 +165,12 @@ export const AppNavigator = Actions.create(
                 title="Add new hotspot"
               />
               <Scene
-                key="messages"
+                key="hotspots"
                 gesturesEnabled={false}
                 hideTabBar
                 hideNavBar
-                component={MessageListScreen}
-                title="Messages"
-              />
-              <Scene
-                key="pm"
-                hideTabBar
-                hideNavBar
-                component={PrivateMessageScreen}
-                title="Private Message"
+                component={HotspotListScreen}
+                title="My Hotspots"
               />
               <Scene
                 key="comments"

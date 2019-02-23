@@ -28,13 +28,18 @@ class ProfileScreen extends Component {
   };
 
   async componentDidMount() {
-    this.setState({ user: this.props.user.info });
-    this._getUserGallery(this.props.user.info);
+    if (this.props.user.info !== null && this.props.isLoggedIn) {
+      this.setState({ user: this.props.user.info });
+      this._getUserGallery(this.props.user.info);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.user.info !== nextProps.user.info) {
+    if (this.props.user.info !== nextProps.user.info && nextProps.isLoggedIn) {
       this.setState({ user: nextProps.user.info });
+    }
+    if (!nextProps.isLoggedIn) {
+      this.setState({ isLoading: true });
     }
   }
 
@@ -92,6 +97,7 @@ class ProfileScreen extends Component {
 const mapStoreToProps = store => {
   return {
     user: store.auth.user,
+    isLoggedIn: store.auth.isLoggedIn,
     gallery: store.gallery.collection
   };
 };

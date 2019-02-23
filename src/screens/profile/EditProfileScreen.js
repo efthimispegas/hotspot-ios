@@ -101,7 +101,7 @@ class EditProfileScreen extends Component {
         />
       );
     } else {
-      return renderProfilePicture(this.props.user.avatar);
+      return renderProfilePicture(this.props.user.avatar,null,{ width: 60, height: 60, borderRadius: 30 });
     }
   };
 

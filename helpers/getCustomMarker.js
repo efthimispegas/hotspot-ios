@@ -167,19 +167,17 @@ export const renderImage = hotspot => {
 };
 
 //needs modifying
-export const renderProfilePicture = avatar => {
+export const renderProfilePicture = (avatar, image, imageStyle) => {
   if (typeof avatar.uri === 'string') {
+    return <Image source={{ uri: avatar.uri }} style={imageStyle} />;
+  } else if (image) {
+    return image;
+  } else {
     return (
       <Image
-        source={{ uri: avatar.uri }}
-        style={{ width: 60, height: 60, borderRadius: 30 }}
+        source={require('../assets/icons/user-unknown.png')}
+        style={imageStyle}
       />
     );
   }
-  return (
-    <Image
-      source={require('../assets/icons/user.png')}
-      style={{ width: 60, height: 60 }}
-    />
-  );
 };

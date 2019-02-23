@@ -14,7 +14,7 @@ const ProfileLst = ({
   _handleLogout
 }) => (
   <View style={styles.container}>
-    <View style={styles.picture}>{renderProfilePicture(user.avatar)}</View>
+    <View style={styles.picture}>{renderProfilePicture(user.avatar,null,{ width: 60, height: 60, borderRadius: 30 })}</View>
     <View style={styles.settings}>
       <List>
         <ListItem itemDivider>

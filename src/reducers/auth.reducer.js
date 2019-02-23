@@ -73,7 +73,7 @@ export default (state = INITIAL_STATE, action) => {
     case LOGOUT:
       return {
         ...state,
-        user: null,
+        user: { info: null },
         isLoggedIn: false,
         error: false
       };

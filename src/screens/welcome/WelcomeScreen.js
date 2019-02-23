@@ -31,7 +31,6 @@ class WelcomeScreen extends Component {
     console.log('[WelcomeScreen]:', token);
     console.log('===============');
     if (token) {
-      this.setState({ isLoading: false });
       this.props.getUser(token);
       Actions.main({ type: 'replace' });
       // return;
@@ -68,7 +67,12 @@ class WelcomeScreen extends Component {
 
   render() {
     if (this.state.isLoading) {
-      return <SplashScreen />;
+      return (
+        <Image
+          source={require('../../../assets/splash.png')}
+          style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+        />
+      );
     }
     const { opacity, position } = this.state;
     const translateTitle = position.interpolate({
@@ -130,7 +134,7 @@ class WelcomeScreen extends Component {
           </Animated.View>
 
           <Animated.View style={[styles.buttonContainer, { opacity }]}>
-            <Button name="Get started!" onPress={() => Actions.login()} />
+            <Button name="Get started!" onPress={() => Actions.register()} />
           </Animated.View>
         </View>
       </View>

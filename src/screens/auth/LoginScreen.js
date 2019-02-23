@@ -113,9 +113,6 @@ class LoginScreen extends Component {
       );
       this.setState({ isLoading: false });
     } else {
-      //do some validations
-      //(...)
-      //401 = email and password don't match
       //if everything matches dispatch login action to be catched from the watcher
       const { email, password } = this.state;
       console.log('===============');

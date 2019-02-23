@@ -8,7 +8,7 @@ import {
   Keyboard
 } from 'react-native';
 
-import { Button, Colors } from '../../../common';
+import { Button, Colors, CustomDebouncedButton } from '../../../common';
 
 const LoginForm = ({
   _handleChangePassword,
@@ -22,7 +22,6 @@ const LoginForm = ({
         <View>
           <TextInput
             keyboardType="email-address"
-            autoFocus
             autoCapitalize="none"
             placeholder="Email"
             selectionColor={Colors.hotspotColor}
@@ -30,9 +29,6 @@ const LoginForm = ({
             value={state.email}
             style={styles.input}
           />
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Errors will go here</Text>
-          </View>
           <TextInput
             placeholder="Password"
             selectionColor={Colors.hotspotColor}
@@ -41,11 +37,8 @@ const LoginForm = ({
             secureTextEntry={true}
             style={styles.input}
           />
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>Errors will go here</Text>
-          </View>
           <View style={styles.formButton}>
-            <Button
+            <CustomDebouncedButton
               isLoading={state.isLoading}
               name="Done"
               onPress={_handleDone}
@@ -72,7 +65,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1
-    // backgroundColor: Colors.violetColor
   },
   formButton: {
     marginTop: 30
@@ -89,16 +81,6 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     paddingVertical: 7,
     backgroundColor: Colors.whiteColor
-  },
-  errorContainer: {
-    backgroundColor: Colors.pinkColor,
-    paddingBottom: 10
-  },
-  errorText: {
-    color: Colors.redColor,
-    fontFamily: 'montserrat',
-    fontSize: 15,
-    marginLeft: 10
   }
 });
 

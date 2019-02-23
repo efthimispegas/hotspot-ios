@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Alert,
+  AsyncStorage
+} from 'react-native';
 import Expo, { Permissions, Location, AR, ImagePicker } from 'expo';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
@@ -11,6 +18,7 @@ import * as actions from '../../actions';
 import SignUpForm from './components/SignUpForm';
 import { validateInput } from '../../../helpers';
 import { Colors } from '../../common';
+import { ACCESS_TOKEN } from '../../actions/types';
 
 class SignUpScreen extends Component {
   state = {
@@ -33,6 +41,23 @@ class SignUpScreen extends Component {
       fullname: null
     }
   };
+
+  async storeToken(accessToken) {
+    try {
+      await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getToken() {
+    try {
+      const token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   openCameraRoll = async () => {
     const { status, permissions } = await Permissions.askAsync(
@@ -176,32 +201,34 @@ class SignUpScreen extends Component {
   };
 
   _validateField = (type, input, requiredLength) => {
-    const errors = validateInput(type, input, requiredLength);
+    if (Actions.currentScene === '_register') {
+      const errors = validateInput(type, input, requiredLength);
 
-    if (type === 'email') {
-      this.setState({
-        ...this.state,
-        errors: { ...this.state.errors, email: errors }
-      });
-    } else if (type === 'password') {
-      this.setState({
-        ...this.state,
-        errors: { ...this.state.errors, password: errors }
-      });
-    } else if (type === 'fullname') {
-      this.setState({
-        ...this.state,
-        errors: { ...this.state.errors, fullname: errors }
-      });
-    } else if (type === 'username') {
-      this.setState({
-        ...this.state,
-        errors: { ...this.state.errors, username: errors }
-      });
+      if (type === 'email') {
+        this.setState({
+          ...this.state,
+          errors: { ...this.state.errors, email: errors }
+        });
+      } else if (type === 'password') {
+        this.setState({
+          ...this.state,
+          errors: { ...this.state.errors, password: errors }
+        });
+      } else if (type === 'fullname') {
+        this.setState({
+          ...this.state,
+          errors: { ...this.state.errors, fullname: errors }
+        });
+      } else if (type === 'username') {
+        this.setState({
+          ...this.state,
+          errors: { ...this.state.errors, username: errors }
+        });
+      }
     }
   };
 
-  _handleSubmit = () => {
+  _handleSubmit = async () => {
     if (this.props.error) {
       if (this.props.error.code === 403) {
         Alert.alert(`Email ${this.props.error.message}`);
@@ -209,6 +236,7 @@ class SignUpScreen extends Component {
         return;
       }
     }
+    await this.storeToken(this.props.user.token);
     this.setState({ isLoading: false });
     Actions.main({ type: 'replace' });
   };
@@ -307,7 +335,7 @@ class SignUpScreen extends Component {
 
 const mapStoreToProps = store => {
   return {
-    user: store.auth,
+    user: store.auth.user,
     error: store.auth.error
   };
 };

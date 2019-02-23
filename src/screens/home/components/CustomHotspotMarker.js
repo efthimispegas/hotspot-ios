@@ -24,22 +24,25 @@ import { Marker, Callout } from 'react-native-maps';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons';
 
-import { getMarkerImage, renderImage } from '../../../../helpers';
+import {
+  getMarkerImage,
+  renderImage,
+  renderProfilePicture
+} from '../../../../helpers';
 import { Colors, TouchableDebounce } from '../../../common';
 import { Actions } from 'react-native-router-flux';
 
-const CustomHotspotMarker = ({ hotspot }) => {
+const CustomHotspotMarker = ({ hotspot, user }) => {
   const _handleMarkerPress = () => {
     //go to the details page with comments
 
-    Actions.comments({ hotspot });
+    Actions.comments({ hotspot, user });
   };
-
   return (
     <Marker
       key={hotspot._id}
       coordinate={hotspot.coordinates}
-      title={hotspot.user.username}
+      title={user.username}
       image={getMarkerImage('flame', hotspot.size)}
       style={styles.marker}
     >
@@ -47,14 +50,12 @@ const CustomHotspotMarker = ({ hotspot }) => {
         <Card>
           <CardItem bordered>
             <Left>
-              <Thumbnail
-                source={require('../../../../assets/icons/user-unknown.png')}
-              />
+              {renderProfilePicture(hotspot.user.avatar,null,{ width: 60, height: 60, borderRadius: 30 })}
               <Body>
                 <Text style={styles.text}>{hotspot.user.username}</Text>
-                <Text style={styles.meta}>Athens</Text>
+                <Text style={styles.meta}>{user.city}</Text>
               </Body>
-              <Right>
+              <Right style={{ flex: 0.8, marginTop: 20 }}>
                 <Text style={styles.meta} note>{`${moment(
                   hotspot.created_at
                 ).fromNow()}`}</Text>

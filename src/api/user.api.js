@@ -28,7 +28,7 @@ class UserApi {
   async register(args) {
     try {
       //make an axios call to my server
-      const { data } = await axios.post(`/register`, args);
+      const { data } = await axios.post('/register', args);
       console.log('===============');
       console.log('data from axios:', data);
       console.log('===============');
@@ -40,7 +40,7 @@ class UserApi {
   async login(args) {
     try {
       //make an axios call to my server
-      const { data } = await axios.post(`/login`, args);
+      const { data } = await axios.post('/login', args);
       console.log('===============');
       console.log('data returned by axios:\n', data);
       console.log('===============');

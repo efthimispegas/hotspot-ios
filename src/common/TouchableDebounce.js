@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import { Button } from 'native-base';
+import { Button as NativeButton } from 'native-base';
 import { withDebounce } from '../../helpers';
+import { Button } from './Button';
 
-export const TouchableDebounce = withDebounce(Button);
+const TouchableDebounce = withDebounce(NativeButton);
+const CustomDebouncedButton = withDebounce(Button);
+
+export { TouchableDebounce, CustomDebouncedButton };
