@@ -77,10 +77,10 @@ export function getUser(token) {
   };
 }
 
-export function updateProfile(args) {
+export function updateProfile(userId, args) {
   return async dispatch => {
     try {
-      const { info } = await User.updateUser(args);
+      const { info } = await User.updateUser(userId, args);
       return dispatch({ type: UPDATE_USER_SUCCESS, payload: info });
     } catch (error) {
       return dispatch({ type: UPDATE_USER_ERROR, error });

@@ -145,6 +145,21 @@ class EditProfileScreen extends Component {
 
   _handleDone = () => {
     this.setState({ isLoading: true });
+    this._checkPasswordEmpty();
+  };
+
+  _checkPasswordEmpty = () => {
+    const { password } = this.state.nextUser;
+    if (password === null || password === '') {
+      Alert.alert(
+        'Verification required.',
+        'Please enter your old password in the password fields for the changes to take place.',
+        [{ text: 'OK', style: 'cancel' }],
+        { cancelable: true }
+      );
+      this.setState({ isLoading: false });
+      return;
+    }
     this._checkPasswordMatch();
   };
 
@@ -183,51 +198,41 @@ class EditProfileScreen extends Component {
       gender
     } = this.state.nextUser;
     let { avatar } = this.state.prevvUser;
-    if (username === null || username === '') {
-      username = this.state.prevvUser.username;
+    let updates = {};
+    if (username !== null && username !== '') {
+      updates['username'] = username;
     }
-    if (fullname === null || fullname === '') {
-      fullname = this.state.prevvUser.fullname;
+    if (fullname !== null && fullname !== '') {
+      updates['fullname'] = fullname;
     }
-    if (email === null || email === '') {
-      email = this.state.prevvUser.email;
+    if (email !== null && email !== '') {
+      updates['email'] = email;
     }
-    if (password === null || password === '') {
-      password = this.state.prevvUser.password;
+    if (password !== null && password !== '') {
+      updates['password'] = password;
     }
-    if (city === null || city === '') {
-      city = this.state.prevvUser.city;
+    if (city !== null && city !== '') {
+      updates['city'] = city;
     }
-    if (birthday === null || birthday === '') {
-      birthday = this.state.prevvUser.birthday;
+    if (birthday !== null && birthday !== '') {
+      updates['birthday'] = birthday;
     }
-    if (gender === null || gender === '') {
-      gender = this.state.prevvUser.gender;
+    if (gender !== null && gender !== '') {
+      updates['gender'] = gender;
     }
     if (this.state.picture !== null) {
       avatar['uri'] = this.state.picture;
+      updates['avatar'] = avatar;
     }
-    const nextUser = {
-      public: this.state.prevvUser.public,
-      username,
-      fullname,
-      email,
-      password,
-      city,
-      birthday,
-      gender,
-      avatar,
-      _id: this.state.prevvUser._id
-    };
     console.log('===============');
-    console.log('updates for the user:', nextUser);
+    console.log('updates for the user:', updates);
     console.log('===============');
     this.setState({
       ...this.state,
-      nextUser
+      updates
     });
-    await this.props.updateUserProfile(nextUser);
-    this._handleSubmit(nextUser);
+    await this.props.updateUserProfile(this.state.prevvUser._id, updates);
+    this._handleSubmit(updates);
   };
 
   _handleSubmit = async nextUser => {

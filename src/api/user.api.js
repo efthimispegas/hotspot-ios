@@ -50,12 +50,9 @@ class UserApi {
     }
   }
 
-  async updateUser(nextUser) {
+  async updateUser(userId, updates) {
     try {
-      const { data } = await axios.put(
-        `${this.getPath(nextUser._id)}/edit`,
-        nextUser
-      );
+      const { data } = await axios.put(`${this.getPath(userId)}/edit`, updates);
       console.log('===============');
       console.log('data returned by axios:', data);
       console.log('===============');
