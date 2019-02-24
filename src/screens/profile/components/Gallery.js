@@ -12,8 +12,7 @@ import {
 } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-import { Spinner, Colors } from '../../../common';
-import GalleryImage from './GalleryImage';
+import { Spinner, Colors, GalleryImage } from '../../../common';
 
 class Gallery extends Component {
   state = {

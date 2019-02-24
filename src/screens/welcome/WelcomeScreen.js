@@ -33,7 +33,7 @@ class WelcomeScreen extends Component {
     if (token) {
       this.props.getUser(token);
       Actions.main({ type: 'replace' });
-      // return;
+      return;
     } else {
       this.setState({ isLoading: false });
       this._addOpacityAnimation();

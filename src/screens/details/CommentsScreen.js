@@ -6,7 +6,8 @@ import {
   Alert,
   Dimensions,
   TextInput,
-  Image
+  Image,
+  Modal
 } from 'react-native';
 import {
   View,
@@ -22,7 +23,7 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { Location } from 'expo';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Entypo, Ionicons, AntDesign } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import moment from 'moment';
 
@@ -30,7 +31,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
-import { Colors, CustomNavBar, Spinner } from '../../common';
+import { Colors, CustomNavBar, Spinner, GalleryImage } from '../../common';
 import { validateCommentReply, renderProfilePicture } from '../../../helpers';
 import HotspotPost from './components/HotspotPost';
 import CommentsList from './components/CommentsList';
@@ -41,7 +42,8 @@ class CommentsScreen extends React.Component {
     super(props);
     this.state = {
       commentData: [],
-      newComment: ''
+      newComment: '',
+      isModalVisible: false
     };
     this.hotspot = props.hotspot;
     this.user = props.user;
@@ -76,7 +78,8 @@ class CommentsScreen extends React.Component {
       return true;
     } else if (
       nextState.commentData.length !== this.state.commentData.length ||
-      this.state.newComment.length !== nextState.newComment.length
+      this.state.newComment.length !== nextState.newComment.length ||
+      this.state.isModalVisible !== nextState.isModalVisible
     ) {
       //every other time, update only when a new comment is added
       return true;
@@ -142,6 +145,15 @@ class CommentsScreen extends React.Component {
   _handleChangeText = newComment => {
     this.setState({ newComment });
   };
+  _handleReply = (data, secId, rowId, rowMap) => {
+    rowMap[`${secId}${rowId}`].props.closeRow();
+    this.replyRef.current.focus();
+  };
+
+  toggleModal = isVisible => {
+    console.log(isVisible);
+    this.setState({ isModalVisible: isVisible });
+  };
 
   render() {
     console.log('===============');
@@ -172,11 +184,30 @@ class CommentsScreen extends React.Component {
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />
         <KeyboardAwareScrollView style={{ backgroundColor: 'white' }}>
-          <HotspotPost hotspot={this.hotspot} />
+          <Modal
+            animationType="fade"
+            transparent
+            visible={this.state.isModalVisible}
+            style={styles.modal}
+          >
+            <View style={styles.modal}>
+              <TouchableOpacity
+                onPress={() => this.toggleModal(false)}
+                style={styles.closeButton}
+              >
+                <AntDesign name="close" size={24} color="white" />
+              </TouchableOpacity>
+              <GalleryImage uri={this.hotspot.file.uri} />
+            </View>
+          </Modal>
+          <HotspotPost
+            toggleModal={this.toggleModal.bind(this)}
+            hotspot={this.hotspot}
+          />
           <CommentsList
             ds={this.ds}
             commentData={this.state.commentData}
-            replyRef={this.replyRef}
+            _handleReply={this._handleReply.bind(this)}
           />
           <ReplyBox
             replyRef={this.replyRef}
@@ -189,6 +220,35 @@ class CommentsScreen extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    backgroundColor: '#eee'
+  },
+  imageWrapper: {
+    width: Dimensions.get('window').width / 3 - 4,
+    height: Dimensions.get('window').height / 3 - 4,
+    padding: 5,
+    backgroundColor: '#fff'
+  },
+  modal: {
+    flex: 1,
+    padding: 40,
+    backgroundColor: 'rgba(0,0,0,0.9)'
+  },
+  closeButton: {
+    alignSelf: 'center',
+    height: 26,
+    width: 26,
+    marginBottom: 20
+  }
+});
 
 const mapStoreToProps = store => {
   return {

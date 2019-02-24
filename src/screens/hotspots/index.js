@@ -1,3 +1,4 @@
 import HotspotListScreen from './HotspotListScreen';
+import EditHotspotScreen from './EditHotspotScreen';
 
-export { HotspotListScreen };
+export { EditHotspotScreen, HotspotListScreen };

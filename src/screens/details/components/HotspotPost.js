@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Card, CardItem, Left, Body } from 'native-base';
 import moment from 'moment';
 
 import { renderProfilePicture, renderImage } from '../../../../helpers';
 import { Colors } from '../../../common';
 
-const HotspotPost = ({ hotspot }) => (
+const HotspotPost = ({ hotspot, toggleModal }) => (
   <Card style={{ flex: 0 }}>
     <CardItem bordered>
       <Left>
@@ -26,7 +26,9 @@ const HotspotPost = ({ hotspot }) => (
         <Text style={styles.message}>{hotspot.text}</Text>
       </Body>
     </CardItem>
-    {renderImage(hotspot)}
+    <TouchableOpacity activeOpacity={0.9} onPress={() => toggleModal(true)}>
+      {renderImage(hotspot)}
+    </TouchableOpacity>
   </Card>
 );
 

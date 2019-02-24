@@ -15,7 +15,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 import { Colors, Button, DebouncedOpacity } from '../../../common';
 
-const CreateHotspotForm = ({
+const EditHotspotForm = ({
   state,
   _handleChangeMessage,
   _handleChangeSlider,
@@ -28,15 +28,15 @@ const CreateHotspotForm = ({
       <View style={{ flex: 1 }}>
         <View style={styles.messageContainer}>
           <View style={[styles.titleBox, { marginBottom: 20 }]}>
-            <Text style={styles.text}>Your Message:</Text>
+            <Text style={styles.text}>Edit your Message:</Text>
           </View>
 
           <View style={styles.messageBox}>
             <TextInput
-              placeholder="Add message..."
+              placeholder={state.prevvHotspot.text}
               onChangeText={_handleChangeMessage}
               style={styles.input}
-              value={state.message}
+              value={state.nextHotspot.message}
               multiline={true}
             />
           </View>
@@ -44,33 +44,37 @@ const CreateHotspotForm = ({
 
         <View style={styles.sliderContainer}>
           <View style={[styles.titleBox, { marginVertical: 20 }]}>
-            <Text style={styles.text}>Validity of your message</Text>
+            <Text style={styles.text}>Change validity</Text>
             <Slider
-              value={30}
+              value={state.prevvHotspot.validity}
               minimumValue={1}
               maximumValue={60}
-              step={1}
+              step={5}
               thumbTintColor={Colors.greyColor}
               minimumTrackTintColor={Colors.whiteColor}
               onValueChange={_handleChangeSlider}
               onSlidingComplete={value =>
                 Alert.alert(
-                  'Validity of your message:',
+                  'New validity of your message:',
                   `${value} minute${value > 1 ? 's' : ''}`
                 )
               }
             />
-            <Text style={styles.text}>{state.value}</Text>
+            <Text style={styles.text}>
+              {state.nextHotspot.value !== null
+                ? state.nextHotspot.value
+                : state.prevvHotspot.validity}
+            </Text>
           </View>
         </View>
 
         <View style={styles.imageContainer}>
-          <Text style={styles.text}> Choose image</Text>
+          <Text style={styles.text}> Edit image</Text>
           <View style={styles.picture}>
             <DebouncedOpacity
               onPress={() =>
                 Alert.alert(
-                  'Add a photo to your message',
+                  'Change the photo of your message',
                   'Choose a photo from Camera Roll, or take a new one.',
                   [
                     { text: 'Camera Roll', onPress: _openCameraRoll },
@@ -151,4 +155,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateHotspotForm;
+export default EditHotspotForm;

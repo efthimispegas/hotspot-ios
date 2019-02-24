@@ -7,7 +7,11 @@ import {
   CREATE_HOTSPOT_ERROR,
   CANCEL_HOTSPOT,
   LOAD_USER_HOTSPOTS_ERROR,
-  LOAD_USER_HOTSPOTS_SUCCESS
+  LOAD_USER_HOTSPOTS_SUCCESS,
+  EDIT_HOTSPOT_SUCCESS,
+  EDIT_HOTSPOT_ERROR,
+  DELETE_HOTSPOT_SUCCESS,
+  DELETE_HOTSPOT_ERROR
 } from './types';
 import { Hotspot } from '../api';
 
@@ -55,6 +59,28 @@ export function createHotspot(args) {
       dispatch({ type: CREATE_HOTSPOT_SUCCESS, payload: hotspot });
     } catch (error) {
       return dispatch({ type: CREATE_HOTSPOT_ERROR, error });
+    }
+  };
+}
+
+export function updateHotspot(hotspotId, args) {
+  return async dispatch => {
+    try {
+      const { hotspot } = await Hotspot.editHotspot(hotspotId, args);
+      dispatch({ type: EDIT_HOTSPOT_SUCCESS, payload: hotspot });
+    } catch (error) {
+      return dispatch({ type: EDIT_HOTSPOT_ERROR, error });
+    }
+  };
+}
+
+export function deleteHotspot(hotspotId) {
+  return async dispatch => {
+    try {
+      const { success } = await Hotspot.deleteHotspot(hotspotId);
+      dispatch({ type: DELETE_HOTSPOT_SUCCESS, payload: success });
+    } catch (error) {
+      return dispatch({ type: DELETE_HOTSPOT_ERROR, error });
     }
   };
 }

@@ -62,7 +62,7 @@ class UserApi {
 
       return data;
     } catch (e) {
-      throw e.message;
+      throw new ErrorHandler(e.message).error;
     }
   }
 }

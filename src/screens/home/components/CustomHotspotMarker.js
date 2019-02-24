@@ -50,7 +50,11 @@ const CustomHotspotMarker = ({ hotspot, user }) => {
         <Card>
           <CardItem bordered>
             <Left>
-              {renderProfilePicture(hotspot.user.avatar,null,{ width: 60, height: 60, borderRadius: 30 })}
+              {renderProfilePicture(hotspot.user.avatar, null, {
+                width: 60,
+                height: 60,
+                borderRadius: 30
+              })}
               <Body>
                 <Text style={styles.text}>{hotspot.user.username}</Text>
                 <Text style={styles.meta}>{user.city}</Text>
@@ -82,11 +86,7 @@ const CustomHotspotMarker = ({ hotspot, user }) => {
                 justifyContent: 'center'
               }}
             >
-              <Ionicons
-                name="ios-thumbs-up"
-                size={18}
-                color={Colors.hotspotColor}
-              />
+              <Ionicons name="md-eye" size={18} color={Colors.hotspotColor} />
               <Text style={[styles.text, { fontSize: 12 }]}>{`${
                 hotspot.views_count
               } Views`}</Text>

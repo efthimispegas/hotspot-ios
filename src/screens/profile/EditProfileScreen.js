@@ -101,7 +101,11 @@ class EditProfileScreen extends Component {
         />
       );
     } else {
-      return renderProfilePicture(this.props.user.avatar,null,{ width: 60, height: 60, borderRadius: 30 });
+      return renderProfilePicture(this.props.user.avatar, null, {
+        width: 60,
+        height: 60,
+        borderRadius: 30
+      });
     }
   };
 
@@ -168,7 +172,7 @@ class EditProfileScreen extends Component {
 
   //modify this to check whether a field hasn't changed,
   //to revert it back to prevvUser value
-  _confirmNotEmpty = () => {
+  _confirmNotEmpty = async () => {
     let {
       username,
       email,
@@ -222,6 +226,7 @@ class EditProfileScreen extends Component {
       ...this.state,
       nextUser
     });
+    await this.props.updateUserProfile(nextUser);
     this._handleSubmit(nextUser);
   };
 
@@ -230,10 +235,22 @@ class EditProfileScreen extends Component {
     if (this.props.error) {
       if (this.props.error.code === 403) {
         Alert.alert(`Email ${this.props.error.message}`);
+        this.setState({
+          ...this.state,
+          nextUser: {
+            email: null,
+            password: null,
+            confirmPassword: null,
+            username: null,
+            fullname: null,
+            gender: null,
+            city: null,
+            birthday: null
+          }
+        });
         return;
       }
     }
-    await this.props.updateUserProfile(nextUser);
     Actions.pop();
   };
 
@@ -672,7 +689,8 @@ const styles = StyleSheet.create({
 
 const mapStoreToProps = store => {
   return {
-    user: store.auth.user.info
+    user: store.auth.user.info,
+    error: store.auth.error
   };
 };
 

@@ -10,7 +10,7 @@ let url;
 if (Platform.OS !== 'ios') {
   url = 'http://10.0.3.2:3000/api';
 } else {
-  // url = 'http://192.168.10.39:3000/api/';
+  // url = 'http://192.168.10.39:3000/api';
   url = 'http://172.20.10.5:3000/api';
 }
 

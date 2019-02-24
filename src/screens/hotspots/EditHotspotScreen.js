@@ -18,22 +18,28 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import { Colors, CustomNavBar } from '../../common';
-import CreateHotspotForm from './components/CreateHotspotForm';
-import { validateCreationForm } from '../../../helpers';
+import EditHotspotForm from './components/EditHotspotForm';
+import { validateCreationForm, renderImage } from '../../../helpers';
 
-class CreateHotspotScreen extends Component {
-  state = {
-    message: '',
-    value: 30,
-    image: null,
-    isLoading: false
-  };
+class EditHotspotScreen extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      prevvHotspot: props.hotspot,
+      nextHotspot: {
+        message: null,
+        value: null,
+        image: null
+      }
+    };
+  }
 
   componentWillReceiveProps(nextProps) {
     console.log('===============');
-    console.log('nextProps:', nextProps);
+    console.log('[Edit Hotspot] nextProps:', nextProps);
     console.log('===============');
-    if (!nextProps.creation) {
+    if (!nextProps.updates) {
       if (nextProps.cancelled) {
         this.setState({
           message: '',
@@ -41,17 +47,27 @@ class CreateHotspotScreen extends Component {
           image: null,
           isLoading: false
         });
-        nextProps.flushImage();
         Actions.pop();
       }
+    } else {
+      //updates were made
+      console.log('===============');
+      console.log('[Edit hotspot] updates made:', nextProps.updates);
+      console.log('===============');
     }
   }
 
   _handleChangeMessage = message => {
-    this.setState({ message });
+    this.setState({
+      ...this.state,
+      nextHotspot: { ...this.state.nextHotspot, message }
+    });
   };
   _handleChangeSlider = value => {
-    this.setState({ value });
+    this.setState({
+      ...this.state,
+      nextHotspot: { ...this.state.nextHotspot, value }
+    });
   };
 
   _openCameraRoll = async () => {
@@ -69,7 +85,11 @@ class CreateHotspotScreen extends Component {
     });
     if (!cancelled) {
       this.setState({
-        image: uri
+        ...this.state,
+        nextHotspot: {
+          ...this.state.nextHotspot,
+          image: uri
+        }
       });
       //save image to the store as hotspot's file
       this.props.saveImage(uri);
@@ -91,7 +111,11 @@ class CreateHotspotScreen extends Component {
     });
     if (!cancelled) {
       this.setState({
-        image: uri
+        ...this.state,
+        nextHotspot: {
+          ...this.state.nextHotspot,
+          image: uri
+        }
       });
       //save image to the store as hotspot's file
       this.props.saveImage(uri);
@@ -99,66 +123,93 @@ class CreateHotspotScreen extends Component {
   };
 
   _renderImage = () => {
-    if (this.props.image) {
+    if (this.state.nextHotspot.image) {
       return (
         <Image
-          source={{ uri: this.props.image }}
+          source={{ uri: this.state.nextHotspot.image }}
           style={{ width: 164, height: 164 }}
         />
       );
+    } else {
+      if (typeof this.state.prevvHotspot.file.uri === 'string') {
+        return (
+          <Image
+            source={{ uri: this.state.prevvHotspot.file.uri }}
+            style={{ width: 164, height: 164 }}
+          />
+        );
+      }
+      return (
+        <Image
+          source={require('../../../assets/icons/add-image.png')}
+          style={{ width: 164, height: 164, borderRadius: 5 }}
+        />
+      );
     }
-    return (
-      <Image
-        source={require('../../../assets/icons/add-image.png')}
-        style={{ width: 164, height: 164, borderRadius: 5 }}
-      />
-    );
   };
 
   _saveImage = async () => {
-    const { image } = this.state;
+    const { image } = this.state.nextHotspot;
     if (image) {
       //and also upload it to the db collection as seperate file, for user's gallery
-      const userId = '5c539c398b7c1126bcfd984d';
+      const userId = this.props.user._id;
       await this.props.uploadImage(userId, image);
     }
-    this._postMessage();
+    this._checkNotEmpty();
   };
 
-  _postMessage = async () => {
-    //will also add user later, hardcode it for now
-    const { region, image, user } = this.props;
-    const { value, message } = this.state;
-    //post message to the map
-    this.props.createHotspot({
-      loc: { coordinates: [region.latitude, region.longitude] },
-      file: {
-        uri: image === undefined ? null : image
-      },
-      text: message,
-      user: {
-        id: user.info._id,
-        username: user.info.username,
-        avatar: user.info.avatar
-      },
-      validity: value
-    });
-    //refresh screen and redirect after successful post
+  _checkNotEmpty() {
+    let { message, value, image } = this.state.nextHotspot;
+    if (message === '' || message === null) {
+      message = this.state.prevvHotspot.text;
+    }
+    if (value === '' || value === null) {
+      value = this.state.prevvHotspot.validity;
+    }
+    if (image === null) {
+      image = this.state.prevvHotspot.file.uri;
+    }
     this.setState({
-      message: '',
-      image: null,
-      value: 30,
-      isLoading: false
+      ...this.state,
+      nextHotspot: {
+        message,
+        value,
+        image
+      }
     });
-    this.props.flushImage();
-    //reload the hotspots, to refresh the homescreen
-    await this.props.loadHotspots(this.props.region);
+
+    this._postMessage({
+      message,
+      value,
+      image
+    });
+  }
+
+  _postMessage = async nextHotspot => {
+    const { user } = this.props;
+    const args = {
+      file: {
+        uri: nextHotspot.image
+      },
+      text: nextHotspot.message,
+      user: {
+        id: user._id,
+        username: user.username,
+        avatar: user.avatar
+      },
+      validity: nextHotspot.value
+    };
+    const hotspotId = this.state.prevvHotspot._id;
+    //update message
+    this.props.updateHotspot(hotspotId, args);
+    //reload user's hotspots, with the updated one
+    await this.props.loadUserHotspots(this.props.user._id);
     Actions.pop();
   };
 
   _onSave = () => {
     this.setState({ isLoading: true });
-    const error = validateCreationForm(this.state);
+    const error = validateCreationForm(this.state.nextHotspot);
     if (error) {
       Alert.alert(
         'Oops...',
@@ -172,21 +223,24 @@ class CreateHotspotScreen extends Component {
         { cancelable: true }
       );
       this.setState({
-        isLoading: false,
-        message: null,
-        value: 15
+        ...this.state,
+        nextHotspot: {
+          image: null,
+          message: null,
+          value: 15
+        }
       });
       return;
     }
     //if no errors, verify and post
     Alert.alert(
-      'Create Hotspot?',
-      'If you agree press "OK" and your message will be posted!',
+      'Update Hotspot?',
+      'If you agree press "OK" and your message will be updated!',
       [
         { text: 'OK', onPress: () => this._saveImage() },
         {
           text: 'Cancel',
-          onPress: () => this.props.cancelCreation(),
+          onPress: () => this._onCancel(),
           style: 'cancel'
         }
       ],
@@ -194,28 +248,26 @@ class CreateHotspotScreen extends Component {
     );
   };
 
-  _onCancel = async () => {
-    //reload the hotspots, to refresh the homescreen
-    await this.props.loadHotspots(this.props.region);
-    //do some canceling
-    this.props.cancelCreation(true);
-    this.props.cancelCreation(false);
-  };
-
   render() {
+    console.log('===============');
+    console.log('[EditHotspot] state:', this.state);
+    console.log('===============');
+    console.log('===============');
+    console.log('[EditHotspot] props:', this.props);
+    console.log('===============');
     return (
       <View style={{ flex: 1, backgroundColor: Colors.hotspotColor }}>
         <CustomNavBar
-          title="Add a hotspot"
+          title="Edit hotspot"
           leftTitle="Cancel"
           rightTitle="Save"
-          onLeft={this._onCancel}
+          onLeft={Actions.pop}
           onRight={this._onSave}
-          margins={{ marginLeft: 50, marginRight: 68 }}
+          margins={{ marginLeft: 56, marginRight: 72 }}
           textColor={{ color: Colors.hotspotColor }}
           backgroundColor={{ backgroundColor: Colors.whiteColor }}
         />
-        <CreateHotspotForm
+        <EditHotspotForm
           _handleChangeSlider={this._handleChangeSlider.bind(this)}
           _handleChangeMessage={this._handleChangeMessage.bind(this)}
           _openCamera={this._openCamera.bind(this)}
@@ -230,27 +282,25 @@ class CreateHotspotScreen extends Component {
 
 const mapStateToProps = store => {
   return {
-    user: store.auth.user,
+    user: store.auth.user.info,
     region: store.location.region,
     hotspots: store.hotspots.markers,
-    image: store.gallery.image,
-    creation: store.hotspots.creation,
+    updates: store.hotspots.updates,
     cancelled: store.hotspots.cancelled
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    createHotspot: bindActionCreators(actions.createHotspot, dispatch),
-    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch),
+    updateHotspot: bindActionCreators(actions.updateHotspot, dispatch),
+    loadUserHotspots: bindActionCreators(actions.loadUserHotspots, dispatch),
     saveImage: bindActionCreators(actions.saveImage, dispatch),
     uploadImage: bindActionCreators(actions.uploadImage, dispatch),
-    flushImage: bindActionCreators(actions.flushImage, dispatch),
-    cancelCreation: bindActionCreators(actions.cancelCreation, dispatch)
+    cancelUpdate: bindActionCreators(actions.cancelCreation, dispatch)
   };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CreateHotspotScreen);
+)(EditHotspotScreen);

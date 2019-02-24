@@ -21,7 +21,7 @@ import {
   Text
 } from 'native-base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
@@ -30,17 +30,16 @@ import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
 import { messages as dummyData } from './dummy';
-import { Colors, CustomNavBar, TouchableDebounce } from '../../common';
+import { Colors, CustomNavBar, TouchableDebounce, Spinner } from '../../common';
 import { renderProfilePicture } from '../../../helpers';
 
 class HotspotListScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      basic: true,
+      isLoading: true,
       hotspotData: []
     };
-    this.myHotspots = props.myHotspots;
     this.user = props.user;
   }
   ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }); //truthy if row has changed
@@ -65,20 +64,23 @@ class HotspotListScreen extends React.Component {
     if (nextProps.myHotspots) {
       this.updateHotspotList(nextProps.myHotspots);
     }
+    if (nextProps.deletion) {
+      this.updateHotspotList(nextProps.myHotspots);
+    }
   }
 
   //here add any checks that need to be made after the component receives props
   //in order to determine whether or not it will update
-  shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.myHotspots === null) {
-      //the first time it loads
-      return true;
-    } else if (nextState.hotspotData.length !== this.state.hotspotData.length) {
-      //every other time, reload only when a hotspot is deleted or updated
-      return true;
-    }
-    return false;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (this.props.myHotspots === null) {
+  //     //the first time it loads
+  //     return true;
+  //   } else if (nextState.hotspotData.length !== this.state.hotspotData.length) {
+  //     //every other time, reload only when a hotspot is deleted or updated
+  //     return true;
+  //   } else if (nextProps)
+  //   return false;
+  // }
 
   async getHotspotDetails() {
     //here i will fetch the hotspots of the current user
@@ -91,7 +93,7 @@ class HotspotListScreen extends React.Component {
     let hotspotArray = [];
     hotspots.forEach(el => {
       let hotspot = {
-        id: el._id,
+        _id: el._id,
         text: el.text,
         description: el.description,
         validity: el.validity,
@@ -107,26 +109,84 @@ class HotspotListScreen extends React.Component {
     });
 
     this.setState({
-      hotspotData: hotspotArray
+      hotspotData: hotspotArray,
+      isLoading: false
     });
   }
 
-  async deleteRow(secId, rowId, rowMap) {
+  async _handleDelete(hotspot, secId, rowId, rowMap) {
+    console.log('===============');
+    console.log('hotspot:', hotspot);
+    console.log('===============');
     rowMap[`${secId}${rowId}`].props.closeRow();
+    //remove the selected hotspot
+    await this.props.deleteHotspot(hotspot._id);
+    await this.getHotspotDetails();
     let newData = [...this.state.hotspotData];
     newData.splice(rowId, 1);
     this.setState({ hotspotData: newData });
   }
 
-  privateMessage = data => {
-    console.log('===============');
-    console.log('data:', data);
-    console.log('===============');
+  _handleEdit = (hotspot, secId, rowId, rowMap) => {
+    rowMap[`${secId}${rowId}`].props.closeRow();
+    Actions.edit_hotspot({ hotspot });
   };
 
   //if no messages then need to display "no mesages"
   render() {
     console.log('state', this.state);
+    if (this.state.isLoading) {
+      return (
+        <View style={{ ...StyleSheet.absoluteFill }}>
+          <CustomNavBar
+            title="My Hotspots"
+            leftTitle="Back"
+            rightTitle={null}
+            onLeft={Actions.pop}
+            onRight={null}
+            margins={{ marginLeft: 76 }}
+            textColor={{ color: Colors.whiteColor }}
+            backgroundColor={{ backgroundColor: Colors.hotspotColor }}
+          />
+          <View
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Spinner />
+          </View>
+        </View>
+      );
+    }
+    console.log('===============');
+    console.log('[HotspotList]:this.props.myHotspots', this.props.myHotspots);
+    console.log('===============');
+    if (!this.props.myHotspots) {
+      return (
+        <View style={{ ...StyleSheet.absoluteFill }}>
+          <CustomNavBar
+            title="My Hotspots"
+            leftTitle="Back"
+            rightTitle={null}
+            onLeft={Actions.pop}
+            onRight={null}
+            margins={{ marginLeft: 76 }}
+            textColor={{ color: Colors.whiteColor }}
+            backgroundColor={{ backgroundColor: Colors.hotspotColor }}
+          />
+          <View
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Text
+              style={{
+                color: Colors.lightGreyColor,
+                fontFamily: 'montserratItalic'
+              }}
+            >
+              No Hotspots
+            </Text>
+          </View>
+        </View>
+      );
+    }
 
     return (
       <View style={{ ...StyleSheet.absoluteFill }}>
@@ -156,7 +216,9 @@ class HotspotListScreen extends React.Component {
                     </View>
                     <View style={styles.postContainer}>
                       <Text style={styles.message}>
-                        {value.text.substr(0, 100).concat('...')}
+                        {value.text.length <= 100
+                          ? value.text
+                          : value.text.substr(0, 100).concat('...')}
                       </Text>
                     </View>
                   </View>
@@ -173,7 +235,7 @@ class HotspotListScreen extends React.Component {
                     }}
                   >
                     <Ionicons
-                      name="ios-thumbs-up"
+                      name="md-eye"
                       size={18}
                       color={Colors.hotspotColor}
                     />
@@ -198,7 +260,7 @@ class HotspotListScreen extends React.Component {
                       }}
                       transparent={true}
                       activeOpacity={0.2}
-                      onPress={() => {}}
+                      onPress={() => Actions.comments({ hotspot: value })}
                     >
                       <Ionicons
                         name="ios-chatbubbles"
@@ -213,25 +275,35 @@ class HotspotListScreen extends React.Component {
                 </View>
               </View>
             )}
-            renderLeftHiddenRow={data => (
+            renderLeftHiddenRow={(data, secId, rowId, rowMap) => (
               <View style={styles.replyButton}>
-                <TouchableOpacity onPress={() => this.privateMessage(data)}>
-                  <Entypo name="reply" size={32} color={Colors.blackColor} />
-                </TouchableOpacity>
+                <TouchableDebounce
+                  transparent
+                  full
+                  onPress={() => this._handleEdit(data, secId, rowId, rowMap)}
+                >
+                  <MaterialIcons
+                    name="edit"
+                    size={32}
+                    color={Colors.blackColor}
+                  />
+                </TouchableDebounce>
               </View>
             )}
             renderRightHiddenRow={(data, secId, rowId, rowMap) => (
-              <Button
-                full
-                danger
-                onPress={() => this.deleteRow(secId, rowId, rowMap)}
-              >
-                <Ionicons
-                  name="ios-trash"
-                  size={32}
-                  color={Colors.whiteColor}
-                />
-              </Button>
+              <View style={styles.deleteButton}>
+                <Button
+                  transparent
+                  full
+                  onPress={() => this._handleDelete(data, secId, rowId, rowMap)}
+                >
+                  <Ionicons
+                    name="ios-trash"
+                    size={32}
+                    color={Colors.whiteColor}
+                  />
+                </Button>
+              </View>
             )}
           />
         </KeyboardAwareScrollView>
@@ -279,6 +351,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Colors.hotspotColor
   },
+  deleteButton: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.redColor
+  },
   text: {
     fontFamily: 'montserrat',
     fontSize: 14,
@@ -293,15 +371,15 @@ const styles = StyleSheet.create({
 const mapStoreToProps = store => {
   return {
     user: store.auth.user.info,
-    myHotspots: store.hotspots.myHotspots
+    myHotspots: store.hotspots.myHotspots,
+    deletion: store.hotspots.deletion
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     loadUserHotspots: bindActionCreators(actions.loadUserHotspots, dispatch),
-    updateHotspot: null, //<----------------------
-    deleteHotspot: null //<-----------|
+    deleteHotspot: bindActionCreators(actions.deleteHotspot, dispatch)
   };
 };
 

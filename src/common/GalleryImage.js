@@ -3,7 +3,7 @@ import { Image, StyleSheet, Dimensions } from 'react-native';
 
 const WIDTH = Dimensions.get('window').width;
 
-export default class GalleryImage extends Component {
+class GalleryImage extends Component {
   render() {
     return <Image source={{ uri: this.props.uri }} style={styles.image} />;
   }
@@ -16,3 +16,5 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch'
   }
 });
+
+export { GalleryImage };

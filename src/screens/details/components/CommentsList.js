@@ -7,7 +7,7 @@ import { Entypo } from '@expo/vector-icons';
 import { renderProfilePicture } from '../../../../helpers';
 import { Colors } from '../../../common';
 
-const CommentsList = ({ ds, commentData, replyRef }) => {
+const CommentsList = ({ ds, commentData, _handleReply }) => {
   return (
     <List
       rightOpenValue={-75}
@@ -34,9 +34,11 @@ const CommentsList = ({ ds, commentData, replyRef }) => {
           </Body>
         </ListItem>
       )}
-      renderRightHiddenRow={data => (
+      renderRightHiddenRow={(data, secId, rowId, rowMap) => (
         <View style={styles.button}>
-          <TouchableOpacity onPress={() => replyRef.current.focus()}>
+          <TouchableOpacity
+            onPress={() => _handleReply(data, secId, rowId, rowMap)}
+          >
             <Entypo name="reply" size={32} color={Colors.blackColor} />
           </TouchableOpacity>
         </View>

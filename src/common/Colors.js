@@ -11,7 +11,7 @@ export const Colors = {
   blueColor: '#3498db',
   iosBlueColor: '#007aff',
   violetColor: '#5dc4ec',
-  redColor: 'red',
+  redColor: '#dd1d1d',
   orangeColor1: '#d3300777', //orange-red
   orangeColor2: '#fc7318', //orange-light
   orangeColor3: '#e64f09', //orange-vivid

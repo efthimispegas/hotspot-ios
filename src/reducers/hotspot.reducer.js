@@ -5,13 +5,19 @@ import {
   LOAD_HOTSPOTS_ERROR,
   CREATE_HOTSPOT_ERROR,
   LOAD_USER_HOTSPOTS_SUCCESS,
-  LOAD_USER_HOTSPOTS_ERROR
+  LOAD_USER_HOTSPOTS_ERROR,
+  EDIT_HOTSPOT_SUCCESS,
+  EDIT_HOTSPOT_ERROR,
+  DELETE_HOTSPOT_SUCCESS,
+  DELETE_HOTSPOT_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = {
   markers: null,
   myHotspots: null,
   creation: false,
+  deletion: false,
+  updates: null,
   cancelled: false,
   error: false
 };
@@ -52,6 +58,32 @@ export default (state = INITIAL_STATE, action) => {
       return {
         ...state,
         creation: false,
+        cancelled: false,
+        error: action.error
+      };
+    case EDIT_HOTSPOT_SUCCESS:
+      return {
+        ...state,
+        updates: action.payload,
+        error: false
+      };
+    case EDIT_HOTSPOT_ERROR:
+      return {
+        ...state,
+        updates: false,
+        cancelled: false,
+        error: action.error
+      };
+    case DELETE_HOTSPOT_SUCCESS:
+      return {
+        ...state,
+        deletion: action.payload, //true if successfull
+        error: false
+      };
+    case DELETE_HOTSPOT_ERROR:
+      return {
+        ...state,
+        deletion: false,
         cancelled: false,
         error: action.error
       };

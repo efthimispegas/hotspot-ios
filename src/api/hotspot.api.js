@@ -27,7 +27,7 @@ class HotspotApi {
       console.log('===============');
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -43,7 +43,7 @@ class HotspotApi {
       console.log('===============');
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -58,23 +58,33 @@ class HotspotApi {
       console.log('===============');
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 
-  async editHotspot(userId, hotspotId, args) {
+  async editHotspot(hotspotId, args) {
     try {
-      const { data } = await axios.post(
-        `/${userId}${this.path}/${hotspotId}/edit`,
-        args
-      );
+      const { data } = await axios.put(`${this.path}/${hotspotId}/edit`, args);
       console.log('===============');
       console.log('data returned from axios:', data);
       console.log('===============');
 
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw e;
+    }
+  }
+
+  async deleteHotspot(hotspotId) {
+    try {
+      const { data } = await axios.delete(`${this.path}/${hotspotId}/delete`);
+      console.log('===============');
+      console.log('data returned from axios:', data);
+      console.log('===============');
+
+      return data;
+    } catch (e) {
+      throw e;
     }
   }
 
@@ -91,7 +101,7 @@ class HotspotApi {
 
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 
@@ -107,7 +117,7 @@ class HotspotApi {
 
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw e;
     }
   }
 }

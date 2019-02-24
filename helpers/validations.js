@@ -105,6 +105,7 @@ const validateCreationForm = fields => {
   }
   return false;
 };
+
 const validateCommentReply = comment => {
   if (!comment || comment.length < 1) {
     return "Comments can't be empty 🤨";

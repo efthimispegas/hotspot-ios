@@ -4,7 +4,7 @@ import { List, ListItem, Left, Button, Body, Right, Switch } from 'native-base';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 
-import { Colors } from '../../../common';
+import { Colors, TouchableDebounce, DebouncedOpacity } from '../../../common';
 import { renderProfilePicture } from '../../../../helpers';
 
 const ProfileLst = ({
@@ -14,7 +14,13 @@ const ProfileLst = ({
   _handleLogout
 }) => (
   <View style={styles.container}>
-    <View style={styles.picture}>{renderProfilePicture(user.avatar,null,{ width: 60, height: 60, borderRadius: 30 })}</View>
+    <View style={styles.picture}>
+      {renderProfilePicture(user.avatar, null, {
+        width: 60,
+        height: 60,
+        borderRadius: 30
+      })}
+    </View>
     <View style={styles.settings}>
       <List>
         <ListItem itemDivider>
@@ -143,11 +149,15 @@ const ProfileLst = ({
           </Right>
         </ListItem>
         <ListItem icon style={{ alignItems: 'center' }}>
-          <Button transparent onPress={_handleLogout}>
+          <DebouncedOpacity
+            activeOpacity={0.2}
+            transparent
+            onPress={_handleLogout}
+          >
             <Text style={{ color: Colors.redColor, fontSize: 18 }}>
               Log out
             </Text>
-          </Button>
+          </DebouncedOpacity>
         </ListItem>
         <ListItem itemDivider>
           <Text style={styles.separator}>GALLERY</Text>

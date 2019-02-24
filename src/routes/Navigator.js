@@ -28,7 +28,7 @@ import {
   ProfileScreen,
   EditProfileScreen,
   CommentsScreen,
-  PrivateMessageScreen
+  EditHotspotScreen
 } from '../screens';
 import { Colors } from '../common';
 import DrawerContent from './components/DrawerContent';
@@ -52,11 +52,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingBottom: 8,
     fontFamily: 'montserrat',
-    // backgroundColor: Colors.violetColor,
     fontSize: 20
   },
   tabBarStyle: {
-    // height: 0,
     marginTop: 16,
     borderTopWidth: 0,
     borderTopColor: Colors.whiteColor,
@@ -163,6 +161,16 @@ export const AppNavigator = Actions.create(
                 hideNavBar
                 component={CreateHotspotScreen}
                 title="Add new hotspot"
+              />
+              <Scene
+                key="edit_hotspot"
+                swipeEnabled={false}
+                gesturesEnabled={false}
+                back
+                hideTabBar
+                hideNavBar
+                component={EditHotspotScreen}
+                title="Edit hotspot"
               />
               <Scene
                 key="hotspots"
