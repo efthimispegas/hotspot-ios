@@ -54,7 +54,7 @@ class HotspotApi {
       // console.log('===============');
       const { data } = await axios.post(`${this.path}/new`, args);
       console.log('===============');
-      console.log('[HotspotApi] created hotspot:', data);
+      console.log('[Axios]data return from create hotspot call:', data);
       console.log('===============');
       return data;
     } catch (e) {
@@ -66,7 +66,7 @@ class HotspotApi {
     try {
       const { data } = await axios.put(`${this.path}/${hotspotId}/edit`, args);
       console.log('===============');
-      console.log('data returned from axios:', data);
+      console.log('[Axios] data returned from editHotspot call:', data);
       console.log('===============');
 
       return data;
@@ -79,7 +79,34 @@ class HotspotApi {
     try {
       const { data } = await axios.delete(`${this.path}/${hotspotId}/delete`);
       console.log('===============');
-      console.log('data returned from axios:', data);
+      console.log('[Axios] data returned from deleteHotspot call:', data);
+      console.log('===============');
+
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async deleteExpiredHotspots() {
+    try {
+      const { data } = await axios.delete(`${this.path}/expired`);
+      console.log('===============');
+      console.log('[Axios] data returned from deleteExpired call:', data);
+      console.log('===============');
+
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async showMoreHotspots(page, limit, userId) {
+    try {
+      const query = `page=${page}&limit=${limit}`;
+      const { data } = await axios.get(`users/${userId}${this.path}?${query}`);
+      console.log('===============');
+      console.log('[Axios] data returned from showMoreHotspots call:', data);
       console.log('===============');
 
       return data;
@@ -96,7 +123,7 @@ class HotspotApi {
         `/${userId}${this.path}/${hotspotId}/comments`
       );
       console.log('===============');
-      console.log('data returned by axios:\n', data);
+      console.log('[Axios] data returned from getHotspotComments: \n', data);
       console.log('===============');
 
       return data;
@@ -112,7 +139,23 @@ class HotspotApi {
         args
       );
       console.log('===============');
-      console.log('data returned from axios:', data);
+      console.log('[Axios] data returned from CreateHotspotComment:', data);
+      console.log('===============');
+
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async showMoreComments(page, limit, userId, hotspotId) {
+    try {
+      const query = `page=${page}&limit=${limit}`;
+      const { data } = await axios.get(
+        `/${userId}${this.path}/${hotspotId}/comments?${query}`
+      );
+      console.log('===============');
+      console.log('[Axios] data returned from showMoreComments call:', data);
       console.log('===============');
 
       return data;

@@ -9,7 +9,9 @@ import {
   EDIT_HOTSPOT_SUCCESS,
   EDIT_HOTSPOT_ERROR,
   DELETE_HOTSPOT_SUCCESS,
-  DELETE_HOTSPOT_ERROR
+  DELETE_HOTSPOT_ERROR,
+  DELETE_EXPIRED_HOTSPOTS_SUCCESS,
+  DELETE_EXPIRED_HOTSPOTS_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -81,6 +83,19 @@ export default (state = INITIAL_STATE, action) => {
         error: false
       };
     case DELETE_HOTSPOT_ERROR:
+      return {
+        ...state,
+        deletion: false,
+        cancelled: false,
+        error: action.error
+      };
+    case DELETE_EXPIRED_HOTSPOTS_SUCCESS:
+      return {
+        ...state,
+        deletion: action.payload, //true if successfull
+        error: false
+      };
+    case DELETE_EXPIRED_HOTSPOTS_ERROR:
       return {
         ...state,
         deletion: false,

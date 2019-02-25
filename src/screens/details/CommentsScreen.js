@@ -36,6 +36,7 @@ import { validateCommentReply, renderProfilePicture } from '../../../helpers';
 import HotspotPost from './components/HotspotPost';
 import CommentsList from './components/CommentsList';
 import ReplyBox from './components/ReplyBox';
+import { Hotspot } from '../../api';
 
 class CommentsScreen extends React.Component {
   constructor(props) {
@@ -43,7 +44,9 @@ class CommentsScreen extends React.Component {
     this.state = {
       commentData: [],
       newComment: '',
-      isModalVisible: false
+      page: 1,
+      isModalVisible: false,
+      isShowMoreVisible: true
     };
     this.hotspot = props.hotspot;
     this.user = props.user;
@@ -102,7 +105,7 @@ class CommentsScreen extends React.Component {
       let comment = {
         id: el._id,
         user: el.user,
-        content: el.description,
+        description: el.description,
         created_at: el.created_at
       };
       commentArray.push(comment);
@@ -148,6 +151,24 @@ class CommentsScreen extends React.Component {
   _handleReply = (data, secId, rowId, rowMap) => {
     rowMap[`${secId}${rowId}`].props.closeRow();
     this.replyRef.current.focus();
+  };
+
+  _handleShowMore = async (page, limit) => {
+    const { comments, total, offset } = await Hotspot.showMoreComments(
+      page,
+      limit,
+      this.user._id,
+      this.hotspot._id
+    );
+    if (offset * page >= total) {
+      this.setState({
+        isShowMoreVisible: false
+      });
+    }
+    this.setState({
+      commentData: [...this.state.commentData, ...comments],
+      page: this.state.page + 1
+    });
   };
 
   toggleModal = isVisible => {
@@ -209,6 +230,14 @@ class CommentsScreen extends React.Component {
             commentData={this.state.commentData}
             _handleReply={this._handleReply.bind(this)}
           />
+          {this.state.isShowMoreVisible ? (
+            <TouchableOpacity
+              onPress={() => this._handleShowMore(this.state.page + 1, 5)}
+              style={{ flex: 1, alignItems: 'center', paddingVertical: 10 }}
+            >
+              <Text style={{ color: Colors.lightGreyColor }}>More...</Text>
+            </TouchableOpacity>
+          ) : null}
           <ReplyBox
             replyRef={this.replyRef}
             state={this.state}

@@ -11,7 +11,9 @@ import {
   EDIT_HOTSPOT_SUCCESS,
   EDIT_HOTSPOT_ERROR,
   DELETE_HOTSPOT_SUCCESS,
-  DELETE_HOTSPOT_ERROR
+  DELETE_HOTSPOT_ERROR,
+  DELETE_EXPIRED_HOTSPOTS_ERROR,
+  DELETE_EXPIRED_HOTSPOTS_SUCCESS
 } from './types';
 import { Hotspot } from '../api';
 
@@ -81,6 +83,18 @@ export function deleteHotspot(hotspotId) {
       dispatch({ type: DELETE_HOTSPOT_SUCCESS, payload: success });
     } catch (error) {
       return dispatch({ type: DELETE_HOTSPOT_ERROR, error });
+    }
+  };
+}
+
+export function deleteExpiredHotspots() {
+  return async dispatch => {
+    try {
+      const res = await Hotspot.deleteExpiredHotspots();
+
+      return dispatch({ type: DELETE_EXPIRED_HOTSPOTS_SUCCESS, payload: res });
+    } catch (error) {
+      return dispatch({ type: DELETE_EXPIRED_HOTSPOTS_ERROR, error });
     }
   };
 }

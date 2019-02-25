@@ -29,7 +29,7 @@ const CommentsList = ({ ds, commentData, _handleReply }) => {
               </Text>
             </View>
             <View style={styles.bottomContainer}>
-              <Text style={styles.message}>{value.content}</Text>
+              <Text style={styles.message}>{value.description}</Text>
             </View>
           </Body>
         </ListItem>

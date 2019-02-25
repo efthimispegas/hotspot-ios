@@ -32,13 +32,16 @@ import * as actions from '../../actions';
 import { messages as dummyData } from './dummy';
 import { Colors, CustomNavBar, TouchableDebounce, Spinner } from '../../common';
 import { renderProfilePicture } from '../../../helpers';
+import { Hotspot } from '../../api';
 
 class HotspotListScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoading: true,
-      hotspotData: []
+      hotspotData: [],
+      page: 1,
+      isShowMoreVisible: true
     };
     this.user = props.user;
   }
@@ -130,6 +133,23 @@ class HotspotListScreen extends React.Component {
   _handleEdit = (hotspot, secId, rowId, rowMap) => {
     rowMap[`${secId}${rowId}`].props.closeRow();
     Actions.edit_hotspot({ hotspot });
+  };
+
+  _handleShowMore = async (page, limit) => {
+    const { docs, total, offset } = await Hotspot.showMoreHotspots(
+      page,
+      limit,
+      this.user._id
+    );
+    if (offset * page >= total) {
+      this.setState({
+        isShowMoreVisible: false
+      });
+    }
+    this.setState({
+      hotspotData: [...this.state.hotspotData, ...docs],
+      page: this.state.page + 1
+    });
   };
 
   //if no messages then need to display "no mesages"
@@ -306,6 +326,14 @@ class HotspotListScreen extends React.Component {
               </View>
             )}
           />
+          {this.state.isShowMoreVisible ? (
+            <TouchableOpacity
+              onPress={() => this._handleShowMore(this.state.page + 1, 5)}
+              style={{ flex: 1, alignItems: 'center', paddingVertical: 10 }}
+            >
+              <Text style={{ color: Colors.lightGreyColor }}>More...</Text>
+            </TouchableOpacity>
+          ) : null}
         </KeyboardAwareScrollView>
       </View>
     );

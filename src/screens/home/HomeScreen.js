@@ -31,12 +31,11 @@ class HomeScreen extends Component {
     };
   }
   async componentDidMount() {
+    // await this.props.deleteExpiredHotspots();
     this._getMarkers();
     this.setState({ isFirstLoad: false });
   }
 
-  //determines whether a change in props or state should trigger a re-render
-  //returns true or false correspondingly
   async shouldComponentUpdate(nextProps, nextState) {
     if (this.props.hotspots !== null) {
       if (this.props.hotspots.length !== nextProps.hotspots.length) {
@@ -57,7 +56,6 @@ class HomeScreen extends Component {
     return false;
   }
 
-  //called when component may be receiving new props, make sure to check nextProps and existing state
   async componentWillReceiveProps(nextProps) {
     //create an array with the selected venue(s) and
     //change the state to re-render with the venues
@@ -80,6 +78,9 @@ class HomeScreen extends Component {
     } else if (!nextProps.isVenueSelected && nextProps.selectedVenue === null) {
       this.setState({ selectedVenue: null });
     }
+    //every time the component updates, we check for expired hotspots and remove them
+    //now the most efficient way, but an effortless one
+    // await this.props.deleteExpiredHotspots();
   }
 
   async _getMarkers() {
@@ -115,6 +116,7 @@ class HomeScreen extends Component {
             });
           }
         );
+
         this.setState({
           isLoading: false,
           isFirstLoad: false,
@@ -244,6 +246,10 @@ const mapDispatchToProps = dispatch => {
     ),
     clearRecommendations: bindActionCreators(
       actions.clearRecommendations,
+      dispatch
+    ),
+    deleteExpiredHotspots: bindActionCreators(
+      actions.deleteExpiredHotspots,
       dispatch
     )
   };
