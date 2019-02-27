@@ -1,17 +1,54 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, Image, Animated } from 'react-native';
-
-import { Button, Colors } from '../../common';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  Animated,
+  AsyncStorage
+} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
-import SearchBox from '../home/components/SearchBox';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
+import SplashScreen from './SplashScreen';
+import { Button, Colors, Spinner } from '../../common';
+import { ACCESS_TOKEN } from '../../actions/types';
 
 class WelcomeScreen extends Component {
   state = {
+    isLoading: true,
     //starting point of button's state (we don't see it)
     opacity: new Animated.Value(0),
     position: new Animated.Value(0)
   };
+
+  async componentDidMount() {
+    const token = await this.getToken();
+    console.log('===============');
+    console.log('[WelcomeScreen]:', token);
+    console.log('===============');
+    if (token) {
+      this.props.getUser(token);
+      Actions.main({ type: 'replace' });
+      return;
+    } else {
+      this.setState({ isLoading: false });
+      this._addOpacityAnimation();
+      this._addTransitionAnimation();
+    }
+  }
+
+  async getToken() {
+    try {
+      const token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   _addOpacityAnimation = () => {
     Animated.timing(this.state.opacity, {
@@ -28,18 +65,15 @@ class WelcomeScreen extends Component {
     }).start();
   };
 
-  componentDidMount() {
-    this._addOpacityAnimation();
-    this._addTransitionAnimation();
-  }
-
-  _checkAuth = () => {
-    setTimeout(() => {
-      Actions.login();
-    }, 1500);
-  };
-
   render() {
+    if (this.state.isLoading) {
+      return (
+        <Image
+          source={require('../../../assets/splash.png')}
+          style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+        />
+      );
+    }
     const { opacity, position } = this.state;
     const translateTitle = position.interpolate({
       inputRange: [0, 1],
@@ -79,7 +113,6 @@ class WelcomeScreen extends Component {
         </Animated.View>
 
         <Animated.Image
-          //----> require('../../../assets/images/welcome2.png')
           source={require('../../../assets/images/street.png')}
           style={[
             styles.imageContainer,
@@ -101,15 +134,13 @@ class WelcomeScreen extends Component {
           </Animated.View>
 
           <Animated.View style={[styles.buttonContainer, { opacity }]}>
-            <Button name="Check it out!" onPress={() => Actions.login()} />
+            <Button name="Get started!" onPress={() => Actions.register()} />
           </Animated.View>
         </View>
       </View>
     );
   }
 }
-
-export default WelcomeScreen;
 
 const styles = StyleSheet.create({
   welcomeMainContainer: {
@@ -129,20 +160,18 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   imageContainer: {
-    height: '8%', //<---- set to 28%
+    height: '8%',
     width: '100%',
     resizeMode: 'stretch'
   },
 
   hotspotLogoContainer: {
     flex: 0.5,
-    // backgroundColor: Colors.violetColor,
     justifyContent: 'center',
     alignItems: 'center'
   },
   hotspotLogo: {
     marginTop: 10,
-    // backgroundColor: Colors.pinkColor,
     height: 180,
     width: 180
   },
@@ -174,3 +203,19 @@ const styles = StyleSheet.create({
     marginTop: 10
   }
 });
+
+const mapStoreToProps = store => {
+  return {
+    user: null //<------------------
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getUser: bindActionCreators(actions.getUser, dispatch)
+  };
+};
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(WelcomeScreen);

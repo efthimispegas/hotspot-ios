@@ -6,26 +6,55 @@ import {
   TouchableHighlight,
   TouchableWithoutFeedback,
   StyleSheet,
-  Alert
+  Alert,
+  AsyncStorage
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Expo, { Permissions, Location } from 'expo';
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../../actions';
+
 import LoginForm from './components/LoginForm';
+import { ACCESS_TOKEN } from '../../actions/types';
 
 class LoginScreen extends Component {
   state = {
     isLoading: false,
-    username: '',
-    password: '',
-    email: ''
+    email: '',
+    password: ''
   };
+
+  // async componentDidMount() {
+  //   const token = await this.getToken();
+  //   if (token) {
+  //     Actions.main({ type: 'replace' });
+  //   }
+  // }
+
+  async storeToken(accessToken) {
+    try {
+      await AsyncStorage.setItem(ACCESS_TOKEN, accessToken);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getToken() {
+    try {
+      const token = await AsyncStorage.getItem(ACCESS_TOKEN);
+      return token;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   _handleChangePassword = password => {
     this.setState({ password });
   };
-  _handleChangeUsername = username => {
-    this.setState({ username });
+  _handleChangeEmail = email => {
+    this.setState({ email });
   };
 
   _handleDone = () => {
@@ -33,18 +62,26 @@ class LoginScreen extends Component {
     this._enableServicesAsync();
   };
 
-  _handleSubmit = () => {
+  _handleSubmit = async () => {
+    if (this.props.error) {
+      if (this.props.error.code === 401) {
+        Alert.alert(`Email and password don't match. `);
+        this.setState({ isLoading: false });
+        return;
+      }
+    }
+    await this.storeToken(this.props.user.token);
+    this.setState({ isLoading: false });
     Actions.main({ type: 'replace' });
-    console.log('===============');
-    console.log('go home');
-    console.log('===============');
   };
+
   render() {
     return (
       <LoginForm
+        {...this.props}
         state={this.state}
         _handleChangePassword={this._handleChangePassword.bind(this)}
-        _handleChangeUsername={this._handleChangeUsername.bind(this)}
+        _handleChangeEmail={this._handleChangeEmail.bind(this)}
         _handleDone={this._handleDone.bind(this)}
       />
     );
@@ -59,9 +96,6 @@ class LoginScreen extends Component {
         'Looks like you have Location Services disabled. To continue you must enable it.'
       );
     } else {
-      console.log('===============');
-      console.log('got here');
-      console.log('===============');
       this._askLocationPermissionsAsync();
     }
   }
@@ -70,29 +104,44 @@ class LoginScreen extends Component {
     const { status, permissions } = await Permissions.askAsync(
       Permissions.LOCATION
     );
-    console.log('===============');
-    console.log('asked permission');
-    console.log('===============');
+
     //check if permission to use location is granted
     if (status === 'denied') {
       Alert.alert(
         'Access Denied!',
         'Hotspot requires permission to use your current location'
       );
-    } else {
-      console.log('===============');
-      console.log('status granted');
-      console.log('===============');
       this.setState({ isLoading: false });
+    } else {
+      //if everything matches dispatch login action to be catched from the watcher
+      const { email, password } = this.state;
       console.log('===============');
-      console.log('loading: false');
+      console.log('[LoginScreen]data to be sent to the server:', {
+        email,
+        password
+      });
       console.log('===============');
+      await this.props.login({ email, password });
 
-      //then submit form and store the user's current location
       this._handleSubmit();
     }
   }
 }
-export default LoginScreen;
 
-const styles = StyleSheet.create({});
+const mapStoreToProps = store => {
+  return {
+    user: store.auth.user,
+    error: store.auth.error
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    login: bindActionCreators(actions.login, dispatch)
+  };
+};
+
+export default connect(
+  mapStoreToProps,
+  mapDispatchToProps
+)(LoginScreen);

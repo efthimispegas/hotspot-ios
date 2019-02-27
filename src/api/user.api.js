@@ -1,44 +1,65 @@
-import { service as axios } from '../api';
+import axios from 'axios';
+import { domainUrl } from '../config/domainUrl';
+import ErrorHandler from './error.api';
 
-const fakeUserId = '5c54b1a4231ce64440d8292f';
+axios.defaults.baseURL = domainUrl;
+// axios.defaults.headers.common['Authorization'] = '<AUTH_TOKEN>';
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+// const fakeUserId = '5c54b1a4231ce64440d8292f';
 class UserApi {
   constructor() {
-    this.userId = fakeUserId;
-    this.path = `/users/${this.userId}`;
+    this.getPath = userId => `/users/${userId}`;
   }
 
-  async fetchUsers() {
+  async fetchUser(access_token) {
     try {
       //make an axios call to somewhere
-      const res = await axios.get('somewhere');
+      const { data } = await axios.post('/verify', { access_token });
       console.log('===============');
-      console.log('data returned by axios:\n', res);
+      console.log('data returned by axios:\n', data);
       console.log('===============');
       return data;
     } catch (e) {
-      throw new Error(e);
+      throw new ErrorHandler(e.message).error;
     }
   }
 
+  async register(args) {
+    try {
+      //make an axios call to my server
+      const { data } = await axios.post('/register', args);
+      console.log('===============');
+      console.log('data from axios:', data);
+      console.log('===============');
+      return data;
+    } catch (e) {
+      throw new ErrorHandler(e.message).error;
+    }
+  }
   async login(args) {
     try {
       //make an axios call to my server
-      const res = await axios.post(`/users/login`, args);
+      const { data } = await axios.post('/login', args);
       console.log('===============');
-      console.log('data returned by axios:\n', res);
+      console.log('data returned by axios:\n', data);
       console.log('===============');
-      return res;
+      return data;
     } catch (e) {
-      throw new Error(e);
+      throw new ErrorHandler(e.message).error;
     }
   }
 
-  async createHotspotComment(args) {
+  async updateUser(userId, updates) {
     try {
-      const response = await axios.post(`${this.path}/new`, args);
-      return response;
+      const { data } = await axios.put(`${this.getPath(userId)}/edit`, updates);
+      console.log('===============');
+      console.log('data returned by axios:', data);
+      console.log('===============');
+
+      return data;
     } catch (e) {
-      throw e;
+      throw new ErrorHandler(e.message).error;
     }
   }
 }

@@ -16,13 +16,31 @@ const cachedAssets = assets =>
     }
   });
 
-export const ImageAssets = cachedAssets([
-  'https://image.flaticon.com/icons/png/512/0/340.png',
-  'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/1200px-Hamburger_icon.svg.png',
-  require('../assets/images/street.png'),
-  require('../assets/images/hotspot-logo.png'),
-  require('../assets/images/welcome2.png'),
-  require('../assets/icons/ios.png'),
-  require('../assets/hotspot-splash.png'),
-  require('../assets/splash.png')
+export const imageAssets = cachedAssets([
+  require('../assets/splash.png'),
+  require('../assets/icon.png'),
+  require('../assets/categories/palette.png'),
+  require('../assets/categories/theater.png'),
+  require('../assets/categories/pizza.png'),
+  require('../assets/categories/popcorn.png'),
+  require('../assets/categories/fast-food.png'),
+  require('../assets/categories/fast-food.png'),
+  require('../assets/categories/coffee.png'),
+  require('../assets/categories/shopping-store.png'),
+  require('../assets/gifs/loading.gif'),
+  require('../assets/flames/x1.png'),
+  require('../assets/flames/x2.png'),
+  require('../assets/flames/x3.png'),
+  require('../assets/flames/x4.png'),
+  require('../assets/flames/x5.png'),
+  require('../assets/icons/plus.png'),
+  require('../assets/icons/add-image.png'),
+  require('../assets/icons/arrow-back.png'),
+  require('../assets/icons/camera.png'),
+  require('../assets/icons/chat.png'),
+  require('../assets/icons/exit.png'),
+  require('../assets/icons/location.png'),
+  require('../assets/icons/location-on.png'),
+  require('../assets/icons/findmylocation.png'),
+  require('../assets/icons/user-unknown.png')
 ]);

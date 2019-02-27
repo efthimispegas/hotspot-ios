@@ -1,69 +1,104 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Alert,
-  Keyboard,
-  Dimensions,
-  TouchableWithoutFeedback
-} from 'react-native';
-import { Colors } from '../../common';
+import { Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Location } from 'expo';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import geolib from 'geolib';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import * as actions from '../../actions'; //we import it as * to use it later in the bindActionCreators()
 
-import LoadingScreen from '../loading/LoadingScreen';
+import { Actions } from 'react-native-router-flux';
 import MapContainer from './components/MapContainer';
-import { Hotspot } from '../../api';
-import * as locationActions from '../../actions'; //we import it as * to use it later in the bindActionCreators()
+import { LoadingScreen } from '../loading';
+import { Spinner } from '../../common';
 
 //we bind the functions to this component's instance because if not,
 //the variables in each function will not refer to the component but to the window
-
-//hardcode a hotspot id from my db for now
-const fakeHotspotId = '5c54b08d231ce64440d8292a';
 
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
     this.watchID = null;
     this.state = {
+      isFirstLoad: true,
       currentPosition: 'unknown',
       lastPosition: 'unknown',
       mapRegion: undefined,
-      mapRegionInput: {},
-      annotations: [],
-      markers: [],
+      mapRegionInput: undefined,
       isLoading: true,
-      dimensions: {
-        height: null,
-        width: null
-      }
+      selectedVenue: null,
+      error: null
     };
   }
   async componentDidMount() {
+    // await this.props.deleteExpiredHotspots();
+    this._getMarkers();
+    this.setState({ isFirstLoad: false });
+  }
+
+  async shouldComponentUpdate(nextProps, nextState) {
+    if (this.props.hotspots !== null) {
+      if (this.props.hotspots.length !== nextProps.hotspots.length) {
+        return true;
+      }
+    }
+    if (
+      this.props.hotspots !== nextProps.hotspots ||
+      nextState.currentPosition !== this.state.currentPosition ||
+      nextState.selectedVenue !== this.state.selectedVenue ||
+      nextProps.input !== this.props.input ||
+      nextProps.suggestions !== this.props.suggestions ||
+      nextProps.recommendations !== this.props.recommendations ||
+      nextProps.showMyLocation !== this.props.showMyLocation
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  async componentWillReceiveProps(nextProps) {
+    //create an array with the selected venue(s) and
+    //change the state to re-render with the venues
+    console.log('===============');
+    console.log('[ComponentWillReceiveProps] Home nextProps:', nextProps);
+    console.log('===============');
+
+    let venues = [];
+    if (
+      nextProps.isVenueSelected &&
+      (nextProps.isVenueSelected !== null ||
+        nextProps.isVenueSelected !== undefined) &&
+      (this.state.selectedVenue !== [] || this.state.selectedVenue !== null) &&
+      this.state.selectedVenue !== nextProps.selectedVenue
+    ) {
+      if (nextProps.selectedVenue.length > 1)
+        venues = [...nextProps.selectedVenue];
+      else venues = nextProps.selectedVenue;
+      this.setState({ selectedVenue: venues });
+    } else if (!nextProps.isVenueSelected && nextProps.selectedVenue === null) {
+      this.setState({ selectedVenue: null });
+    }
+    //every time the component updates, we check for expired hotspots and remove them
+    //now the most efficient way, but an effortless one
+    // await this.props.deleteExpiredHotspots();
+  }
+
+  async _getMarkers() {
     try {
-      //get the device dimensions to display the map correctly
-      const { height, width } = Dimensions.get('window');
       //get user's current location, returns a Promise
       const { coords } = await Location.getCurrentPositionAsync({
         enableHighAccuracy: true,
         timeout: 20000,
         timeInterval: 1000
       });
+
       //if coords were returned then
-      //fetch current user's hotspots from the server
+      //fetch hotspots within radius from the server
       if (coords) {
-        let data = await Hotspot.fetchHotspots(this.props.position); //<----here we will refactor later, with loadHotspots(position, token) action
-        //for now we apply a views_count property to each hotspot to //<----and we also need to call updateLocation(coords) action here
-        //adjust the marker's size later according to the views_count
-        data.hotspots.forEach((hotspot, index) => {
-          const views_count = Math.floor(Math.random() * 3);
-          hotspot.views_count = views_count;
-        });
+        this.props.updateLocation(coords);
+        //load hotspots to the specific coords
+        await this.props.loadHotspots(coords);
+
         //watch last position, when the promise is resolved returns remove() function
         //then we can clear watch by calling this.watchID.remove()
         this.watchID = await Location.watchPositionAsync(
@@ -81,19 +116,32 @@ class HomeScreen extends Component {
             });
           }
         );
+
         this.setState({
           isLoading: false,
-          annotations: data,
+          isFirstLoad: false,
+          hotspots: this.props.hotspots,
           currentPosition: {
             latitude: coords.latitude,
             longitude: coords.longitude
-          },
-          dimensions: { height, width }
+          }
         });
       }
     } catch (e) {
-      console.log('ERROR', e);
-      throw new Error(e);
+      console.log('ERROR', e.message);
+      Alert.alert(
+        'Error!',
+        'Network connection failed.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => Actions.reset('overlay')
+          }
+        ]
+        // { cancelable: true }
+      );
+      throw new Error(e.message);
     }
   }
 
@@ -101,103 +149,109 @@ class HomeScreen extends Component {
     this.setState({ mapRegionInput });
   };
 
-  _onRegionChangeComplete = mapRegionInput => {
+  _onRegionChangeComplete = async mapRegionInput => {
     this.setState({
       mapRegionInput
-      // annotations: this._getMarkers(),
     });
-    const markers = this.state.annotations.hotspots.map((hotspot, index) => {
-      const marker = {
-        lat: hotspot.loc.lat,
-        lng: hotspot.loc.lng,
-        title: `Hotspot - ${index + 1}`,
-        subtitle: hotspot.description,
-        text: hotspot.text,
-        size: hotspot.views_count
+    if (this.props.last4sqCall && this.props.last4sqCall !== null) {
+      //fetch recommendations for the region that is shown now
+      //only if there has been a request
+      this.props.fetchRecommendations(mapRegionInput, this.props.lookingFor);
+    }
+    //when the region changes, check the distance from user position
+    if (!this.state.isFirstLoad) {
+      const mapRegion = {
+        latitude: mapRegionInput.latitude,
+        longitude: mapRegionInput.longitude
       };
-      // console.log('===============');
-      // console.log('marker created:\n', marker);
-      // console.log('===============');
-      return marker;
-    });
+      const userRegion = {
+        latitude: this.props.region.latitude,
+        longitude: this.props.region.longitude
+      };
 
-    // console.log('===============');
-    // console.log('map result:\n', marker);
-    // console.log('===============');
-    this.setState({ markers });
+      //fetch hotspots in the new region, but still in a 0.5km radius
+      await this.props.loadHotspots(mapRegionInput);
+    }
   };
 
-  _handleMarkerPress = marker => {
+  _handleVenuePress = venue => {
     console.log('===============');
-    console.log('marker:\n', marker);
+    console.log('venue:\n', venue);
     console.log('===============');
   };
 
   render() {
-    console.log('===============');
-    console.log('[HomeScreen] state:\n', this.state);
-    console.log('===============');
-    console.log('===============');
-    console.log('[HomeScreen] props:\n', this.props);
-    console.log('===============');
     if (this.state.isLoading) {
       return <LoadingScreen />;
     }
+    if (!this.props.isLoggedIn) {
+      return <Spinner />;
+    }
+
     return (
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <MapContainer
+          {...this.props}
           state={this.state}
-          _onRegionChange={this._onRegionChange.bind(this)}
-          _onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
-          _handleMarkerPress={this._handleMarkerPress.bind(this)}
+          _onRegionChange={this._onRegionChange}
+          _onRegionChangeComplete={this._onRegionChangeComplete}
+          _handleMarkerPress={this._handleMarkerPress}
+          _handleVenuePress={this._handleVenuePress}
         />
       </TouchableWithoutFeedback>
     );
   }
-}
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: Colors.eggWhiteColor
-  },
-  top: {
-    flex: 1,
-    backgroundColor: Colors.orangeColor1
-  },
-  screenTitle: {
-    fontFamily: 'montserrat',
-    fontSize: 20,
-    fontWeight: '600',
-    color: 'white'
-  },
-  bottom: {
-    flex: 0.4
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center'
-  },
-  text: {
-    fontFamily: 'montserrat',
-    fontSize: 14
+  componentWillUnmount() {
+    this.watchID.remove();
   }
-});
+}
 
 const mapStoreToProps = store => {
   return {
-    hotspots: null,
-    token: null,
-    location: store.location
+    isLoggedIn: store.auth.isLoggedIn,
+    user: store.auth.user,
+    hotspots: store.hotspots.markers,
+    region: store.location.region,
+    showMyLocation: store.location.showMyLocation,
+    input: store.home.input,
+    suggestions: store.home.suggestions,
+    selectedVenue: store.home.selectedVenue,
+    isVenueSelected: store.home.isVenueSelected,
+    lookingFor: store.menu.lookingFor,
+    recommendations: store.menu.recommendations,
+    last4sqCall: store.menu.last4sqCall
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    loadHotspots: null,
-    openHotspot: null,
-    updateLocation: bindActionCreators(locationActions.updateLocation, dispatch) //same as writing updateLocation: dispatch => dispatch(updateLocation())
+    loadHotspots: bindActionCreators(actions.loadHotspots, dispatch),
+    updateLocation: bindActionCreators(actions.updateLocation, dispatch),
+    getMyLocation: bindActionCreators(actions.getMyLocation, dispatch),
+    getSearchInput: bindActionCreators(actions.getSearchInput, dispatch),
+    clearSearchInput: bindActionCreators(actions.clearSearchInput, dispatch),
+    getSearchSuggestions: bindActionCreators(
+      actions.getSearchSuggestions,
+      dispatch
+    ),
+    toggleSearchSuggestionsList: bindActionCreators(
+      actions.toggleSearchSuggestionsList,
+      dispatch
+    ),
+    getSelectedVenue: bindActionCreators(actions.getSelectedVenue, dispatch),
+    fetchRecommendations: bindActionCreators(
+      actions.fetchRecommendations,
+      dispatch
+    ),
+    clearRecommendations: bindActionCreators(
+      actions.clearRecommendations,
+      dispatch
+    ),
+    deleteExpiredHotspots: bindActionCreators(
+      actions.deleteExpiredHotspots,
+      dispatch
+    )
   };
 };
 

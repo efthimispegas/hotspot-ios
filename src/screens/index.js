@@ -4,3 +4,7 @@ export * from './loading';
 export * from './create';
 export * from './auth';
 export * from './AR';
+export * from './hotspots';
+export * from './profile';
+export * from './settings';
+export * from './details';

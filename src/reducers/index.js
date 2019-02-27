@@ -1,11 +1,21 @@
 import { combineReducers } from 'redux';
 
-import event from './a-reducer';
+import auth from './auth.reducer';
 import nav from './nav.reducer';
 import location from './location.reducer';
+import home from './home.reducer';
+import menu from './menu.reducer';
+import hotspots from './hotspot.reducer';
+import gallery from './gallery.reducer';
+import comments from './comment.reducer'
 
 export default combineReducers({
-  event,
+  auth,
   nav,
-  location
+  location,
+  home,
+  menu,
+  hotspots,
+  gallery,
+  comments
 });

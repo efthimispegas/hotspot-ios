@@ -8,30 +8,27 @@ import {
   Keyboard
 } from 'react-native';
 
-import { Button, Colors } from '../../../common';
+import { Button, Colors, CustomDebouncedButton } from '../../../common';
 
 const LoginForm = ({
   _handleChangePassword,
-  _handleChangeUsername,
+  _handleChangeEmail,
   _handleDone,
   state
 }) => (
-  <TouchableWithoutFeedback
-    onPress={() => {
-      Keyboard.dismiss();
-    }}
-  >
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <View style={styles.mainContainer}>
       <View style={styles.formContainer}>
         <View>
           <TextInput
-            placeholder="Username"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholder="Email"
             selectionColor={Colors.hotspotColor}
-            onChangeText={username => _handleChangeUsername(username)}
-            value={state.username}
+            onChangeText={email => _handleChangeEmail(email)}
+            value={state.email}
             style={styles.input}
           />
-
           <TextInput
             placeholder="Password"
             selectionColor={Colors.hotspotColor}
@@ -40,19 +37,14 @@ const LoginForm = ({
             secureTextEntry={true}
             style={styles.input}
           />
-
           <View style={styles.formButton}>
-            <Button
+            <CustomDebouncedButton
               isLoading={state.isLoading}
               name="Done"
               onPress={_handleDone}
             />
           </View>
         </View>
-      </View>
-
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Errors will go here</Text>
       </View>
     </View>
   </TouchableWithoutFeedback>
@@ -72,7 +64,7 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   formContainer: {
-    // backgroundColor: Colors.violetColor
+    flex: 1
   },
   formButton: {
     marginTop: 30
@@ -89,15 +81,6 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     paddingVertical: 7,
     backgroundColor: Colors.whiteColor
-  },
-  errorContainer: {
-    // backgroundColor: Colors.pinkColor
-  },
-  errorText: {
-    color: Colors.redColor,
-    fontFamily: 'montserrat',
-    fontSize: 15,
-    marginLeft: 20
   }
 });
 

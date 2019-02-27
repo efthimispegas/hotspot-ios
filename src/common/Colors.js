@@ -1,13 +1,17 @@
 export const Colors = {
   pinkColor: '#ee8787',
-  violetColor: '#5dc4ec',
-  blackColor: '#000',
+  blackColor: '#373737',
   eggWhiteColor: '#eaebde',
   whiteColor: '#fff',
-  lightGreyColor: '#4e4c4cb6',
-  darkGreyColor: '#413f3f',
-  greenColor: '#5de068',
-  redColor: 'red',
+  lightGreyColor: '#c2c2c2',
+  mediumGreyColor: '#4e4c4cb6',
+  darkGreyColor: '#2e2d2c',
+  purpleColor: '#9b59b6',
+  greenColor: '#1abc9c',
+  blueColor: '#3498db',
+  iosBlueColor: '#007aff',
+  violetColor: '#5dc4ec',
+  redColor: '#dd1d1d',
   orangeColor1: '#d3300777', //orange-red
   orangeColor2: '#fc7318', //orange-light
   orangeColor3: '#e64f09', //orange-vivid

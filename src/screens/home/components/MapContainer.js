@@ -1,56 +1,156 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import MapView, { Marker, Callout, PROVIDER_DEFAULT } from 'react-native-maps';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
+import MapView, {
+  Marker,
+  Callout,
+  PROVIDER_GOOGLE,
+  PROVIDER_DEFAULT
+} from 'react-native-maps';
+import { Actions } from 'react-native-router-flux';
+import _ from 'lodash';
 
-import { Colors } from '../../../common';
-
-const x1 = require('../../../../assets/flames/1.png');
-const x2 = require('../../../../assets/flames/2.png');
-const x3 = require('../../../../assets/flames/3.png');
-const x4 = require('../../../../assets/flames/4.png');
-const flames = [x1, x2, x3, x4];
+import {
+  CustomHotspotMarker,
+  CustomVenueMarker,
+  SearchBar,
+  SearchSuggestionsList,
+  ShowMyLocation,
+  FloatingActionButton
+} from './';
+import { getVenueCategory, getMarkerImage } from '../../../../helpers';
 
 const MapContainer = ({
+  input,
+  hotspots,
+  user,
+  suggestions,
+  recommendations,
+  getSearchInput,
+  clearSearchInput,
+  getSearchSuggestions,
+  getSelectedVenue,
+  toggleSearchSuggestionsList,
+  region,
+  getMyLocation,
+  showMyLocation,
   state,
   _onRegionChange,
   _onRegionChangeComplete,
-  _handleMarkerPress
+  _handleMarkerPress,
+  _handleVenuePress
 }) => {
-  const { dimensions, currentPosition, mapRegion, markers } = state;
+  const { currentPosition, markers, selectedVenue } = state;
+  let { mapRegion } = state;
+
+  //if the "show my location" button is pressed
+  //we reset the mapview to show the user's location
+  if (showMyLocation) {
+    mapRegion = {
+      latitude: currentPosition.latitude,
+      latitudeDelta: 0.00922 * 0.8,
+      longitude: currentPosition.longitude,
+      longitudeDelta: 0.00421
+    };
+  }
+
   return (
-    <View style={{ width: dimensions.width, height: dimensions.height }}>
-      <MapView
-        provider={PROVIDER_DEFAULT}
-        initialRegion={{
-          latitude: currentPosition.latitude,
-          longitude: currentPosition.longitude,
-          latitudeDelta: 0.0322,
-          longitudeDelta: 0.0221
-        }}
-        region={mapRegion}
-        onRegionChange={_onRegionChange}
-        onRegionChangeComplete={_onRegionChangeComplete}
-        showsUserLocation={true}
-        followsUserLocation={true}
-        style={[
-          styles.mapContainer,
-          { width: dimensions.width, height: dimensions.height }
-        ]}
-      >
-        {markers.map((marker, id) => (
-          <Marker
-            key={id}
-            coordinate={{ latitude: marker.lat, longitude: marker.lng }}
-            title={marker.title}
-            image={flames[marker.size]}
-          >
-            <Callout onPress={() => _handleMarkerPress(marker)}>
-              <Text style={styles.text}>{marker.title}</Text>
-            </Callout>
-          </Marker>
-        ))}
-      </MapView>
-    </View>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.mainContainer}>
+        <MapView
+          provider={PROVIDER_DEFAULT}
+          initialRegion={{
+            latitude: currentPosition.latitude,
+            latitudeDelta: 0.00922 * 0.8,
+            longitude: currentPosition.longitude,
+            longitudeDelta: 0.00421
+          }}
+          region={mapRegion}
+          onRegionChange={_onRegionChange}
+          onRegionChangeComplete={_onRegionChangeComplete}
+          showsUserLocation={true}
+          showsCompass={false}
+          followsUserLocation={false}
+          style={styles.mapContainer}
+        >
+          {/* Here we map the hotspots */}
+          {hotspots.map(marker => {
+            return (
+              <CustomHotspotMarker
+                key={marker._id}
+                hotspot={marker}
+                user={user.info}
+                _handleMarkerPress={_handleMarkerPress}
+              />
+            );
+          })}
+          {/* Here we show the single selected venue */}
+          {selectedVenue !== null && !_.isArrayLikeObject(selectedVenue) && (
+            <CustomVenueMarker
+              selectedVenue={selectedVenue}
+              _handleVenuePress={_handleVenuePress}
+              isGeneral={false}
+              img={null}
+            />
+          )}
+          {/* Here we map the general selected venues */}
+          {_.isArrayLikeObject(selectedVenue) &&
+            selectedVenue.map(venue => {
+              const categoryId = getVenueCategory(venue);
+              const img = getMarkerImage('category', categoryId);
+              return (
+                <CustomVenueMarker
+                  key={venue.id}
+                  selectedVenue={venue}
+                  _handleVenuePress={_handleVenuePress}
+                  isGeneral={true}
+                  img={img}
+                />
+              );
+            })}
+          {/* Here we map the menu recommendations */}
+          {recommendations &&
+            _.isArrayLikeObject(recommendations) &&
+            recommendations.map(({ venue }) => {
+              const categoryId = getVenueCategory(venue);
+              const img = getMarkerImage('category', categoryId);
+              return (
+                <CustomVenueMarker
+                  key={venue.id}
+                  selectedVenue={venue}
+                  _handleVenuePress={_handleVenuePress}
+                  isGeneral={true}
+                  img={img}
+                />
+              );
+            })}
+        </MapView>
+        <SearchBar
+          input={input}
+          region={region}
+          getSearchInput={getSearchInput}
+          clearSearchInput={clearSearchInput}
+          getSearchSuggestions={getSearchSuggestions}
+          toggleSearchSuggestionsList={toggleSearchSuggestionsList}
+        />
+        {input !== undefined && input !== '' && (
+          <SearchSuggestionsList
+            input={input}
+            suggestions={suggestions}
+            getSelectedVenue={getSelectedVenue}
+            toggleSearchSuggestionsList={toggleSearchSuggestionsList}
+            clearSearchInput={clearSearchInput}
+          />
+        )}
+        <FloatingActionButton />
+        <ShowMyLocation getMyLocation={getMyLocation} region={region} />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -58,12 +158,10 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: Colors.eggWhiteColor
+    alignItems: 'center'
   },
-  mapContainer: {},
-  top: {
-    flex: 1,
-    backgroundColor: Colors.orangeColor1
+  mapContainer: {
+    ...StyleSheet.absoluteFillObject
   }
 });
 
