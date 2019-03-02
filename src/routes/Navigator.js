@@ -24,7 +24,7 @@ import {
   WelcomeScreen,
   CreateHotspotScreen,
   HotspotListScreen,
-  SettingsScreen,
+  StatisticsScreen,
   ProfileScreen,
   EditProfileScreen,
   CommentsScreen,
@@ -212,11 +212,12 @@ export const AppNavigator = Actions.create(
               />
 
               <Scene
-                key="settings"
+                key="stats"
                 swipeEnabled={false}
                 hideTabBar
-                component={SettingsScreen}
-                title="Settings"
+                hideNavBar
+                component={StatisticsScreen}
+                title="Statistics"
               />
             </Stack>
           </Stack>

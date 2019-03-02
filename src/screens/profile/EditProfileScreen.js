@@ -10,7 +10,16 @@ import {
   Keyboard,
   Alert
 } from 'react-native';
-import { List, ListItem, Left, Button, Body, Right, Picker } from 'native-base';
+import {
+  List,
+  ListItem,
+  Left,
+  Button,
+  Body,
+  Right,
+  Picker,
+  Switch
+} from 'native-base';
 import { Permissions, ImagePicker, Camera } from 'expo';
 import { FontAwesome, Ionicons, Foundation } from '@expo/vector-icons';
 import DatePicker from 'react-native-modal-datetime-picker';
@@ -41,9 +50,11 @@ class EditProfileScreen extends Component {
         fullname: null,
         gender: null,
         city: null,
-        birthday: null
+        birthday: null,
+        publicAccount: true
       },
       picker: 'key0',
+      value: props.user.public,
       isDatePickerVisible: false,
       picture: null,
       errors: {
@@ -108,6 +119,14 @@ class EditProfileScreen extends Component {
       });
     }
   };
+
+  _handleValueChange(value) {
+    this.setState({
+      ...this.state,
+      value,
+      nextUser: { ...this.state.nextUser, publicAccount: value }
+    });
+  }
 
   renderSpinner = () => {
     if (this.state.isLoading) {
@@ -195,7 +214,8 @@ class EditProfileScreen extends Component {
       fullname,
       city,
       birthday,
-      gender
+      gender,
+      publicAccount
     } = this.state.nextUser;
     let { avatar } = this.state.prevvUser;
     let updates = {};
@@ -224,6 +244,7 @@ class EditProfileScreen extends Component {
       avatar['uri'] = this.state.picture;
       updates['avatar'] = avatar;
     }
+    updates['public'] = publicAccount;
     console.log('===============');
     console.log('updates for the user:', updates);
     console.log('===============');
@@ -527,6 +548,18 @@ class EditProfileScreen extends Component {
                           nextUser: { ...this.state.nextUser, confirmPassword }
                         })
                       }
+                    />
+                  </Right>
+                </ListItem>
+                <ListItem>
+                  <Left>
+                    <Text style={styles.listItem}>Public</Text>
+                  </Left>
+                  <Body />
+                  <Right>
+                    <Switch
+                      value={this.state.value}
+                      onValueChange={value => this._handleValueChange(value)}
                     />
                   </Right>
                 </ListItem>

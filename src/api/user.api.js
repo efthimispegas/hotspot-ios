@@ -12,6 +12,15 @@ class UserApi {
     this.getPath = userId => `/users/${userId}`;
   }
 
+  async fetchAllUsers() {
+    try {
+      const { data } = await axios.get('/users');
+      return data;
+    } catch (e) {
+      throw new ErrorHandler(e.message).error;
+    }
+  }
+
   async fetchUser(access_token) {
     try {
       //make an axios call to somewhere

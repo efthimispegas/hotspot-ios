@@ -31,6 +31,19 @@ class HotspotApi {
     }
   }
 
+  async fetchAllUserHotspots(userId) {
+    try {
+      //we just return all the user's hotspots
+      const { data } = await axios.get(`/users/${userId}${this.path}/all`);
+      console.log('===============');
+      console.log('data returned by axios:\n', data);
+      console.log('===============');
+      return data.myHotspots;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   async fetchHotspotsWithinRadius(region) {
     const query = `lat=${region.latitude}&lng=${region.longitude}`;
 

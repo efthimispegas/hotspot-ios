@@ -1,18 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { List, ListItem, Left, Button, Body, Right, Switch } from 'native-base';
+import { Actions } from 'react-native-router-flux';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import moment from 'moment';
 
 import { Colors, TouchableDebounce, DebouncedOpacity } from '../../../common';
 import { renderProfilePicture } from '../../../../helpers';
 
-const ProfileLst = ({
-  publicAccount,
-  user,
-  _handleValueChange,
-  _handleLogout
-}) => (
+const ProfileLst = ({ user, _handleLogout }) => (
   <View style={styles.container}>
     <View style={styles.picture}>
       {renderProfilePicture(user.avatar, null, {
@@ -114,16 +110,15 @@ const ProfileLst = ({
         <ListItem itemDivider>
           <Text style={styles.separator}>SETTINGS</Text>
         </ListItem>
-        <ListItem>
-          <Left>
-            <Text style={styles.listItem}>Public</Text>
-          </Left>
-          <Body />
+        <ListItem icon>
+          <Left />
+          <Body>
+            <Text style={styles.listItem}>Profile Status</Text>
+          </Body>
           <Right>
-            <Switch
-              value={publicAccount}
-              onValueChange={value => _handleValueChange(value)}
-            />
+            <Text style={styles.listItem}>
+              {user.public ? 'Public' : 'Private'}
+            </Text>
           </Right>
         </ListItem>
         <ListItem icon>
@@ -139,7 +134,7 @@ const ProfileLst = ({
             <Text style={styles.listItem}>Stats for nerds</Text>
           </Body>
           <Right>
-            <Button transparent>
+            <Button transparent onPress={() => Actions.stats()}>
               <Ionicons
                 name="ios-arrow-forward"
                 size={32}
@@ -169,7 +164,8 @@ const ProfileLst = ({
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: Colors.whiteColor
   },
   picture: {
     justifyContent: 'center',

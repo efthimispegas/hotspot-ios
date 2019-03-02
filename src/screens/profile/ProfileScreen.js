@@ -23,8 +23,7 @@ import { ACCESS_TOKEN } from '../../actions/types';
 class ProfileScreen extends Component {
   state = {
     isLoading: true,
-    user: null,
-    publicAccount: true
+    user: null
   };
 
   async componentDidMount() {
@@ -47,10 +46,6 @@ class ProfileScreen extends Component {
     await this.props.loadGallery(user._id);
     this.setState({ isLoading: false });
   };
-
-  async _handleValueChange(value) {
-    this.setState({ public: value });
-  }
 
   _handleLogout = async () => {
     try {
@@ -82,11 +77,7 @@ class ProfileScreen extends Component {
           backgroundColor={{ backgroundColor: Colors.hotspotColor }}
         />
         <ScrollView>
-          <ProfileLst
-            {...this.state}
-            _handleLogout={this._handleLogout}
-            _handleValueChange={this._handleValueChange}
-          />
+          <ProfileLst {...this.state} _handleLogout={this._handleLogout} />
           <Gallery {...this.props} />
         </ScrollView>
       </View>

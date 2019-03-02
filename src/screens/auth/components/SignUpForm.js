@@ -197,11 +197,6 @@ const SignUpForm = ({
           </TouchableOpacity>
 
           <View style={styles.formButton}>
-            {/* <Button
-              isLoading={state.isLoading}
-              name="Done"
-              onPress={_handleDone}
-            /> */}
             <CustomDebouncedButton
               isLoading={state.isLoading}
               name="Done"
@@ -210,7 +205,7 @@ const SignUpForm = ({
           </View>
         </View>
 
-        <View style={styles.divider}>
+        {/* <View style={styles.divider}>
           <Divider style={{ backgroundColor: Colors.whiteColor, width: 120 }} />
           <Text
             style={{
@@ -223,9 +218,9 @@ const SignUpForm = ({
             OR
           </Text>
           <Divider style={{ backgroundColor: Colors.whiteColor, width: 120 }} />
-        </View>
+        </View> */}
 
-        <View style={styles.bottomContainer}>
+        {/* <View style={styles.bottomContainer}>
           <View style={styles.facebookButton}>
             <ButtonWithIcon
               buttonName="Sign Up with facebook"
@@ -244,7 +239,7 @@ const SignUpForm = ({
               onPress={() => console.log('google')}
             />
           </View>
-        </View>
+        </View> */}
         <DatePicker
           mode="date"
           isVisible={state.isDatePickerVisible}
@@ -318,7 +313,6 @@ const styles = StyleSheet.create({
     marginVertical: 20
   },
   bottomContainer: {
-    // backgroundColor: Colors.violetColor,
     paddingVertical: 20
   },
   facebookButton: {
@@ -328,8 +322,7 @@ const styles = StyleSheet.create({
   googleButton: {
     alignSelf: 'stretch',
     marginTop: 10
-  },
-  disabled: {}
+  }
 });
 
 export default SignUpForm;
