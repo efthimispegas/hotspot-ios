@@ -68,6 +68,11 @@ class CommentsScreen extends React.Component {
         { cancelable: true }
       );
     }
+    if (nextProps.pages && nextProps.pages === 1) {
+      this.setState({ isShowMoreVisible: false });
+    } else {
+      this.setState({ isShowMoreVisible: true });
+    }
     if (nextProps.comments) {
       this.updateCommentList(nextProps.comments);
     }
@@ -82,7 +87,8 @@ class CommentsScreen extends React.Component {
     } else if (
       nextState.commentData.length !== this.state.commentData.length ||
       this.state.newComment.length !== nextState.newComment.length ||
-      this.state.isModalVisible !== nextState.isModalVisible
+      this.state.isModalVisible !== nextState.isModalVisible ||
+      this.state.isShowMoreVisible !== nextState.isShowMoreVisible
     ) {
       //every other time, update only when a new comment is added
       return true;
@@ -160,7 +166,7 @@ class CommentsScreen extends React.Component {
       this.user._id,
       this.hotspot._id
     );
-    if (offset * page >= total) {
+    if (offset * page >= total || total === 0) {
       this.setState({
         isShowMoreVisible: false
       });
@@ -284,6 +290,8 @@ const mapStoreToProps = store => {
     user: store.auth.user.info,
     region: store.location.region,
     comments: store.comments.data.comments,
+    pages:
+      Math.floor(store.comments.data.total / store.comments.data.limit) + 1,
     error: store.comments.error
   };
 };

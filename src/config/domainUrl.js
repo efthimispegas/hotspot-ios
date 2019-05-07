@@ -10,11 +10,12 @@ let url;
 if (Platform.OS !== 'ios') {
   url = 'http://10.0.3.2:3000/api';
 } else {
-  url = 'http://192.168.10.39:3000/api';
-  // url = 'http://172.20.10.5:3000/api';
+  // url = 'http://192.168.10.22:3000/api';
+  url = 'http://172.20.10.5:3000/api';
+  // url = 'http://147.102.11.164:3000/api';
 }
 
-export const domainUrl = url;
+export const domainUrl = url; 
 
 export const suggest4sq =
   'https://api.foursquare.com/v2/venues/suggestcompletion';

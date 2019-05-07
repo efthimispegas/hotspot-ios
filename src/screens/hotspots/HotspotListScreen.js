@@ -7,19 +7,7 @@ import {
   ListView,
   TouchableOpacity
 } from 'react-native';
-import {
-  View,
-  List,
-  Card,
-  ListItem,
-  CardItem,
-  Left,
-  Body,
-  Right,
-  Thumbnail,
-  Button,
-  Text
-} from 'native-base';
+import { View, List, ListItem, Button, Text } from 'native-base';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Entypo, Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Actions } from 'react-native-router-flux';
@@ -29,7 +17,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions';
 
-import { messages as dummyData } from './dummy';
 import { Colors, CustomNavBar, TouchableDebounce, Spinner } from '../../common';
 import { renderProfilePicture } from '../../../helpers';
 import { Hotspot } from '../../api';
@@ -141,7 +128,8 @@ class HotspotListScreen extends React.Component {
       limit,
       this.user._id
     );
-    if (offset * page >= total) {
+
+    if (offset * page >= total || total === 0) {
       this.setState({
         isShowMoreVisible: false
       });

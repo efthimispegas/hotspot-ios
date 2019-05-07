@@ -246,7 +246,12 @@ class SignUpScreen extends Component {
     console.log('[SignUpScreen]state:', this.state);
     console.log('===============');
     return (
-      <View style={{ backgroundColor: Colors.hotspotColor }}>
+      <View
+        style={{
+          backgroundColor: Colors.hotspotColor,
+          ...StyleSheet.absoluteFill
+        }}
+      >
         <SignUpForm
           {...this.props}
           state={this.state}
